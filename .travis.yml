@@ -1,0 +1,66 @@
+sudo: required
+dist: trusty
+os: linux
+language: minimal
+cache:
+  directories:
+    - depends/built
+    - depends/work
+    - depends/sdk-sources
+    - $HOME/.ccache
+env:
+  global:
+    - SDK_URL=https://bitcoincore.org/depends-sources/sdks
+    - CCACHE_SIZE=1G
+    - CCACHE_TEMPDIR=/tmp/.ccache-temp
+    - CCACHE_COMPRESS=1
+    - MAKEJOBS="-j2"
+    - BASE_OUTDIR=$TRAVIS_BUILD_DIR/out
+    - BASE_PACKAGES="zlib1g-dev zip git build-essential libtool autotools-dev automake pkg-config bsdmainutils curl"
+  matrix:
+    # ARM32
+    - HOST=arm-linux-gnueabihf PACKAGES="g++-arm-linux-gnueabihf" OPT="NO_QT=1" CONF="--without-gui"
+    # ARM64
+    - HOST=aarch64-linux-gnu PACKAGES="g++-aarch64-linux-gnu" OPT="NO_QT=1" CONF="--without-gui"
+    # Win32
+    - HOST=i686-w64-mingw32 PACKAGES="g++-mingw-w64-i686 mingw-w64-i686-dev"
+    # Win64
+    - HOST=x86_64-w64-mingw32 PACKAGES="g++-mingw-w64-x86-64 mingw-w64-x86-64-dev"
+    # x86_64 Linux
+    - HOST=x86_64-unknown-linux-gnu PACKAGES=""
+    # Cross-Mac
+    - HOST=x86_64-apple-darwin11 PACKAGES="cmake imagemagick libcap-dev librsvg2-bin libz-dev libbz2-dev libtiff-tools python-dev" OSX_SDK=10.11
+
+before_install:
+  - export PATH=$(echo $PATH | tr ':' "\n" | sed '/\/opt\/python/d' | tr "\n" ":" | sed "s|::|:|g")
+install:
+  - sudo add-apt-repository -y ppa:bitcoin/bitcoin
+  - sudo apt-get update
+  - travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $BASE_PACKAGES
+  - if [ -n "$PACKAGES" ]; then travis_retry sudo apt-get install --no-install-recommends --no-upgrade -qq $PACKAGES; fi
+before_script:
+  - unset CC; unset CXX
+  - cd $TRAVIS_BUILD_DIR
+  - mkdir -p depends/SDKs depends/sdk-sources
+  - if [ -n "$OSX_SDK" -a ! -f depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz ]; then curl --location --fail $SDK_URL/MacOSX${OSX_SDK}.sdk.tar.gz -o depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz; fi
+  - if [ -n "$OSX_SDK" -a -f depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz ]; then tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${OSX_SDK}.sdk.tar.gz; fi
+script:
+  - OUTDIR=$BASE_OUTDIR/$TRAVIS_PULL_REQUEST/$TRAVIS_JOB_NUMBER-$HOST
+  - ./autogen.sh
+  - cd depends && make $MAKEJOBS $OPT
+  - cd $TRAVIS_BUILD_DIR && ./configure --prefix=$TRAVIS_BUILD_DIR/depends/$HOST $CONF
+  - make $MAKEJOBS
+before_deploy:
+  - sudo chown -R travis:travis /home/travis/
+  - "cd $TRAVIS_BUILD_DIR"
+  - "chmod +x pre-deploy.sh"
+  - "./pre-deploy.sh"
+deploy:
+  provider: releases
+  file_glob: true
+  api_key:
+    secure: TWY0QDQ2+YjkpUfBmdLTnFh8YHonz0WtN/ZQVpqAKnfxlRtAbfvUoyObf5pbLTuYAnjfcnu4vvU0xh8XPS1UKpPJ6KnTGNZo607jgJEd3gTYXcJuf30vasWWqRz4k1ubcHXIveYuny6DbnL7eDoYesKRK3gQfice50K2/nAXh9LKFoD/1oLejnJqzTa0BH5MDthu607BJ4fssE5mUx8+zbXnsmFUt9BWwuNVWqjZO4nql2vasrhIal880rIlavLFVJRpHYDidkWT4mM+lgCNBZdwa73PPAEw2qNnzfpTRNLqqjA5mCJzGWDykqYZWO21Rrpg2dsrRaZ+8DtZ6eYUXSyDmHTjbenSAk5HgCDgqmtMpjxqoh0LmGs/wMcVh0b0lQPp16XEkJSaZGtHrRydsWRpo3yZXFC11OMEL7aylL1GI93QOndH9E3s8/zNOFvAjE12dDAaTq8adDdXfEjaOxz4x9uTQaHbHglcWX6GnTlznoUlmtjNlRKJJQVpQr4Ck6h1WOi8WQWVNWMSWYfmnv5cjOvmJ6Tvq1rFOfRvMm8IbPlnsHrlg1n3eGBnLjwP0JIpsTrdOwtHDfSaStzOfPS4o6Tk+AxY9sbg3dSX8Nx+zkblrBpIOfqHBZOBsLzsbEfN/27O22WlJkRZMcxnHrdU/ZdvbUmINfnJ7nEt71I=
+  file: out/**/zip/*
+  skip_cleanup: true
+  on:
+    tags: true
