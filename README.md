@@ -10,7 +10,7 @@
 - Retarget: every block
 - Confirmation: 6 Blocks
 - Maturity: 120 Blocks
-- Max Coins: 40,000,000 BZX
+- Max Coins: N/A
 - Min TX Fee: 0.001 BZX
 - Block Size: 4MB
 
