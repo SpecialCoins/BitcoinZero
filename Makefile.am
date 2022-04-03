@@ -4,11 +4,4 @@
 
 ACLOCAL_AMFLAGS = -I build-aux/m4
 SUBDIRS = src
-.PHONY: deploy FORCE
-
-GZIP_ENV="-9n"
-export PYTHONPATH
-
 dist_noinst_SCRIPTS = autogen.sh
-
-CLEANFILES = $(OSX_DMG) $(BITCOIN_WIN_INSTALLER)

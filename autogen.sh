@@ -16,4 +16,3 @@ autoreconf --install --force --warnings=all
 
 (cd "${srcdir}/src/secp256k1" && ./autogen.sh)
 (cd "${srcdir}/src/tor" && ./autogen.sh)
-
