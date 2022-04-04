@@ -42,7 +42,7 @@ You can also choose to further encrypt your seed with a passphrase for added sec
 If you have an existing seed that you wish to restore, please select &quot;Recover existing wallet&quot; 
 and enter your passphrase (if you have set one for your seed).
 
-Advanced: If you don't wish to generate a wallet with a seed phrase backup (not recommended), you can set usemnemonic=0 in BZXBETA.conf.
+Advanced: If you don't wish to generate a wallet with a seed phrase backup (not recommended), you can set usemnemonic=0 in bitcoinzero.conf.
       </string>
      </property>
      <property name="wordWrap">

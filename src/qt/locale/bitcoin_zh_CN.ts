@@ -133,7 +133,7 @@ Warning:
 
 If you have an existing seed that you wish to restore, please select "Recover existing wallet" and enter your passphrase (if you have set one for your seed).
 
-Advanced: If you don't wish to generate a wallet with a seed phrase backup (not recommended), you can set usemnemonic=0 in BZXBETA.conf.
+Advanced: If you don't wish to generate a wallet with a seed phrase backup (not recommended), you can set usemnemonic=0 in bitcoinzero.conf.
       </source>
         <translation>让我们一起创建你的 BZX 钱包吧！
 
@@ -151,7 +151,7 @@ Advanced: If you don't wish to generate a wallet with a seed phrase backup (not 
 
 如果你有一个想要恢复的现有种子，请选择“恢复现有钱包”，然后输入你的密码（如果你已经为种子设置了密码）。
 
-高级设置：如果你不希望生成一个带有种子短语备份的钱包（不推荐），你可以在 BZXBETA.conf 中设置 usemnemonic=0。
+高级设置：如果你不希望生成一个带有种子短语备份的钱包（不推荐），你可以在 bitcoinzero.conf 中设置 usemnemonic=0。
         </translation>
     </message>
     <message>
@@ -2061,12 +2061,12 @@ After the notification transaction is received by the RAP address issuer, funds 
 <context>
     <name>OverviewPage</name>
     <message>
-        <source>Please restart the BZX wallet to route your connection through Tor to protect your IP address. &lt;br&gt;Syncing your wallet might be slower with TOR. &lt;br&gt;Note that -torsetup in BZXBETA.conf will always override any changes made here.</source>
-        <translation>请重新启动 BZX 钱包，通过 Tor 来路由你的连接，以保护你的 IP 地址。&lt;br&gt;使用 Tor 同步你的钱包可能会比较慢。&lt;br&gt;请注意，BZXBETA.conf 中的 -torsetup 将始终覆盖这里的任何更改。</translation>
+        <source>Please restart the BZX wallet to route your connection through Tor to protect your IP address. &lt;br&gt;Syncing your wallet might be slower with TOR. &lt;br&gt;Note that -torsetup in bitcoinzero.conf will always override any changes made here.</source>
+        <translation>请重新启动 BZX 钱包，通过 Tor 来路由你的连接，以保护你的 IP 地址。&lt;br&gt;使用 Tor 同步你的钱包可能会比较慢。&lt;br&gt;请注意，bitcoinzero.conf 中的 -torsetup 将始终覆盖这里的任何更改。</translation>
     </message>
     <message>
-        <source>Please restart the BZX wallet to disable routing of your connection through Tor to protect your IP address. &lt;br&gt;Note that -torsetup in BZXBETA.conf will always override any changes made here.</source>
-        <translation>请重新启动 BZX 钱包，以禁用通过 Tor 来路由你的连接以保护你的 IP 地址。&lt;br&gt;请注意，BZXBETA.conf 中的 -torsetup 将始终覆盖这里的任何更改。</translation>
+        <source>Please restart the BZX wallet to disable routing of your connection through Tor to protect your IP address. &lt;br&gt;Note that -torsetup in bitcoinzero.conf will always override any changes made here.</source>
+        <translation>请重新启动 BZX 钱包，以禁用通过 Tor 来路由你的连接以保护你的 IP 地址。&lt;br&gt;请注意，bitcoinzero.conf 中的 -torsetup 将始终覆盖这里的任何更改。</translation>
     </message>
     <message>
         <source>Form</source>

@@ -17,13 +17,13 @@ BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
             VALUE "CompanyName",        "BZX"
-            VALUE "FileDescription",    "BZXBETA-cli (JSON-RPC client for " PACKAGE_NAME ")"
+            VALUE "FileDescription",    "bitcoinzero-cli (JSON-RPC client for " PACKAGE_NAME ")"
             VALUE "FileVersion",        VER_FILEVERSION_STR
-            VALUE "InternalName",       "BZXBETA-cli"
+            VALUE "InternalName",       "bitcoinzero-cli"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
-            VALUE "OriginalFilename",   "BZXBETA-cli.exe"
-            VALUE "ProductName",        "BZXBETA-cli"
+            VALUE "OriginalFilename",   "bitcoinzero-cli.exe"
+            VALUE "ProductName",        "bitcoinzero-cli"
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
     END

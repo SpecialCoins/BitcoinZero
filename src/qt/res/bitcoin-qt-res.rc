@@ -22,10 +22,10 @@ BEGIN
             VALUE "CompanyName",        "BZX"
             VALUE "FileDescription",    PACKAGE_NAME " (GUI node for BZX)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
-            VALUE "InternalName",       "BZXBETA-qt"
+            VALUE "InternalName",       "bitcoinzero-qt"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
-            VALUE "OriginalFilename",   "BZXBETA-qt.exe"
+            VALUE "OriginalFilename",   "bitcoinzero-qt.exe"
             VALUE "ProductName",        PACKAGE_NAME
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
