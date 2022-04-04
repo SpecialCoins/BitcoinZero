@@ -41,10 +41,62 @@
         <source>&amp;Delete</source>
         <translation>&amp;Видалити</translation>
     </message>
-    </context>
+    <message>
+        <source>Choose the address to send coins to</source>
+        <translation>Оберіть адресу для відправки монет</translation>
+    </message>
+    <message>
+        <source>Choose the address to receive coins with</source>
+        <translation>Оберіть адресу для отримання монет</translation>
+    </message>
+    <message>
+        <source>C&amp;hoose</source>
+        <translation>О&amp;брати</translation>
+    </message>
+    <message>
+        <source>Sending addresses</source>
+        <translation>Адреса відправлення</translation>
+    </message>
+    <message>
+        <source>Receiving addresses</source>
+        <translation>Адреса отримання</translation>
+    </message>
+    <message>
+        <source>Copy &amp;Label</source>
+        <translation>Зкопіювати&amp;Створити мітку</translation>
+    </message>
+    <message>
+        <source>&amp;Edit</source>
+        <translation>&amp;Редагувати</translation>
+    </message>
+    <message>
+        <source>Export Address List</source>
+        <translation>Експотувати список адрес</translation>
+    </message>
+    <message>
+        <source>Comma separated file (*.csv)</source>
+        <translation>Файли (*.csv) розділеі комами</translation>
+    </message>
+    <message>
+        <source>Exporting Failed</source>
+        <translation>Експортування пройшло не успішно</translation>
+    </message>
+    <message>
+        <source>There was an error trying to save the address list to %1. Please try again.</source>
+        <translation>Виникла помилка при спрбі збереження списку адрес %1. Будь-ласка, спробувати пізніше. </translation>
+    </message>
+</context>
 <context>
     <name>AddressTableModel</name>
-    </context>
+    <message>
+        <source>Label</source>
+        <translation>Мітка</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(немає мітки)</translation>
+    </message>
+</context>
 <context>
     <name>AskPassphraseDialog</name>
     <message>
@@ -76,7 +128,7 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>&amp;Підписати повідомлення...</translation>
@@ -158,7 +210,7 @@
         <translation>Переіндексація блоків на диску ...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
+        <source>Send coins to a address</source>
         <translation>Відправити монети на вказану адресу</translation>
     </message>
     <message>
@@ -182,8 +234,8 @@
         <translation>П&amp;еревірити повідомлення...</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -210,12 +262,12 @@
         <translation>Зашифрувати закриті ключі, що знаходяться у вашому гаманці</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
-        <translation>Підтвердіть, що Ви є власником повідомлення підписавши його Вашою BitcoinZero-адресою </translation>
+        <source>Sign messages with your addresses to prove you own them</source>
+        <translation>Підтвердіть, що Ви є власником повідомлення підписавши його Вашою BZX-адресою </translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
-        <translation>Перевірте повідомлення для впевненості, що воно підписано вказаною BitcoinZero-адресою</translation>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
+        <translation>Перевірте повідомлення для впевненості, що воно підписано вказаною BZX-адресою</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -234,8 +286,8 @@
         <translation>Панель вкладок</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>Створити запит платежу (генерує QR-код та BitcoinZero: URI)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>Створити запит платежу (генерує QR-код та BZX: URI)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -246,44 +298,20 @@
         <translation>Показати список адрес і міток, що були використані для отримання</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>Відкрити BitcoinZero: URI чи запит платежу</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>Відкрити BZX: URI чи запит платежу</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>П&amp;араметри командного рядка</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to BitcoinZero network</source>
-        <translation><numerusform>%n активне з'єднання з мережею BitcoinZero</numerusform><numerusform>%n активні з'єднання з мережею BitcoinZero</numerusform><numerusform>%n активних з'єднань з мережею BitcoinZero</numerusform></translation>
-    </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>Недоступно жодного джерела блоків...</translation>
+        <source>%n active connection(s) to BZX network</source>
+        <translation><numerusform>%n активне з'єднання з мережею BZX</numerusform><numerusform>%n активні з'єднання з мережею BZX</numerusform><numerusform>%n активних з'єднань з мережею BZX</numerusform></translation>
     </message>
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
         <translation><numerusform>Оброблено %n блок історії транзакцій.</numerusform><numerusform>Оброблено %n блоки історії транзакцій.</numerusform><numerusform>Оброблено %n блоків історії транзакцій.</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n година</numerusform><numerusform>%n години</numerusform><numerusform>%n годин</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n день</numerusform><numerusform>%n дні</numerusform><numerusform>%n днів</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n тиждень</numerusform><numerusform>%n тижня</numerusform><numerusform>%n тижнів</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 та %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n рік</numerusform><numerusform>%n роки</numerusform><numerusform>%n років</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -363,7 +391,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>&lt;b&gt;Зашифрований&lt;/b&gt; гаманець &lt;b&gt;заблоковано&lt;/b&gt;</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -381,10 +409,6 @@
     <message>
         <source>Amount:</source>
         <translation>Сума:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Пріорітет:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -439,8 +463,8 @@
         <translation>Підтверджені</translation>
     </message>
     <message>
-        <source>Priority</source>
-        <translation>Пріоритет</translation>
+        <source>(no label)</source>
+        <translation>немає мітки</translation>
     </message>
     </context>
 <context>
@@ -568,6 +592,21 @@
     </message>
 </context>
 <context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>Форма</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>Час останнього блоку</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Приховати</translation>
+    </message>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     <message>
         <source>Open URI</source>
@@ -673,7 +712,7 @@
         <translation>&amp;Витрачати непідтверджену решту</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
         <translation>Автоматично відкривати порт для клієнту біткоін на роутері. Працює лише якщо ваш роутер підтримує UPnP і ця функція увімкнена.</translation>
     </message>
     <message>
@@ -681,8 +720,8 @@
         <translation>Відображення порту через &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a SOCKS5 proxy.</source>
-        <translation>Підключення до мережі BitcoinZero через SOCKS5 проксі.</translation>
+        <source>Connect to the BZX network through a SOCKS5 proxy.</source>
+        <translation>Підключення до мережі BZX через SOCKS5 проксі.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -721,8 +760,8 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>Підключатися до мережі BitcoinZero через окремий SOCKS5 проксі для прихованих сервісів Tor.</translation>
+        <source>Connect to the BZX network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>Підключатися до мережі BZX через окремий SOCKS5 проксі для прихованих сервісів Tor.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</source>
@@ -808,8 +847,8 @@
         <translation>Форма</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
-        <translation>Показана інформація вже може бути застарілою. Ваш гаманець буде автоматично синхронізовано з мережею BitcoinZero після встановлення підключення, але цей процес ще не завершено.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
+        <translation>Показана інформація вже може бути застарілою. Ваш гаманець буде автоматично синхронізовано з мережею BZX після встановлення підключення, але цей процес ще не завершено.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -889,11 +928,7 @@
         <source>Node/Service</source>
         <translation>Вузол/Сервіс</translation>
     </message>
-    <message>
-        <source>Ping Time</source>
-        <translation>Затримка</translation>
-    </message>
-</context>
+    </context>
 <context>
     <name>QObject</name>
     <message>
@@ -901,8 +936,8 @@
         <translation>Кількість</translation>
     </message>
     <message>
-        <source>Enter a BitcoinZero address (e.g. %1)</source>
-        <translation>Введіть адресу BitcoinZero (наприклад %1)</translation>
+        <source>Enter a address (e.g. %1)</source>
+        <translation>Введіть адресу BZX (наприклад %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -932,7 +967,14 @@
         <source>%1 ms</source>
         <translation>%1 мс</translation>
     </message>
-</context>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 та %2</translation>
+    </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
+    </context>
 <context>
     <name>QRImageWidget</name>
     </context>
@@ -1123,14 +1165,6 @@
         <translation>Очистити консоль</translation>
     </message>
     <message>
-        <source>&amp;Disconnect Node</source>
-        <translation>&amp;Від'єднати Вузол</translation>
-    </message>
-    <message>
-        <source>Ban Node for</source>
-        <translation>Заблокувати Вузол на</translation>
-    </message>
-    <message>
         <source>1 &amp;hour</source>
         <translation>1 &amp;годину</translation>
     </message>
@@ -1145,10 +1179,6 @@
     <message>
         <source>1 &amp;year</source>
         <translation>1 &amp;рік</translation>
-    </message>
-    <message>
-        <source>&amp;Unban Node</source>
-        <translation>&amp;Розблокувати Вузол</translation>
     </message>
     <message>
         <source>Use up and down arrows to navigate history, and &lt;b&gt;Ctrl-L&lt;/b&gt; to clear screen.</source>
@@ -1230,8 +1260,8 @@
         <translation>По&amp;вторно використати адресу для отримання (не рекомендується)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BitcoinZero network.</source>
-        <translation>Необов'язкове повідомлення на додаток до запиту платежу, котре буде показане під час відкриття запиту. Примітка: Це повідомлення не буде відправлено з платежем через мережу BitcoinZero.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BZX network.</source>
+        <translation>Необов'язкове повідомлення на додаток до запиту платежу, котре буде показане під час відкриття запиту. Примітка: Це повідомлення не буде відправлено з платежем через мережу BZX.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1296,9 +1326,21 @@
         <source>&amp;Save Image...</source>
         <translation>&amp;Зберегти зображення...</translation>
     </message>
+    <message>
+        <source>Label</source>
+        <translation>Мітка</translation>
+    </message>
     </context>
 <context>
     <name>RecentRequestsTableModel</name>
+    <message>
+        <source>Label</source>
+        <translation>Мітка</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>немає мітки</translation>
+    </message>
     </context>
 <context>
     <name>SendCoinsDialog</name>
@@ -1333,10 +1375,6 @@
     <message>
         <source>Amount:</source>
         <translation>Сума:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Пріорітет:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -1387,8 +1425,8 @@
         <translation>всього щонайменше</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BitcoinZero transactions than the network can process.</source>
-        <translation>Оплата тільки мінімальної комісії є прийнятною, допоки обсяг транзакцій є меншим простору в блоках. Але майте на увазі, що це може анулювати транзакцію, якщо попит на BitcoinZero транзакції стане більшим, ніж мережа зможе обробити.</translation>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BZX transactions than the network can process.</source>
+        <translation>Оплата тільки мінімальної комісії є прийнятною, допоки обсяг транзакцій є меншим простору в блоках. Але майте на увазі, що це може анулювати транзакцію, якщо попит на BZX транзакції стане більшим, ніж мережа зможе обробити.</translation>
     </message>
     <message>
         <source>(read the tooltip)</source>
@@ -1405,10 +1443,6 @@
     <message>
         <source>(Smart fee not initialized yet. This usually takes a few blocks...)</source>
         <translation>(Розумну оплату ще не ініціалізовано. Це, зазвичай, триває кілька блоків...)</translation>
-    </message>
-    <message>
-        <source>Confirmation time:</source>
-        <translation>Час підтвердження:</translation>
     </message>
     <message>
         <source>normal</source>
@@ -1450,7 +1484,11 @@
         <source>S&amp;end</source>
         <translation>&amp;Відправити</translation>
     </message>
-    </context>
+    <message>
+        <source>(no label)</source>
+        <translation>немає мітки</translation>
+    </message>
+</context>
 <context>
     <name>SendCoinsEntry</name>
     <message>
@@ -1474,8 +1512,8 @@
         <translation>Це звичайний платіж.</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to send the payment to</source>
-        <translation>Адреса BitcoinZero для відправлення платежу</translation>
+        <source>The address to send the payment to</source>
+        <translation>Адреса BZX для відправлення платежу</translation>
     </message>
     <message>
         <source>Alt+A</source>
@@ -1494,7 +1532,7 @@
         <translation>Видалити цей запис</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less bitcoinzeros than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less BZXs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>Комісію буде знято зі вказаної суми. До отримувача надійде менше біткоінів, ніж було вказано в полі кількості. Якщо ж отримувачів декілька - комісію буде розподілено між ними.</translation>
     </message>
     <message>
@@ -1518,8 +1556,8 @@
         <translation>Введіть мітку для цієї адреси для додавання її в список використаних адрес</translation>
     </message>
     <message>
-        <source>A message that was attached to the BitcoinZero: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BitcoinZero network.</source>
-        <translation>Повідомлення, що було додане до BitcoinZero: URI та буде збережено разом з транзакцією для довідки. Примітка: Це повідомлення не буде відправлено в мережу BitcoinZero.</translation>
+        <source>A message that was attached to the BZX: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BZX network.</source>
+        <translation>Повідомлення, що було додане до BZX:URI та буде збережено разом з транзакцією для довідки. Примітка: Це повідомлення не буде відправлено в мережу BZX.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -1551,12 +1589,12 @@
         <translation>&amp;Підписати повідомлення</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive bitcoinzeros sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive BZXs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>Ви можете підписувати повідомлення/угоди своїми адресами, щоб довести можливість отримання біткоінів, що будуть надіслані на них. Остерігайтеся підписувати будь-що нечітке чи неочікуване, так як за допомогою фішинг-атаки вас можуть спробувати ввести в оману для отримання вашого підпису під чужими словами. Підписуйте лише чіткі твердження, з якими ви повністю згодні.</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to sign the message with</source>
-        <translation>Адреса BitcoinZero для підпису цього повідомлення</translation>
+        <source>The address to sign the message with</source>
+        <translation>Адреса BZX для підпису цього повідомлення</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -1587,7 +1625,7 @@
         <translation>Копіювати поточну сигнатуру до системного буферу обміну</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
+        <source>Sign the message to prove you own this address</source>
         <translation>Підпишіть повідомлення щоб довести, що ви є власником цієї адреси</translation>
     </message>
     <message>
@@ -1611,12 +1649,12 @@
         <translation>Введіть нижче адресу отримувача, повідомлення (впевніться, що ви точно скопіювали символи завершення рядка, табуляцію, пробіли тощо) та підпис для перевірки повідомлення. Впевніться, що в підпис не було додано зайвих символів: це допоможе уникнути атак типу «людина посередині». Зауважте, що це лише засвідчує можливість отримання транзакцій підписувачем, але не в стані підтвердити джерело жодної транзакції!</translation>
     </message>
     <message>
-        <source>The BitcoinZero address the message was signed with</source>
-        <translation>Адреса BitcoinZero, якою було підписано це повідомлення</translation>
+        <source>The address the message was signed with</source>
+        <translation>Адреса BZX, якою було підписано це повідомлення</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
-        <translation>Перевірте повідомлення для впевненості, що воно підписано вказаною BitcoinZero-адресою</translation>
+        <source>Verify the message to ensure it was signed with the specified address</source>
+        <translation>Перевірте повідомлення для впевненості, що воно підписано вказаною BZX-адресою</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1653,9 +1691,29 @@
     </context>
 <context>
     <name>TransactionTableModel</name>
+    <message>
+        <source>Label</source>
+        <translation>Мітка</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>немає мітки</translation>
+    </message>
     </context>
 <context>
     <name>TransactionView</name>
+    <message>
+        <source>Comma separated file (*.csv)</source>
+        <translation>Файли (*.csv) розділеі комами</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Мітка</translation>
+    </message>
+    <message>
+        <source>Exporting Failed</source>
+        <translation>Експортування пройшло не успішно</translation>
+    </message>
     </context>
 <context>
     <name>UnitDisplayStatusBarControl</name>
@@ -1674,7 +1732,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Параметри:</translation>
@@ -1708,10 +1766,6 @@
         <translation>Операція відсікання: остання синхронізація вмісту гаманцю не обмежується діями над скороченими данними. Вам необхідно зробити переіндексацію -reindex (заново завантажити веcь ланцюжок блоків в разі появи скороченого ланцюга)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>Зменшити вимоги до наявного простору на носії даних за допомогою скорочення ланцюжка (видалення старих блоків). Цей режим несумісний з параметрами -txindex та -rescan. Увага: при поверненні до типового значення видалені частини ланцюжка буде повторно завантажено. (типово: 0 = вимкнути скорочення ланцюжка, &gt;%u = очікуваний розмір файлів блоків в МіБ)</translation>
-    </message>
-    <message>
         <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
         <translation>Неможливо провести повторне сканування зі скороченим ланцюжком. Вам необхідно використати -reindex для завантаження повного ланцюжка блоків.</translation>
     </message>
@@ -1736,12 +1790,8 @@
         <translation>Неможливо запустити HTTP-сервер. Детальніший опис наведено в журналі зневадження.</translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>Приймати підключення ззовні (типово: 1 за відсутності -proxy чи -connect)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
-        <translation>BitcoinZero Core</translation>
+        <source>BZX Core</source>
+        <translation>BZX Core</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>
@@ -1750,10 +1800,6 @@
     <message>
         <source>Delete all wallet transactions and only recover those parts of the blockchain through -rescan on startup</source>
         <translation>Видалити всі транзакції гаманця та відновити ті, що будуть знайдені під час запуску за допомогою -rescan</translation>
-    </message>
-    <message>
-        <source>Distributed under the MIT software license, see the accompanying file COPYING or &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</source>
-        <translation>Поширюється за ліцензією MIT, додаткова інформація міститься у файлі COPYING та за адресою &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</translation>
     </message>
     <message>
         <source>Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)</source>
@@ -1768,24 +1814,8 @@
         <translation>Схоже, що база даних блоків містить блок з майбутнього. Це може статися із-за некоректно встановленої дати та/або часу. Перебудовуйте базу даних блоків лише тоді, коли ви переконані, що встановлено правильну дату і час</translation>
     </message>
     <message>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
-        <translation>Це тестова збірка пре-релізної версії - використовуйте на свій страх і ризик - не застосовувати для добування монет або торгівлі</translation>
-    </message>
-    <message>
         <source>Use UPnP to map the listening port (default: 1 when listening and no -proxy)</source>
         <translation>Використовувати UPnP для відображення порту, що прослуховується (типово: 1 при прослуховуванні та за відсутності -proxy)</translation>
-    </message>
-    <message>
-        <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
-        <translation>Увага: Частина мережі використовує інший головний ланцюжок! Деякі добувачі, можливо, зазнають проблем.</translation>
-    </message>
-    <message>
-        <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
-        <translation>Увага: Наш ланцюжок блоків відрізняється від ланцюжків підключених учасників! Можливо, вам, або іншим вузлам, необхідно оновитися.</translation>
-    </message>
-    <message>
-        <source>Whitelist peers connecting from the given netmask or IP address. Can be specified multiple times.</source>
-        <translation>Додати учасників, що під'єднуються з заданої підмережі чи IP-адреси, в білий список. Можна вказувати декілька разів.</translation>
     </message>
     <message>
         <source>-maxmempool must be at least %d MB</source>
@@ -1798,10 +1828,6 @@
     <message>
         <source>Block creation options:</source>
         <translation>Опції створення блоку:</translation>
-    </message>
-    <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>Підключитись лише до вказаного вузла/вузлів</translation>
     </message>
     <message>
         <source>Connection options:</source>
@@ -1992,10 +2018,6 @@
         <translation>Максимальний розмір даних в транзакціях носіїв даних, що ми передаємо і добуваємо (за замовчуванням: %u)</translation>
     </message>
     <message>
-        <source>Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)</source>
-        <translation>Дізнаватися адреси учасників через DNS при замалій кількості відомих адрес (типово: 1 за відсутності -connect)</translation>
-    </message>
-    <message>
         <source>Randomize credentials for every proxy connection. This enables Tor stream isolation (default: %u)</source>
         <translation>Надавати випадкові дані доступу для кожного проксі-з'єднання. Це дозволяє ввімкнути ізоляцію потоків Tor'у (типово: %u)</translation>
     </message>
@@ -2006,10 +2028,6 @@
     <message>
         <source>The transaction amount is too small to send after the fee has been deducted</source>
         <translation>Залишок від суми транзакції зі сплатою комісії занадто малий </translation>
-    </message>
-    <message>
-        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit &lt;https://www.openssl.org/&gt; and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
-        <translation>Цей продукт включає в себе програмне забезпечення, розроблене в рамках проекту OpenSSL &lt;https://www.openssl.org/&gt;, криптографічне програмне забезпечення, написане Еріком Янгом, та функції для роботи з UPnP, написані Томасом Бернардом.</translation>
     </message>
     <message>
         <source>Whitelisted peers cannot be DoS banned and their transactions are always relayed, even if they are already in the mempool, useful e.g. for a gateway</source>
@@ -2120,10 +2138,6 @@
         <translation>Сума транзакції занадто мала</translation>
     </message>
     <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>Суми монет у транзакції мають бути позитивними</translation>
-    </message>
-    <message>
         <source>Transaction too large for fee policy</source>
         <translation>Транзакція занадто велика для правил комісії</translation>
     </message>
@@ -2184,10 +2198,6 @@
         <translation>Встановлено дуже велике значення -maxtxfee! Такі великі комісії можуть бути сплачені окремою транзакцією.</translation>
     </message>
     <message>
-        <source>-paytxfee is set very high! This is the transaction fee you will pay if you send a transaction.</source>
-        <translation>Встановлено дуже велике значення -paytxfee! Цю комісію буде сплачено для проведення транзакції.</translation>
-    </message>
-    <message>
         <source>Do not keep transactions in the mempool longer than &lt;n&gt; hours (default: %u)</source>
         <translation>Не тримати транзакції в пам'яті довше &lt;n&gt; годин (типово: %u)</translation>
     </message>
@@ -2230,10 +2240,6 @@
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services (default: %s)</source>
         <translation>Використовувати окремий SOCKS5-проксі для з'єднання з учасниками через приховані сервіси Tor (типово: %s)</translation>
-    </message>
-    <message>
-        <source>Username and hashed password for JSON-RPC connections. The field &lt;userpw&gt; comes in the format: &lt;USERNAME&gt;:&lt;SALT&gt;$&lt;HASH&gt;. A canonical python script is included in share/rpcuser. This option can be specified multiple times</source>
-        <translation>Логін та хешований пароль для зв'язків JSON-RPC. Поле &lt;userpw&gt; має формат: &lt;USERNAME&gt;:&lt;SALT&gt;$&lt;HASH&gt;. Класичний Python script додано до share/rpcuser. Цей параметр може бути застосований декілька разів.</translation>
     </message>
     <message>
         <source>(default: %s)</source>

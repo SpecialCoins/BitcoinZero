@@ -16,14 +16,14 @@ BEGIN
     BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
-            VALUE "CompanyName",        "BitcoinZero"
-            VALUE "FileDescription",    "bitcoinzero-tx (CLI BitcoinZero transaction editor utility)"
+            VALUE "CompanyName",        "BZX"
+            VALUE "FileDescription",    "BZXBETA-tx (CLI BZX transaction editor utility)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
-            VALUE "InternalName",       "bitcoinzero-tx"
+            VALUE "InternalName",       "BZXBETA-tx"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
-            VALUE "OriginalFilename",   "bitcoinzero-tx.exe"
-            VALUE "ProductName",        "bitcoinzero-tx"
+            VALUE "OriginalFilename",   "BZXBETA-tx.exe"
+            VALUE "ProductName",        "BZXBETA-tx"
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
     END

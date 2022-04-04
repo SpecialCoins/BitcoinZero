@@ -41,10 +41,78 @@
         <source>&amp;Delete</source>
         <translation>&amp;Forigi</translation>
     </message>
-    </context>
+    <message>
+        <source>Choose the address to send coins to</source>
+        <translation>Elekti la adreson por sendi monerojn</translation>
+    </message>
+    <message>
+        <source>Choose the address to receive coins with</source>
+        <translation>Elekti la adreson ricevi monerojn kun</translation>
+    </message>
+    <message>
+        <source>C&amp;hoose</source>
+        <translation>&amp;Elekti</translation>
+    </message>
+    <message>
+        <source>Sending addresses</source>
+        <translation>Sendaj adresoj</translation>
+    </message>
+    <message>
+        <source>Receiving addresses</source>
+        <translation>Ricevaj adresoj</translation>
+    </message>
+    <message>
+        <source>These are your addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Jen viaj Bitmon-adresoj por sendi pagojn. Zorge kontrolu la sumon kaj la alsendan adreson antaŭ ol sendi.</translation>
+    </message>
+    <message>
+        <source>These are your addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Jen viaj bitmonaj adresoj por ricevi pagojn. Estas konsilinde uzi apartan ricevan adreson por ĉiu transakcio.</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Address</source>
+        <translation>&amp;Kopii Adreson</translation>
+    </message>
+    <message>
+        <source>Copy &amp;Label</source>
+        <translation>Kopii &amp;Etikedon</translation>
+    </message>
+    <message>
+        <source>&amp;Edit</source>
+        <translation>&amp;Redakti</translation>
+    </message>
+    <message>
+        <source>Export Address List</source>
+        <translation>Eksporti Adresliston</translation>
+    </message>
+    <message>
+        <source>Comma separated file (*.csv)</source>
+        <translation>Perkome disigita dosiero (*.csv)</translation>
+    </message>
+    <message>
+        <source>Exporting Failed</source>
+        <translation>ekspotado malsukcesinta</translation>
+    </message>
+    <message>
+        <source>There was an error trying to save the address list to %1. Please try again.</source>
+        <translation>Okazis eraron dum konservo de adreslisto al %1. Bonvolu provi denove.</translation>
+    </message>
+</context>
 <context>
     <name>AddressTableModel</name>
-    </context>
+    <message>
+        <source>Label</source>
+        <translation>Etikedo</translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation>Adreso</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(neniu etikedo)</translation>
+    </message>
+</context>
 <context>
     <name>AskPassphraseDialog</name>
     <message>
@@ -68,7 +136,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>Subskribi &amp;mesaĝon...</translation>
@@ -146,7 +214,7 @@
         <translation>Reindeksado de blokoj sur disko...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
+        <source>Send coins to a address</source>
         <translation>Sendi monon al Bitmon-adreso</translation>
     </message>
     <message>
@@ -170,7 +238,7 @@
         <translation>&amp;Kontroli mesaĝon...</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
+        <source>BZX</source>
         <translation>Bitmono</translation>
     </message>
     <message>
@@ -198,11 +266,11 @@
         <translation>Ĉifri la privatajn ŝlosilojn de via monujo</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
+        <source>Sign messages with your addresses to prove you own them</source>
         <translation>Subskribi mesaĝojn per via Bitmon-adresoj por pravigi, ke vi estas la posedanto</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
         <translation>Kontroli mesaĝojn por kontroli ĉu ili estas subskribitaj per specifaj Bitmon-adresoj</translation>
     </message>
     <message>
@@ -222,8 +290,8 @@
         <translation>Langeto-breto</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>Peti pagon (kreas QR-kodojn kaj URI-ojn kun prefikso BitcoinZero:)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>Peti pagon (kreas QR-kodojn kaj URI-ojn kun prefikso BZX:)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -234,36 +302,12 @@
         <translation>Vidigi la liston de uzitaj ricevaj adresoj kaj etikedoj</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>Malfermi BitcoinZero:-URI-on aŭ pagpeton</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>Malfermi BZX:-URI-on aŭ pagpeton</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;Komandliniaj agordaĵoj</translation>
-    </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>Neniu fonto de blokoj trovebla...</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n horo</numerusform><numerusform>%n horoj</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n tago</numerusform><numerusform>%n tagoj</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n semajno</numerusform><numerusform>%n semajnoj</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 kaj %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n jaro</numerusform><numerusform>%n jaroj</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -343,7 +387,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>Monujo estas &lt;b&gt;ĉifrita&lt;/b&gt; kaj aktuale &lt;b&gt;ŝlosita&lt;/b&gt;</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -357,10 +401,6 @@
     <message>
         <source>Amount:</source>
         <translation>Sumo:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Prioritato:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -415,8 +455,8 @@
         <translation>Konfirmita</translation>
     </message>
     <message>
-        <source>Priority</source>
-        <translation>Prioritato</translation>
+        <source>(no label)</source>
+        <translation>(neniu etikedo)</translation>
     </message>
     </context>
 <context>
@@ -512,6 +552,17 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>Formularo</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>Horo de la lasta bloko</translation>
+    </message>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     <message>
         <source>Open URI</source>
@@ -577,7 +628,7 @@
         <translation>Fakulo</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
         <translation>Aŭtomate malfermi la kursilan pordon por Bitmono. Tio funkcias nur se via kursilo havas la UPnP-funkcion, kaj se tiu ĉi estas ŝaltita.</translation>
     </message>
     <message>
@@ -672,7 +723,7 @@
         <translation>Formularo</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
         <translation>Eblas, ke la informoj videblaj ĉi tie estas eksdataj. Via monujo aŭtomate sinkoniĝas kun la bitmona reto kiam ili konektiĝas, sed tiu procezo ankoraŭ ne finfariĝis.</translation>
     </message>
     <message>
@@ -744,6 +795,13 @@
         <source>N/A</source>
         <translation>neaplikebla</translation>
     </message>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 kaj %2</translation>
+    </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -948,9 +1006,25 @@
         <source>&amp;Save Image...</source>
         <translation>&amp;Konservi Bildon...</translation>
     </message>
+    <message>
+        <source>Address</source>
+        <translation>Adreso</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Etikedo</translation>
+    </message>
     </context>
 <context>
     <name>RecentRequestsTableModel</name>
+    <message>
+        <source>Label</source>
+        <translation>Etikedo</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(neniu etikedo)</translation>
+    </message>
     </context>
 <context>
     <name>SendCoinsDialog</name>
@@ -981,10 +1055,6 @@
     <message>
         <source>Amount:</source>
         <translation>Sumo:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Prioritato:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -1034,7 +1104,11 @@
         <source>S&amp;end</source>
         <translation>Ŝendi</translation>
     </message>
-    </context>
+    <message>
+        <source>(no label)</source>
+        <translation>(neniu etikedo)</translation>
+    </message>
+</context>
 <context>
     <name>SendCoinsEntry</name>
     <message>
@@ -1139,7 +1213,7 @@
         <translation>Kopii la aktualan subskribon al la tondejo</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
+        <source>Sign the message to prove you own this address</source>
         <translation>Subskribi la mesaĝon por pravigi, ke vi estas la posedanto de tiu Bitmon-adreso</translation>
     </message>
     <message>
@@ -1159,7 +1233,7 @@
         <translation>&amp;Kontroli Mesaĝon</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
+        <source>Verify the message to ensure it was signed with the specified address</source>
         <translation>Kontroli la mesaĝon por pravigi, ke ĝi ja estas subskribita per la specifa Bitmon-adreso</translation>
     </message>
     <message>
@@ -1197,9 +1271,33 @@
     </context>
 <context>
     <name>TransactionTableModel</name>
+    <message>
+        <source>Label</source>
+        <translation>Etikedo</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(neniu etikedo)</translation>
+    </message>
     </context>
 <context>
     <name>TransactionView</name>
+    <message>
+        <source>Comma separated file (*.csv)</source>
+        <translation>Perkome disigita dosiero (*.csv)</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Etikedo</translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation>Adreso</translation>
+    </message>
+    <message>
+        <source>Exporting Failed</source>
+        <translation>ekspotado malsukcesinta</translation>
+    </message>
     </context>
 <context>
     <name>UnitDisplayStatusBarControl</name>
@@ -1214,7 +1312,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Agordoj:</translation>
@@ -1240,11 +1338,7 @@
         <translation>Ruli fone kiel demono kaj akcepti komandojn</translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>Akcepti konektojn el ekstere (defaŭlte: 1 se ne estas -proxy nek -connect)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
+        <source>BZX Core</source>
         <translation>Kerno de Bitmono</translation>
     </message>
     <message>
@@ -1256,28 +1350,12 @@
         <translation>Plenumi komandon kiam monuja transakcio ŝanĝiĝas (%s en cmd anstataŭiĝas per TxID)</translation>
     </message>
     <message>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
-        <translation>Tiu ĉi estas antaŭeldona testa versio - uzu laŭ via propra risko - ne uzu por minado aŭ por aplikaĵoj por vendistoj</translation>
-    </message>
-    <message>
-        <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
-        <translation>Averto: La reto ne tute konsentas! Kelkaj minantoj ŝajne spertas problemojn aktuale.</translation>
-    </message>
-    <message>
-        <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
-        <translation>Averto: ŝajne ni ne tute konsentas kun niaj samtavolanoj! Eble vi devas ĝisdatigi vian klienton, aŭ eble aliaj nodoj faru same.</translation>
-    </message>
-    <message>
         <source>&lt;category&gt; can be:</source>
         <translation>&lt;category&gt; povas esti:</translation>
     </message>
     <message>
         <source>Block creation options:</source>
         <translation>Blok-kreaj agordaĵoj:</translation>
-    </message>
-    <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>Konekti nur al specifita(j) nodo(j)</translation>
     </message>
     <message>
         <source>Corrupted block database detected</source>
@@ -1370,10 +1448,6 @@
     <message>
         <source>Transaction amount too small</source>
         <translation>Transakcia sumo tro malgranda</translation>
-    </message>
-    <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>Transakcia sumo devas esti pozitiva</translation>
     </message>
     <message>
         <source>Transaction too large</source>

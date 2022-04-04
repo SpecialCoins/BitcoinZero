@@ -17,7 +17,7 @@ class Scalar final {
 public:
 
     Scalar();
-    // Constructor from interger.
+    // Constructor from integer.
     Scalar(uint64_t value);
 
     // Copy constructor
@@ -69,7 +69,11 @@ public:
 
     Scalar hash(const unsigned char* data,size_t len);
 
+    std::size_t get_hash() const;
+
     bool isMember() const;
+
+    bool isZero() const;
 
     // Returns the secp object inside it.
     const void * get_value() const;
@@ -81,7 +85,7 @@ public:
 
     std::string tostring() const;
 
-    size_t memoryRequired() const;
+    static constexpr size_t memoryRequired() { return 32; }
 
     unsigned char* serialize(unsigned char* buffer) const;
     unsigned const char* deserialize(unsigned const char* buffer);
@@ -91,14 +95,9 @@ public:
 
     // These functions are for READWRITE() in serialize.h
 
-    unsigned int GetSerializeSize(int nType=0, int nVersion=0) const
-    {
-        return memoryRequired();
-    }
-
     template<typename Stream>
-    inline void Serialize(Stream& s, int nType, int nVersion) const {
-        int size = memoryRequired();
+    inline void Serialize(Stream& s) const {
+        constexpr int size = memoryRequired();
         unsigned char buffer[size];
         serialize(buffer);
         char* b = (char*)buffer;
@@ -106,8 +105,8 @@ public:
     }
 
     template<typename Stream>
-    inline void Unserialize(Stream& s, int nType, int nVersion) {
-        int size = memoryRequired();
+    inline void Unserialize(Stream& s) {
+        constexpr int size = memoryRequired();
         unsigned char buffer[size];
         char* b = (char*)buffer;
         s.read(b, size);
@@ -134,9 +133,7 @@ using namespace secp_primitives;
 template<>
 struct hash<Scalar> {
     size_t operator()(const Scalar& s) const {
-        array<unsigned char, 32> d;
-        s.serialize(d.data());
-        return hash<string>()(string(d.begin(), d.end()));
+        return s.get_hash();
     }
 };
 

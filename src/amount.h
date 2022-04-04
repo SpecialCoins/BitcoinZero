@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -28,7 +28,8 @@ extern const std::string CURRENCY_UNIT;
  * critical; in unusual circumstances like a(nother) overflow bug that allowed
  * for the creation of coins out of thin air modification could lead to a fork.
  * */
-static const CAmount MAX_MONEY = 99999999 * COIN;
+
+static const CAmount MAX_MONEY = 999000000 * COIN;
 inline bool MoneyRange(const CAmount& nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 
 /**
@@ -44,7 +45,6 @@ public:
     explicit CFeeRate(const CAmount& _nSatoshisPerK): nSatoshisPerK(_nSatoshisPerK) { }
     /** Constructor for a fee rate in satoshis per kB. The size in bytes must not exceed (2^63 - 1)*/
     CFeeRate(const CAmount& nFeePaid, size_t nBytes);
-    CFeeRate(const CFeeRate& other) { nSatoshisPerK = other.nSatoshisPerK; }
     /**
      * Return the fee in satoshis for the given size in bytes.
      */
@@ -64,7 +64,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(nSatoshisPerK);
     }
 };

@@ -1,6 +1,6 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2016-2017 The BitcoinZero Core developers
+// Copyright (c) 2016-2017 The BZX Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,7 +16,6 @@ enum {
     BLOCK_VERSION_CHAIN_START = (1 << 16),
     BLOCK_VERSION_CHAIN_END = (1 << 30),
 };
-static const int64_t nStartRewardTime = 1475020800;
 
 #endif //BTZC_DEFINITION_H
 

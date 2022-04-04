@@ -3,7 +3,7 @@
     <name>AddressBookPage</name>
     <message>
         <source>Right-click to edit address or label</source>
-        <translation>Højreklik for at redigere adresse eller mærke</translation>
+        <translation>Højreklik for at redigere adresse eller mærkat</translation>
     </message>
     <message>
         <source>Create a new address</source>
@@ -43,11 +43,11 @@
     </message>
     <message>
         <source>Choose the address to send coins to</source>
-        <translation>Vælg adresse at sende bitcoinzeros til</translation>
+        <translation>Vælg adresse at sende BZXs til</translation>
     </message>
     <message>
         <source>Choose the address to receive coins with</source>
-        <translation>Vælg adresse at modtage bitcoinzeros med</translation>
+        <translation>Vælg adresse at modtage BZXs med</translation>
     </message>
     <message>
         <source>C&amp;hoose</source>
@@ -62,12 +62,12 @@
         <translation>Modtagelsesadresser</translation>
     </message>
     <message>
-        <source>These are your BitcoinZero addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Disse er dine BitcoinZero-adresser til afsendelse af betalinger. Tjek altid beløb og modtagelsesadresse, inden du sender bitcoinzeros.</translation>
+        <source>These are your addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Disse er dine BZX-adresser til afsendelse af betalinger. Tjek altid beløb og modtagelsesadresse, inden du sender BZXs.</translation>
     </message>
     <message>
-        <source>These are your BitcoinZero addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>Dette er dine BitcoinZero-adresser til modtagelse af betalinger. Det anbefales at bruge en ny modtagelsesadresse for hver transaktion.</translation>
+        <source>These are your addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>Dette er dine BZX-adresser til modtagelse af betalinger. Det anbefales at bruge en ny modtagelsesadresse for hver transaktion.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -168,8 +168,8 @@
         <translation>Bekræft tegnebogskryptering</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR BITCOINS&lt;/b&gt;!</source>
-        <translation>Advarsel: Hvis du krypterer din tegnebog og mister din adgangskode, vil du &lt;b&gt;MISTE ALLE DINE BITCOINS&lt;/b&gt;!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR BZXS&lt;/b&gt;!</source>
+        <translation>Advarsel: Hvis du krypterer din tegnebog og mister din adgangskode, vil du &lt;b&gt;MISTE ALLE DINE BZXS&lt;/b&gt;!</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -180,8 +180,8 @@
         <translation>Tegnebog krypteret</translation>
     </message>
     <message>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your bitcoinzeros from being stolen by malware infecting your computer.</source>
-        <translation>%1 vil nu lukke for at færdiggøre krypteringsprocessen. Husk at kryptering af din tegnebog kan ikke beskytte dine BitcoinZero fuldt ud mod at blive stjålet af eventuel malware, der måtte have inficeret din computer.</translation>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your BZXs from being stolen by malware infecting your computer.</source>
+        <translation>%1 vil nu lukke for at færdiggøre krypteringsprocessen. Husk at kryptering af din tegnebog kan ikke beskytte dine BZX fuldt ud mod at blive stjålet af eventuel malware, der måtte have inficeret din computer.</translation>
     </message>
     <message>
         <source>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. For security reasons, previous backups of the unencrypted wallet file will become useless as soon as you start using the new, encrypted wallet.</source>
@@ -232,7 +232,7 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>Signér &amp;besked…</translation>
@@ -318,12 +318,28 @@
         <translation>&amp;Åbn URI…</translation>
     </message>
     <message>
+        <source>Click to disable network activity.</source>
+        <translation>Klik for at deaktivere netværksaktivitet.</translation>
+    </message>
+    <message>
+        <source>Network activity disabled.</source>
+        <translation>Netværksaktivitet deaktiveret.</translation>
+    </message>
+    <message>
+        <source>Click to enable network activity again.</source>
+        <translation>Klik for a aktivere netværksaktivitet igen.</translation>
+    </message>
+    <message>
+        <source>Syncing Headers (%1%)...</source>
+        <translation>Synkroniserer hoveder (%1%)…</translation>
+    </message>
+    <message>
         <source>Reindexing blocks on disk...</source>
         <translation>Genindekserer blokke på disken…</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>Send bitcoinzeros til en BitcoinZero-adresse</translation>
+        <source>Send coins to a address</source>
+        <translation>Send BZXs til en BZX-adresse</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -346,8 +362,8 @@
         <translation>&amp;Verificér besked…</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -374,12 +390,12 @@
         <translation>Kryptér de private nøgler, der hører til din tegnebog</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
-        <translation>Signér beskeder med dine BitcoinZero-adresser for at bevise, at de tilhører dig</translation>
+        <source>Sign messages with your addresses to prove you own them</source>
+        <translation>Signér beskeder med dine BZX-adresser for at bevise, at de tilhører dig</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
-        <translation>Verificér beskeder for at sikre, at de er signeret med de angivne BitcoinZero-adresser</translation>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
+        <translation>Verificér beskeder for at sikre, at de er signeret med de angivne BZX-adresser</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -398,8 +414,8 @@
         <translation>Faneværktøjslinje</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>Anmod om betalinger (genererer QR-koder og "BitcoinZero:"-URI'er)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>Anmod om betalinger (genererer QR-koder og “BZX:”-URI'er)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -410,16 +426,16 @@
         <translation>Vis listen over brugte modtagelsesadresser og -mærkater</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>Åbn en "BitcoinZero:"-URI eller betalingsanmodning</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>Åbn en “BZX:”-URI eller betalingsanmodning</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>Tilvalg for &amp;kommandolinje</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to BitcoinZero network</source>
-        <translation><numerusform>%n aktiv forbindelse til BitcoinZero-netværket</numerusform><numerusform>%n aktive forbindelser til BitcoinZero-netværket</numerusform></translation>
+        <source>%n active connection(s) to BZX network</source>
+        <translation><numerusform>%n aktiv forbindelse til BZX-netværket</numerusform><numerusform>%n aktive forbindelser til BZX-netværket</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -429,33 +445,9 @@
         <source>Processing blocks on disk...</source>
         <translation>Bearbejder blokke på disken…</translation>
     </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>Ingen blokkilde tilgængelig…</translation>
-    </message>
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
         <translation><numerusform>Bearbejdede %n blok med transaktionshistorik.</numerusform><numerusform>Bearbejdede %n blokke med transaktionshistorik.</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n time</numerusform><numerusform>%n timer</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n dag</numerusform><numerusform>%n dage</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n uge</numerusform><numerusform>%n uger</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 og %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n år</numerusform><numerusform>%n år</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -486,12 +478,16 @@
         <translation>Opdateret</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible BitcoinZero command-line options</source>
-        <translation>Vis %1 hjælpebesked for at få en liste over mulige tilvalg for BitcoinZero kommandolinje</translation>
+        <source>Show the %1 help message to get a list with possible BZX command-line options</source>
+        <translation>Vis %1 hjælpebesked for at få en liste over mulige tilvalg for BZX kommandolinje</translation>
     </message>
     <message>
         <source>%1 client</source>
         <translation>%1-klient</translation>
+    </message>
+    <message>
+        <source>Connecting to peers...</source>
+        <translation>Forbinder til knuder…</translation>
     </message>
     <message>
         <source>Catching up...</source>
@@ -536,12 +532,24 @@
         <translation>Indgående transaktion</translation>
     </message>
     <message>
+        <source>HD key generation is &lt;b&gt;enabled&lt;/b&gt;</source>
+        <translation>Generering af HD-nøgler er &lt;b&gt;aktiveret&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>HD key generation is &lt;b&gt;disabled&lt;/b&gt;</source>
+        <translation>Generering af HD-nøgler er &lt;b&gt;deaktiveret&lt;/b&gt;</translation>
+    </message>
+    <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt;</source>
         <translation>Tegnebog er &lt;b&gt;krypteret&lt;/b&gt; og i øjeblikket &lt;b&gt;ulåst&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>Tegnebog er &lt;b&gt;krypteret&lt;/b&gt; og i øjeblikket &lt;b&gt;låst&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>A fatal error occurred. BZX can no longer continue safely and will quit.</source>
+        <translation>Der opstod en fatal fejl. BZX kan ikke længere fortsætte sikkert og vil afslutte.</translation>
     </message>
 </context>
 <context>
@@ -561,10 +569,6 @@
     <message>
         <source>Amount:</source>
         <translation>Beløb:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Prioritet:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -600,7 +604,7 @@
     </message>
     <message>
         <source>Received with label</source>
-        <translation>Modtaget med mærke</translation>
+        <translation>Modtaget med mærkat</translation>
     </message>
     <message>
         <source>Received with address</source>
@@ -617,10 +621,6 @@
     <message>
         <source>Confirmed</source>
         <translation>Bekræftet</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <translation>Prioritet</translation>
     </message>
     <message>
         <source>Copy address</source>
@@ -663,10 +663,6 @@
         <translation>Kopiér byte</translation>
     </message>
     <message>
-        <source>Copy priority</source>
-        <translation>Kopiér prioritet</translation>
-    </message>
-    <message>
         <source>Copy dust</source>
         <translation>Kopiér støv</translation>
     </message>
@@ -675,48 +671,8 @@
         <translation>Kopiér byttepenge</translation>
     </message>
     <message>
-        <source>highest</source>
-        <translation>højest</translation>
-    </message>
-    <message>
-        <source>higher</source>
-        <translation>højere</translation>
-    </message>
-    <message>
-        <source>high</source>
-        <translation>højt</translation>
-    </message>
-    <message>
-        <source>medium-high</source>
-        <translation>mellemhøjt</translation>
-    </message>
-    <message>
-        <source>medium</source>
-        <translation>medium</translation>
-    </message>
-    <message>
-        <source>low-medium</source>
-        <translation>mellemlavt</translation>
-    </message>
-    <message>
-        <source>low</source>
-        <translation>lavt</translation>
-    </message>
-    <message>
-        <source>lower</source>
-        <translation>lavere</translation>
-    </message>
-    <message>
-        <source>lowest</source>
-        <translation>lavest</translation>
-    </message>
-    <message>
         <source>(%1 locked)</source>
         <translation>(%1 fastlåst)</translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation>ingen</translation>
     </message>
     <message>
         <source>yes</source>
@@ -725,26 +681,6 @@
     <message>
         <source>no</source>
         <translation>nej</translation>
-    </message>
-    <message>
-        <source>This label turns red if the transaction size is greater than 1000 bytes.</source>
-        <translation>Denne mærkat bliver rød, hvis transaktionsstørrelsen er større end 1000 byte.</translation>
-    </message>
-    <message>
-        <source>This means a fee of at least %1 per kB is required.</source>
-        <translation>Dette betyder, at et gebyr på mindst %1 pr. kB er nødvendigt.</translation>
-    </message>
-    <message>
-        <source>Can vary +/- 1 byte per input.</source>
-        <translation>Kan variere ±1 byte pr. input.</translation>
-    </message>
-    <message>
-        <source>Transactions with higher priority are more likely to get included into a block.</source>
-        <translation>Transaktioner med højere prioritet har højere sansynlighed for at blive inkluderet i en blok.</translation>
-    </message>
-    <message>
-        <source>This label turns red if the priority is smaller than "medium".</source>
-        <translation>Denne mærkat bliver rød, hvis prioriteten er mindre end "medium".</translation>
     </message>
     <message>
         <source>This label turns red if any recipient receives an amount smaller than the current dust threshold.</source>
@@ -806,12 +742,12 @@
         <translation>Redigér afsendelsesadresse</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid BitcoinZero address.</source>
-        <translation>Den indtastede adresse "%1" er ikke en gyldig BitcoinZero-adresse.</translation>
+        <source>The entered address "%1" is not a valid address.</source>
+        <translation>Den indtastede adresse “%1” er ikke en gyldig BZX-adresse.</translation>
     </message>
     <message>
         <source>The entered address "%1" is already in the address book.</source>
-        <translation>Den indtastede adresse "%1" er allerede i adressebogen.</translation>
+        <translation>Den indtastede adresse “%1” er allerede i adressebogen.</translation>
     </message>
     <message>
         <source>Could not unlock wallet.</source>
@@ -881,7 +817,7 @@
     </message>
     <message>
         <source>Set language, for example "de_DE" (default: system locale)</source>
-        <translation>Vælg sprog; fx "da_DK" (standard: systemsprog)</translation>
+        <translation>Vælg sprog; fx “da_DK” (standard: systemsprog)</translation>
     </message>
     <message>
         <source>Start minimized</source>
@@ -915,8 +851,8 @@
         <translation>Siden dette er første gang, programmet startes, kan du vælge, hvor %1 skal gemme sin data.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the BitcoinZero block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
-        <translation>%1 vil downloade og gemme et kopi af BitcoinZero-blokkæden. Mindst %2 GB data vil blive gemt i denne mappe, og den vil vokse over tid. Tegnebogen vil også blive gemt i denne mappe.</translation>
+        <source>%1 will download and store a copy of the BZX block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <translation>%1 vil downloade og gemme et kopi af BZX-blokkæden. Mindst %2 GB data vil blive gemt i denne mappe, og den vil vokse over tid. Tegnebogen vil også blive gemt i denne mappe.</translation>
     </message>
     <message>
         <source>Use the default data directory</source>
@@ -928,7 +864,7 @@
     </message>
     <message>
         <source>Error: Specified data directory "%1" cannot be created.</source>
-        <translation>Fejl: Angivet datamappe "%1" kan ikke oprettes.</translation>
+        <translation>Fejl: Angivet datamappe “%1” kan ikke oprettes.</translation>
     </message>
     <message>
         <source>Error</source>
@@ -941,6 +877,57 @@
     <message numerus="yes">
         <source>(of %n GB needed)</source>
         <translation><numerusform>(ud af %n GB nødvendig)</numerusform><numerusform>(ud af %n GB nødvendig)</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>Formular</translation>
+    </message>
+    <message>
+        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the BZX network, as detailed below.</source>
+        <translation>Nylige transaktioner er måske ikke synlige endnu, og derfor kan din tegnebogs saldo være ukorrekt. Denne information vil være korrekt, når din tegnebog er færdig med at synkronisere med BZX-netværket, som detaljerne herunder viser.</translation>
+    </message>
+    <message>
+        <source>Attempting to spend BZXs that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
+        <translation>Forsøg på at bruge BZX, som er indeholdt i endnu-ikke-viste transaktioner, accepteres ikke af netværket.</translation>
+    </message>
+    <message>
+        <source>Number of blocks left</source>
+        <translation>Antal blokke tilbage</translation>
+    </message>
+    <message>
+        <source>Unknown...</source>
+        <translation>Ukendt…</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>Tidsstempel for seneste blok</translation>
+    </message>
+    <message>
+        <source>Progress</source>
+        <translation>Fremgang</translation>
+    </message>
+    <message>
+        <source>Progress increase per hour</source>
+        <translation>Øgning af fremgang pr. time</translation>
+    </message>
+    <message>
+        <source>calculating...</source>
+        <translation>beregner…</translation>
+    </message>
+    <message>
+        <source>Estimated time left until synced</source>
+        <translation>Estimeret tid tilbage af synkronisering</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Skjul</translation>
+    </message>
+    <message>
+        <source>Unknown. Syncing Headers (%1)...</source>
+        <translation>Ukendt. Synkroniserer hoveder (%1)…</translation>
     </message>
 </context>
 <context>
@@ -1054,23 +1041,23 @@
     </message>
     <message>
         <source>If you disable the spending of unconfirmed change, the change from a transaction cannot be used until that transaction has at least one confirmation. This also affects how your balance is computed.</source>
-        <translation>Hvis du slår brug af ubekræftede byttepenge fra, kan byttepengene fra en transaktion ikke bruges, før pågældende transaktion har mindst én bekræftelse. Dette påvirker også måden hvorpå din saldo beregnes.</translation>
+        <translation>Hvis du deaktiverer brug af ubekræftede byttepenge, kan byttepengene fra en transaktion ikke bruges, før pågældende transaktion har mindst én bekræftelse. Dette påvirker også måden hvorpå din saldo beregnes.</translation>
     </message>
     <message>
         <source>&amp;Spend unconfirmed change</source>
         <translation>&amp;Brug ubekræftede byttepenge</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Åbn automatisk BitcoinZero-klientens port på routeren. Dette virker kun, når din router understøtter UPnP, og UPnP er aktiveret.</translation>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Åbn automatisk BZX-klientens port på routeren. Dette virker kun, når din router understøtter UPnP, og UPnP er aktiveret.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Konfigurér port vha. &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a SOCKS5 proxy.</source>
-        <translation>Forbind til BitcoinZero-netværket gennem en SOCKS5-proxy.</translation>
+        <source>Connect to the BZX network through a SOCKS5 proxy.</source>
+        <translation>Forbind til BZX-netværket gennem en SOCKS5-proxy.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -1109,8 +1096,8 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>Forbind til BitcoinZero-netværket gennem en separat SOCKS5-proxy for skjulte Tor-tjenester.</translation>
+        <source>Connect to the BZX network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>Forbind til BZX-netværket gennem en separat SOCKS5-proxy for skjulte Tor-tjenester.</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</source>
@@ -1158,7 +1145,7 @@
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
-        <translation>Vælg standard for underopdeling af enhed, som skal vises i brugergrænsefladen og ved afsendelse af bitcoinzeros.</translation>
+        <translation>Vælg standard for underopdeling af enhed, som skal vises i brugergrænsefladen og ved afsendelse af BZXs.</translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
@@ -1208,8 +1195,8 @@
         <translation>Formular</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
-        <translation>Den viste information kan være forældet. Din tegnebog synkroniserer automatisk med BitcoinZero-netværket, når en forbindelse etableres, men denne proces er ikke gennemført endnu.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
+        <translation>Den viste information kan være forældet. Din tegnebog synkroniserer automatisk med BZX-netværket, når en forbindelse etableres, men denne proces er ikke gennemført endnu.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -1283,8 +1270,8 @@
         <translation>Fejl i betalingsanmodning</translation>
     </message>
     <message>
-        <source>Cannot start BitcoinZero: click-to-pay handler</source>
-        <translation>Kan ikke starte BitcoinZero: click-to-pay-håndtering</translation>
+        <source>Cannot start BZX: click-to-pay handler</source>
+        <translation>Kan ikke starte BZX: click-to-pay-håndtering</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -1299,8 +1286,8 @@
         <translation>Ugyldig betalingsadresse %1</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid BitcoinZero address or malformed URI parameters.</source>
-        <translation>URI kan ikke tolkes! Dette kan skyldes en ugyldig BitcoinZero-adresse eller forkert udformede URL-parametre.</translation>
+        <source>URI cannot be parsed! This can be caused by an invalid address or malformed URI parameters.</source>
+        <translation>URI kan ikke tolkes! Dette kan skyldes en ugyldig BZX-adresse eller forkert udformede URL-parametre.</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -1378,8 +1365,12 @@
         <translation>Knude/tjeneste</translation>
     </message>
     <message>
-        <source>Ping Time</source>
-        <translation>Ping-tid</translation>
+        <source>NodeId</source>
+        <translation>Knude-id</translation>
+    </message>
+    <message>
+        <source>Ping</source>
+        <translation>Ping</translation>
     </message>
 </context>
 <context>
@@ -1389,8 +1380,8 @@
         <translation>Beløb</translation>
     </message>
     <message>
-        <source>Enter a BitcoinZero address (e.g. %1)</source>
-        <translation>Indtast en BitcoinZero-adresse (fx %1)</translation>
+        <source>Enter a address (e.g. %1)</source>
+        <translation>Indtast en BZX-adresse (fx %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1419,6 +1410,53 @@
     <message>
         <source>%1 ms</source>
         <translation>%1 ms</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n second(s)</source>
+        <translation><numerusform>%n sekund</numerusform><numerusform>%n sekunder</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n minute(s)</source>
+        <translation><numerusform>%n minut</numerusform><numerusform>%n minutter</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n hour(s)</source>
+        <translation><numerusform>%n time</numerusform><numerusform>%n timer</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n day(s)</source>
+        <translation><numerusform>%n dag</numerusform><numerusform>%n dage</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n week(s)</source>
+        <translation><numerusform>%n uge</numerusform><numerusform>%n uger</numerusform></translation>
+    </message>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 og %2</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n year(s)</source>
+        <translation><numerusform>%n år</numerusform><numerusform>%n år</numerusform></translation>
+    </message>
+    <message>
+        <source>%1 didn't yet exit safely...</source>
+        <translation>%1 har endnu ikke afsluttet på sikker vis…</translation>
+    </message>
+</context>
+<context>
+    <name>QObject::QObject</name>
+    <message>
+        <source>Error: Specified data directory "%1" does not exist.</source>
+        <translation>Fejl: Angivet datamappe “%1” eksisterer ikke.</translation>
+    </message>
+    <message>
+        <source>Error: Cannot parse configuration file: %1. Only use key=value syntax.</source>
+        <translation>Fejl: Kan ikke fortolke konfigurationsfil: %1. Brug kun syntaksen nøgle=værdi.</translation>
+    </message>
+    <message>
+        <source>Error: %1</source>
+        <translation>Fejl: %1</translation>
     </message>
 </context>
 <context>
@@ -1599,6 +1637,10 @@
         <translation>Ping-ventetid</translation>
     </message>
     <message>
+        <source>Min Ping</source>
+        <translation>Minimum ping</translation>
+    </message>
+    <message>
         <source>Time Offset</source>
         <translation>Tidsforskydning</translation>
     </message>
@@ -1643,14 +1685,6 @@
         <translation>Ryd konsol</translation>
     </message>
     <message>
-        <source>&amp;Disconnect Node</source>
-        <translation>&amp;Afbryd forbindelse til knude</translation>
-    </message>
-    <message>
-        <source>Ban Node for</source>
-        <translation>Bandlys knude i</translation>
-    </message>
-    <message>
         <source>1 &amp;hour</source>
         <translation>1 &amp;time</translation>
     </message>
@@ -1667,8 +1701,16 @@
         <translation>1 &amp;år</translation>
     </message>
     <message>
-        <source>&amp;Unban Node</source>
-        <translation>&amp;Fjern bandlysning af knude</translation>
+        <source>&amp;Disconnect</source>
+        <translation>&amp;Afbryd forbindelse</translation>
+    </message>
+    <message>
+        <source>Ban for</source>
+        <translation>Bandlys i</translation>
+    </message>
+    <message>
+        <source>&amp;Unban</source>
+        <translation>&amp;Fjern bandlysning</translation>
     </message>
     <message>
         <source>Welcome to the %1 RPC console.</source>
@@ -1681,6 +1723,14 @@
     <message>
         <source>Type &lt;b&gt;help&lt;/b&gt; for an overview of available commands.</source>
         <translation>Tast &lt;b&gt;help&lt;/b&gt; for en oversigt over de tilgængelige kommandoer.</translation>
+    </message>
+    <message>
+        <source>WARNING: Scammers have been active, telling users to type commands here, stealing their wallet contents. Do not use this console without fully understanding the ramification of a command.</source>
+        <translation>ADVARSEL: Svindlere har tidligere forsøgt at få folk til at indtaste kommandoer her og derved stjæle indholdet af deres tegnebog. Brug ikke denne konsol uden fuldt ud at forstå følgerne for en kommando.</translation>
+    </message>
+    <message>
+        <source>Network activity disabled</source>
+        <translation>Netværksaktivitet deaktiveret</translation>
     </message>
     <message>
         <source>%1 B</source>
@@ -1754,8 +1804,8 @@
         <translation>&amp;Genbrug en eksisterende modtagelsesadresse (anbefales ikke)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BitcoinZero network.</source>
-        <translation>En valgfri besked, der føjes til betalingsanmodningen, og som vil vises, når anmodningen åbnes. Bemærk: Beskeden vil ikke sendes sammen med betalingen over BitcoinZero-netværket.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BZX network.</source>
+        <translation>En valgfri besked, der føjes til betalingsanmodningen, og som vil vises, når anmodningen åbnes. Bemærk: Beskeden vil ikke sendes sammen med betalingen over BZX-netværket.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1800,6 +1850,10 @@
     <message>
         <source>Remove</source>
         <translation>Fjern</translation>
+    </message>
+    <message>
+        <source>Copy URI</source>
+        <translation>Kopiér URI</translation>
     </message>
     <message>
         <source>Copy label</source>
@@ -1904,7 +1958,7 @@
     <name>SendCoinsDialog</name>
     <message>
         <source>Send Coins</source>
-        <translation>Send bitcoinzeros</translation>
+        <translation>Send BZXs</translation>
     </message>
     <message>
         <source>Coin Control Features</source>
@@ -1933,10 +1987,6 @@
     <message>
         <source>Amount:</source>
         <translation>Beløb:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Prioritet:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -1976,7 +2026,7 @@
     </message>
     <message>
         <source>If the custom fee is set to 1000 satoshis and the transaction is only 250 bytes, then "per kilobyte" only pays 250 satoshis in fee, while "total at least" pays 1000 satoshis. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>Hvis det brugertilpassede gebyr er sat til 1000 satoshis, og transaktionen kun fylder 250 byte, betaler "pr. kilobyte" kun 250 satoshis i gebyr, mens "total mindst" betaler 1000 satoshis. For transaktioner større end en kilobyte betaler begge pr. kilobyte.</translation>
+        <translation>Hvis det brugertilpassede gebyr er sat til 1000 satoshis, og transaktionen kun fylder 250 byte, betaler “pr. kilobyte” kun 250 satoshis i gebyr, mens “total mindst” betaler 1000 satoshis. For transaktioner større end en kilobyte betaler begge pr. kilobyte.</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -1987,8 +2037,8 @@
         <translation>total mindst</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BitcoinZero transactions than the network can process.</source>
-        <translation>Det er helt fint kun at betale det minimale gebyr, så længe den totale transaktionsvolumen er mindre end den plads, der er tilgængelig i blokkene. Men vær opmærksom på, at dette kan ende ud i transaktioner, der aldrig bliver bekræftet, når der bliver større forespørgsel efter BitcoinZero-transaktioner, end hvad netværket kan bearbejde.</translation>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BZX transactions than the network can process.</source>
+        <translation>Det er helt fint kun at betale det minimale gebyr, så længe den totale transaktionsvolumen er mindre end den plads, der er tilgængelig i blokkene. Men vær opmærksom på, at dette kan ende ud i transaktioner, der aldrig bliver bekræftet, når der bliver større forespørgsel efter BZX-transaktioner, end hvad netværket kan bearbejde.</translation>
     </message>
     <message>
         <source>(read the tooltip)</source>
@@ -2005,10 +2055,6 @@
     <message>
         <source>(Smart fee not initialized yet. This usually takes a few blocks...)</source>
         <translation>(Smart-gebyr er ikke initialiseret endnu. Dette tager typisk nogle få blokke…)</translation>
-    </message>
-    <message>
-        <source>Confirmation time:</source>
-        <translation>Bekræftelsestid:</translation>
     </message>
     <message>
         <source>normal</source>
@@ -2033,6 +2079,10 @@
     <message>
         <source>Dust:</source>
         <translation>Støv:</translation>
+    </message>
+    <message>
+        <source>Confirmation time target:</source>
+        <translation>Mål for bekræftelsestid:</translation>
     </message>
     <message>
         <source>Clear &amp;All</source>
@@ -2071,10 +2121,6 @@
         <translation>Kopiér byte</translation>
     </message>
     <message>
-        <source>Copy priority</source>
-        <translation>Kopiér prioritet</translation>
-    </message>
-    <message>
         <source>Copy dust</source>
         <translation>Kopiér støv</translation>
     </message>
@@ -2104,7 +2150,7 @@
     </message>
     <message>
         <source>Confirm send coins</source>
-        <translation>Bekræft afsendelse af bitcoinzeros</translation>
+        <translation>Bekræft afsendelse af BZXs</translation>
     </message>
     <message>
         <source>The recipient address is not valid. Please recheck.</source>
@@ -2131,8 +2177,8 @@
         <translation>Oprettelse af transaktion mislykkedes!</translation>
     </message>
     <message>
-        <source>The transaction was rejected! This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.</source>
-        <translation>Transaktionen blev afvist! Dette kan ske, hvis nogle af dine bitcoinzeros i din tegnebog allerede er brugt, som hvis du brugte en kopi af wallet.dat og dine bitcoinzeros er blevet brugt i kopien, men ikke er markeret som brugt her.</translation>
+        <source>The transaction was rejected with the following reason: %1</source>
+        <translation>Transaktionen blev afvist med følgende begrundelse: %1</translation>
     </message>
     <message>
         <source>A fee higher than %1 is considered an absurdly high fee.</source>
@@ -2142,21 +2188,33 @@
         <source>Payment request expired.</source>
         <translation>Betalingsanmodning er udløbet.</translation>
     </message>
+    <message numerus="yes">
+        <source>%n block(s)</source>
+        <translation><numerusform>%n blok</numerusform><numerusform>%n blokke</numerusform></translation>
+    </message>
     <message>
         <source>Pay only the required fee of %1</source>
         <translation>Betal kun det påkrævede gebyr på %1</translation>
     </message>
     <message numerus="yes">
         <source>Estimated to begin confirmation within %n block(s).</source>
-        <translation><numerusform>Bekræftelse estimeret til at begynde inden for %n blok.</numerusform><numerusform>Bekræftelse estimeret til at begynde inden for %n blokke.</numerusform></translation>
+        <translation><numerusform>Bekræftelse estimeret til at begynde om %n blok.</numerusform><numerusform>Bekræftelse estimeret til at begynde om %n blokke.</numerusform></translation>
     </message>
     <message>
-        <source>Warning: Invalid BitcoinZero address</source>
-        <translation>Advarsel: Ugyldig BitcoinZero-adresse</translation>
+        <source>Warning: Invalid address</source>
+        <translation>Advarsel: Ugyldig BZX-adresse</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
         <translation>Advarsel: Ukendt byttepengeadresse</translation>
+    </message>
+    <message>
+        <source>Confirm custom change address</source>
+        <translation>Bekræft tilpasset byttepengeadresse</translation>
+    </message>
+    <message>
+        <source>The address you selected for change is not part of this wallet. Any or all funds in your wallet may be sent to this address. Are you sure?</source>
+        <translation>Den adresse, du har valgt til byttepenge, er ikke en del af denne tegnebog. Nogle af eller alle penge i din tegnebog kan blive sendt til denne adresse. Er du sikker?</translation>
     </message>
     <message>
         <source>(no label)</source>
@@ -2186,8 +2244,8 @@
         <translation>Dette er en normal betaling.</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to send the payment to</source>
-        <translation>BitcoinZero-adresse, som betalingen skal sendes til</translation>
+        <source>The address to send the payment to</source>
+        <translation>BZX-adresse, som betalingen skal sendes til</translation>
     </message>
     <message>
         <source>Alt+A</source>
@@ -2206,8 +2264,8 @@
         <translation>Fjern denne indgang</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less bitcoinzeros than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>Gebyret vil blive trukket fra det sendte beløb. Modtageren vil modtage færre BitcoinZero, end du indtaster i beløbfeltet. Hvis flere modtagere vælges, vil gebyret deles ligeligt.</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less BZXs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>Gebyret vil blive trukket fra det sendte beløb. Modtageren vil modtage færre BZX, end du indtaster i beløbfeltet. Hvis flere modtagere vælges, vil gebyret deles ligeligt.</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -2230,8 +2288,8 @@
         <translation>Indtast et mærkat for denne adresse for at føje den til listen over brugte adresser</translation>
     </message>
     <message>
-        <source>A message that was attached to the BitcoinZero: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BitcoinZero network.</source>
-        <translation>En besked, som blev føjet til BitcoinZero:-URI'en, som vil gemmes med transaktionen til din reference. Bemærk: Denne besked vil ikke blive sendt over BitcoinZero-netværket.</translation>
+        <source>A message that was attached to the BZX: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BZX network.</source>
+        <translation>En besked, som blev føjet til “bitcon:”-URI'en, som vil gemmes med transaktionen til din reference. Bemærk: Denne besked vil ikke blive sendt over BZX-netværket.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -2275,12 +2333,12 @@
         <translation>&amp;Singér besked</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive bitcoinzeros sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>Du kan signere beskeder/aftaler med dine adresser for at bevise, at du kan modtage bitcoinzeros, der bliver sendt til adresserne. Vær forsigtig med ikke at signere noget vagt eller tilfældigt, da eventuelle phishing-angreb kan snyde dig til at overlade din identitet til dem. Signér kun fuldt ud detaljerede udsagn, som du er enig i.</translation>
+        <source>You can sign messages/agreements with your addresses to prove you can receive BZXs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <translation>Du kan signere beskeder/aftaler med dine adresser for at bevise, at du kan modtage BZX, der bliver sendt til adresserne. Vær forsigtig med ikke at signere noget vagt eller tilfældigt, da eventuelle phishing-angreb kan snyde dig til at overlade din identitet til dem. Signér kun fuldt ud detaljerede udsagn, som du er enig i.</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to sign the message with</source>
-        <translation>BitcoinZero-adresse, som beskeden skal signeres med</translation>
+        <source>The address to sign the message with</source>
+        <translation>BZX-adresse, som beskeden skal signeres med</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -2311,8 +2369,8 @@
         <translation>Kopiér den nuværende signatur til systemets udklipsholder</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
-        <translation>Signér denne besked for at bevise, at BitcoinZero-adressen tilhører dig</translation>
+        <source>Sign the message to prove you own this address</source>
+        <translation>Signér denne besked for at bevise, at BZX-adressen tilhører dig</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -2320,7 +2378,7 @@
     </message>
     <message>
         <source>Reset all sign message fields</source>
-        <translation>Nulstil alle "signér besked"-felter</translation>
+        <translation>Nulstil alle “signér besked”-felter</translation>
     </message>
     <message>
         <source>Clear &amp;All</source>
@@ -2335,12 +2393,12 @@
         <translation>Indtast modtagerens adresse, besked (vær sikker på at kopiere linjeskift, mellemrum, tabuleringer, etc. præcist) og signatur herunder for at verificere beskeden. Vær forsigtig med ikke at læse noget ud fra signaturen, som ikke står i selve beskeden, for at undgå at blive snydt af et eventuelt man-in-the-middle-angreb. Bemærk, at dette kun beviser, at den signerende person kan modtage med adressen; det kan ikke bevise hvem der har sendt en given transaktion!</translation>
     </message>
     <message>
-        <source>The BitcoinZero address the message was signed with</source>
-        <translation>BitcoinZero-adressen, som beskeden blev signeret med</translation>
+        <source>The address the message was signed with</source>
+        <translation>BZX-adressen, som beskeden blev signeret med</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
-        <translation>Verificér beskeden for at sikre, at den er signeret med den angivne BitcoinZero-adresse</translation>
+        <source>Verify the message to ensure it was signed with the specified address</source>
+        <translation>Verificér beskeden for at sikre, at den er signeret med den angivne BZX-adresse</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -2348,11 +2406,11 @@
     </message>
     <message>
         <source>Reset all verify message fields</source>
-        <translation>Nulstil alle "verificér besked"-felter</translation>
+        <translation>Nulstil alle “verificér besked”-felter</translation>
     </message>
     <message>
         <source>Click "Sign Message" to generate signature</source>
-        <translation>Klik "Signér besked" for at generere underskriften</translation>
+        <translation>Klik “Signér besked” for at generere underskriften</translation>
     </message>
     <message>
         <source>The entered address is invalid.</source>
@@ -2421,7 +2479,7 @@
     <name>TransactionDesc</name>
     <message numerus="yes">
         <source>Open for %n more block(s)</source>
-        <translation><numerusform>Åbn yderligere %n blok</numerusform><numerusform>Åbn yderligere %n blokke</numerusform></translation>
+        <translation><numerusform>Åben i %n yderligere blok</numerusform><numerusform>Åben i %n yderligere blokke</numerusform></translation>
     </message>
     <message>
         <source>Open until %1</source>
@@ -2513,7 +2571,7 @@
     </message>
     <message numerus="yes">
         <source>matures in %n more block(s)</source>
-        <translation><numerusform>modner efter yderligere %n blok</numerusform><numerusform>modner efter yderligere %n blokke</numerusform></translation>
+        <translation><numerusform>modner om %n blok</numerusform><numerusform>modner om %n blokke</numerusform></translation>
     </message>
     <message>
         <source>not accepted</source>
@@ -2552,6 +2610,10 @@
         <translation>Transaktions-ID</translation>
     </message>
     <message>
+        <source>Transaction total size</source>
+        <translation>Totalstørrelse af transaktion</translation>
+    </message>
+    <message>
         <source>Output index</source>
         <translation>Outputindeks</translation>
     </message>
@@ -2561,7 +2623,7 @@
     </message>
     <message>
         <source>Generated coins must mature %1 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to "not accepted" and it won't be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
-        <translation>Minede bitcoinzeros skal modne %1 blokke, før de kan bruges. Da du genererede denne blok, blev den transmitteret til netværket for at blive føjet til blokkæden. Hvis det ikke lykkes at få den i kæden, vil dens tilstand ændres til "ikke accepteret", og den vil ikke kunne bruges. Dette kan ske nu og da, hvis en anden knude udvinder en blok inden for nogle få sekunder fra din.</translation>
+        <translation>Minede BZXs skal modne %1 blokke, før de kan bruges. Da du genererede denne blok, blev den transmitteret til netværket for at blive føjet til blokkæden. Hvis det ikke lykkes at få den i kæden, vil dens tilstand ændres til “ikke accepteret”, og den vil ikke kunne bruges. Dette kan ske nu og da, hvis en anden knude udvinder en blok inden for nogle få sekunder fra din.</translation>
     </message>
     <message>
         <source>Debug information</source>
@@ -2615,7 +2677,7 @@
     </message>
     <message numerus="yes">
         <source>Open for %n more block(s)</source>
-        <translation><numerusform>Åben i yderligere %n blok</numerusform><numerusform>Åben i yderligere %n blokke</numerusform></translation>
+        <translation><numerusform>Åben i %n yderligere blok</numerusform><numerusform>Åben i %n yderligere blokke</numerusform></translation>
     </message>
     <message>
         <source>Open until %1</source>
@@ -2887,7 +2949,7 @@
     <name>WalletModel</name>
     <message>
         <source>Send Coins</source>
-        <translation>Send bitcoinzeros</translation>
+        <translation>Send BZXs</translation>
     </message>
 </context>
 <context>
@@ -2926,7 +2988,7 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Indstillinger:</translation>
@@ -2948,6 +3010,18 @@
         <translation>Acceptér kommandolinje- og JSON-RPC-kommandoer</translation>
     </message>
     <message>
+        <source>Accept connections from outside (default: 1 if no -proxy or -connect/-noconnect)</source>
+        <translation>Acceptér forbindelser udefra (standard: 1 hvis ingen -proxy eller -connect/-noconnect)</translation>
+    </message>
+    <message>
+        <source>Connect only to the specified node(s); -noconnect or -connect=0 alone to disable automatic connections</source>
+        <translation>Forbind kun til de specificerede knuder; -noconnect eller -connect=0 alene for at deaktivere automatiske forbindelser</translation>
+    </message>
+    <message>
+        <source>Distributed under the MIT software license, see the accompanying file %s or %s</source>
+        <translation>Distribueret under MIT-softwarelicensen; se den vedlagte fil %s eller %s</translation>
+    </message>
+    <message>
         <source>If &lt;category&gt; is not supplied or if &lt;category&gt; = 1, output all debugging information.</source>
         <translation>Hvis &lt;category&gt; ikke angives eller hvis &lt;category&gt; = 1, udskriv al fejlretningsinformation.</translation>
     </message>
@@ -2958,10 +3032,6 @@
     <message>
         <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
         <translation>Beskæring: Seneste synkronisering rækker udover beskårne data. Du er nødt til at bruge -reindex (downloade hele blokkæden igen i fald af beskåret knude)</translation>
-    </message>
-    <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>Reducér lagringskravene ved at beskære (slette) gamle blokke. Denne tilstand er ikke kompatibel med -txindex og -rescan. Advarsel: Fortrydelse af denne indstilling kræver gendownload af hele blokkæden. (standard: 0 = slå beskæring af blokke fra, &gt;%u = målstørrelse i MiB der skal bruges på blokfiler)</translation>
     </message>
     <message>
         <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
@@ -2988,20 +3058,12 @@
         <translation>Kunne ikke starte HTTP-server. Se fejlretningslog for detaljer.</translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>Acceptér forbindelser udefra (standard: 1 hvis hverken -proxy eller -connect)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
-        <translation>BitcoinZero Core</translation>
+        <source>BZX Core</source>
+        <translation>BZX Core</translation>
     </message>
     <message>
         <source>The %s developers</source>
         <translation>Udviklerne af %s</translation>
-    </message>
-    <message>
-        <source>-fallbackfee is set very high! This is the transaction fee you may pay when fee estimates are not available.</source>
-        <translation>-fallbackfee er sat meget højt! Dette er transaktionsgebyret, du eventuelt betaler, hvis gebyrestimater ikke er tilgængelige.</translation>
     </message>
     <message>
         <source>A fee rate (in %s/kB) that will be used when fee estimation has insufficient data (default: %s)</source>
@@ -3024,14 +3086,6 @@
         <translation>Slet alle transaktioner i tegnebogen og genskab kun disse dele af blokkæden gennem -rescan under opstart</translation>
     </message>
     <message>
-        <source>Distributed under the MIT software license, see the accompanying file COPYING or &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</source>
-        <translation>Distribueret under MIT-softwarelicensen; se den vedlagte fil COPYING eller &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</translation>
-    </message>
-    <message>
-        <source>Equivalent bytes per sigop in transactions for relay and mining (default: %u)</source>
-        <translation>Tilsvarende bytes pr. sigop i transaktioner, som videresendes og mines (standard: %u)</translation>
-    </message>
-    <message>
         <source>Error loading %s: You can't enable HD on a already existing non-HD wallet</source>
         <translation>Fejl under indlæsning af %s: Du kan ikke aktivere HD på en allerede eksisterende ikke-HD-tegnebog</translation>
     </message>
@@ -3042,6 +3096,14 @@
     <message>
         <source>Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)</source>
         <translation>Udfør kommando, når en transaktion i tegnebogen ændres (%s i kommandoen erstattes med TxID)</translation>
+    </message>
+    <message>
+        <source>Extra transactions to keep in memory for compact block reconstructions (default: %u)</source>
+        <translation>Ekstra transaktioner, der skal beholdes i hukommelsen til kompakte blokgenopbygninger (standard: %u)</translation>
+    </message>
+    <message>
+        <source>If this block is in the chain assume that it and its ancestors are valid and potentially skip their script verification (0 to verify all, default: %s, testnet: %s)</source>
+        <translation>Hvis denne blok er i kæden, så antag at den og dens forgængere er gyldige, og spring potentielt deres scriptverificering over (0 for at verificere alle, standard: %s, testnet: %s)</translation>
     </message>
     <message>
         <source>Maximum allowed median peer time offset adjustment. Local perspective of time may be influenced by peers forward or backward by this amount. (default: %u seconds)</source>
@@ -3060,6 +3122,14 @@
         <translation>Overvej venligst at bidrage til udviklingen, hvis du finder %s brugbar. Besøg %s for yderligere information om softwaren.</translation>
     </message>
     <message>
+        <source>Reduce storage requirements by enabling pruning (deleting) of old blocks. This allows the pruneblockchain RPC to be called to delete specific blocks, and enables automatic pruning of old blocks if a target size in MiB is provided. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, 1 = allow manual pruning via RPC, &gt;%u = automatically prune block files to stay under the specified target size in MiB)</source>
+        <translation>Reducér pladskravene ved at beskære (slette, “prune”) gamle blokke. Dette tillader pruneblockchain-RPC'en at blive kaldt for at slette specifikke blokke, og det aktiverer automatisk beskæring af gamle blokke, hvis en målstørrelse i MiB er angivet. Denne tilstand er ikke kompatibel med -txindex og -rescan. Advarsel: Fortrydelse af denne indstilling kræver download af hele blokkæden igen. (standard: 0 = slå beskæring af blokke fra, 1 = tillad manuel beskæring via RPC, &gt;%u = beskær automatisk blokfiler for at bliver under den angivne målstørrelse i MiB)</translation>
+    </message>
+    <message>
+        <source>Set lowest fee rate (in %s/kB) for transactions to be included in block creation. (default: %s)</source>
+        <translation>Sæt den laveste gebyrrate (i %s/kB) for transaktioner, der skal inkluderes i blokoprettelse. (standard: %s)</translation>
+    </message>
+    <message>
         <source>Set the number of script verification threads (%u to %d, 0 = auto, &lt;0 = leave that many cores free, default: %d)</source>
         <translation>Sæt antallet af scriptverificeringstråde (%u til %d, 0 = auto, &lt;0 = efterlad det antal kernet fri, standard: %d)</translation>
     </message>
@@ -3069,7 +3139,7 @@
     </message>
     <message>
         <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
-        <translation>Dette er en foreløbig testudgivelse - brug på eget ansvar - brug ikke til udvinding eller handelsprogrammer</translation>
+        <translation>Dette er en foreløbig testudgivelse – brug på eget ansvar – brug ikke til mining eller handelsprogrammer</translation>
     </message>
     <message>
         <source>Unable to rewind the database to a pre-fork state. You will need to redownload the blockchain</source>
@@ -3080,16 +3150,20 @@
         <translation>Brug UPnP for at konfigurere den lyttende port (standard: 1 under lytning og ingen -proxy)</translation>
     </message>
     <message>
+        <source>Username and hashed password for JSON-RPC connections. The field &lt;userpw&gt; comes in the format: &lt;USERNAME&gt;:&lt;SALT&gt;$&lt;HASH&gt;. A canonical python script is included in share/rpcuser. The client then connects normally using the rpcuser=&lt;USERNAME&gt;/rpcpassword=&lt;PASSWORD&gt; pair of arguments. This option can be specified multiple times</source>
+        <translation>Brugernavn og hashet adgangskode for JSON-RPC-forbindelser. Feltet &lt;userpw&gt; er i formatet: &lt;BRUGERNAVN&gt;:&lt;SALT&gt;$&lt;HASH&gt;. Et kanonisk Python-skript er inkluderet i share/rpcuser. Klienten forbinder så normalt ved hjælp af argumentparret rpcuser=&lt;BRUGERNAVN&gt;/rpcpassword=&lt;ADGANGSKODE&gt;. Dette tilvalg kan angives flere gange</translation>
+    </message>
+    <message>
+        <source>Wallet will not create transactions that violate mempool chain limits (default: %u)</source>
+        <translation>Tegnebogen vil ikke oprette transaktioner, som overtræder begrænsningen for hukommelsespuljekæden (standard: %u)</translation>
+    </message>
+    <message>
         <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
         <translation>Advarsel: Netværket ser ikke ud til at være fuldt ud enige! Enkelte minere ser ud til at opleve problemer.</translation>
     </message>
     <message>
         <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
         <translation>Advarsel: Vi ser ikke ud til at være fuldt ud enige med andre knuder! Du kan være nødt til at opgradere, eller andre knuder kan være nødt til at opgradere.</translation>
-    </message>
-    <message>
-        <source>Whitelist peers connecting from the given netmask or IP address. Can be specified multiple times.</source>
-        <translation>Sæt andre knuder, der forbinder fra den angivne netmaske eller IP, på hvidliste. Kan angives flere gange.</translation>
     </message>
     <message>
         <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
@@ -3121,15 +3195,15 @@
     </message>
     <message>
         <source>Cannot resolve -%s address: '%s'</source>
-        <translation>Kan ikke finde -%s-adressen: "%s"</translation>
+        <translation>Kan ikke finde -%s-adressen: “%s”</translation>
+    </message>
+    <message>
+        <source>Chain selection options:</source>
+        <translation>Indstillinger for kædevalg:</translation>
     </message>
     <message>
         <source>Change index out of range</source>
         <translation>Ændr indeks uden for interval</translation>
-    </message>
-    <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>Tilslut kun til de(n) angivne knude(r)</translation>
     </message>
     <message>
         <source>Connection options:</source>
@@ -3149,7 +3223,7 @@
     </message>
     <message>
         <source>Do not load the wallet and disable wallet RPC calls</source>
-        <translation>Indlæs ikke tegnebogen og slå tegnebogs-RPC-kald fra</translation>
+        <translation>Indlæs ikke tegnebogen og deaktivér tegnebogs-RPC-kald</translation>
     </message>
     <message>
         <source>Do you want to rebuild the block database now?</source>
@@ -3229,15 +3303,15 @@
     </message>
     <message>
         <source>Invalid -onion address: '%s'</source>
-        <translation>Ugyldig -onion adresse: "%s"</translation>
+        <translation>Ugyldig -onion adresse: “%s”</translation>
     </message>
     <message>
         <source>Invalid amount for -%s=&lt;amount&gt;: '%s'</source>
-        <translation>Ugyldigt beløb for -%s=&lt;beløb&gt;: "%s"</translation>
+        <translation>Ugyldigt beløb for -%s=&lt;beløb&gt;: “%s”</translation>
     </message>
     <message>
         <source>Invalid amount for -fallbackfee=&lt;amount&gt;: '%s'</source>
-        <translation>Ugyldigt beløb for -fallbackfee=&lt;beløb&gt;: "%s"</translation>
+        <translation>Ugyldigt beløb for -fallbackfee=&lt;beløb&gt;: “%s”</translation>
     </message>
     <message>
         <source>Keep the transaction memory pool below &lt;n&gt; megabytes (default: %u)</source>
@@ -3292,20 +3366,12 @@
         <translation>Sæt cache-størrelse for database i megabytes (%d til %d; standard: %d)</translation>
     </message>
     <message>
-        <source>Set maximum BIP141 block weight (default: %d)</source>
-        <translation>Sæt maksimal BIP141-blokvægt (standard: %d)</translation>
-    </message>
-    <message>
         <source>Set maximum block size in bytes (default: %d)</source>
         <translation>Sæt maksimum blokstørrelse i byte (standard: %d)</translation>
     </message>
     <message>
         <source>Specify wallet file (within data directory)</source>
         <translation>Angiv tegnebogsfil (inden for datamappe)</translation>
-    </message>
-    <message>
-        <source>Starting network threads...</source>
-        <translation>Starter netværkstråde…</translation>
     </message>
     <message>
         <source>The source code is available from %s.</source>
@@ -3330,6 +3396,10 @@
     <message>
         <source>Use UPnP to map the listening port (default: %u)</source>
         <translation>Brug UPnP til at konfigurere den lyttende port (standard: %u)</translation>
+    </message>
+    <message>
+        <source>Use the test chain</source>
+        <translation>Brug testkæden</translation>
     </message>
     <message>
         <source>User Agent comment (%s) contains unsafe characters.</source>
@@ -3373,7 +3443,7 @@
     </message>
     <message>
         <source>Create new files with system default permissions, instead of umask 077 (only effective with disabled wallet functionality)</source>
-        <translation>Opret nye filer med systemstandard for rettigheder i stedet for umask 077 (kun virksomt med tegnebogsfunktionalitet slået fra)</translation>
+        <translation>Opret nye filer med systemstandard for rettigheder i stedet for umask 077 (kun virksomt med tegnebogsfunktionalitet deaktiveret)</translation>
     </message>
     <message>
         <source>Discover own IP addresses (default: 1 when listening and no -externalip or -proxy)</source>
@@ -3392,24 +3462,16 @@
         <translation>Gebyrer (i %s/kB) mindre end dette opfattes som intet gebyr for videresendelse, mining og oprettelse af transaktioner (standard: %s)</translation>
     </message>
     <message>
-        <source>Force relay of transactions from whitelisted peers even if they violate local relay policy (default: %d)</source>
-        <translation>Gennemtving videresendelse af transaktioner fra hvidlistede knuder, selv om de overtræder lokal videresendelsespolitik (standard: %d)</translation>
-    </message>
-    <message>
         <source>If paytxfee is not set, include enough fee so transactions begin confirmation on average within n blocks (default: %u)</source>
         <translation>Hvis paytxfee ikke er sat, inkluderes nok gebyr til at transaktioner begynder at blive bekræftet ingen for gennemsnitligt n blokke (standard: %u)</translation>
     </message>
     <message>
         <source>Invalid amount for -maxtxfee=&lt;amount&gt;: '%s' (must be at least the minrelay fee of %s to prevent stuck transactions)</source>
-        <translation>Ugyldigt beløb for -maxtxfee=&lt;beløb&gt;: "%s" (skal være på mindst minrelay-gebyret på %s for at undgå hængende transaktioner)</translation>
+        <translation>Ugyldigt beløb for -maxtxfee=&lt;beløb&gt;: “%s” (skal være på mindst minrelay-gebyret på %s for at undgå hængende transaktioner)</translation>
     </message>
     <message>
         <source>Maximum size of data in data carrier transactions we relay and mine (default: %u)</source>
         <translation>Maksimal størrelse på data i transaktioner til dataoverførsel, som vi videresender og miner (standard: %u)</translation>
-    </message>
-    <message>
-        <source>Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)</source>
-        <translation>Forespørgsel</translation>
     </message>
     <message>
         <source>Randomize credentials for every proxy connection. This enables Tor stream isolation (default: %u)</source>
@@ -3422,10 +3484,6 @@
     <message>
         <source>The transaction amount is too small to send after the fee has been deducted</source>
         <translation>Transaktionsbeløbet er for lille til at sende, når gebyret er trukket fra</translation>
-    </message>
-    <message>
-        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit &lt;https://www.openssl.org/&gt; and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
-        <translation>Dette produkt indeholder software, der er udviklet af OpenSSL-projektet for brug i OpenSSL-værktøjskassen &lt;https://www.openssl.org/&gt;, samt kryptografisk software, der er skrevet af Eric Young, samt UPnP-software, der er skrevet af Thomas Bernard.</translation>
     </message>
     <message>
         <source>Use hierarchical deterministic key generation (HD) after BIP32. Only has effect during wallet creation/first start</source>
@@ -3469,11 +3527,11 @@
     </message>
     <message>
         <source>Invalid amount for -paytxfee=&lt;amount&gt;: '%s' (must be at least %s)</source>
-        <translation>Ugyldigt beløb for -paytxfee=&lt;beløb&gt;: "%s" (skal være mindst %s)</translation>
+        <translation>Ugyldigt beløb for -paytxfee=&lt;beløb&gt;: “%s” (skal være mindst %s)</translation>
     </message>
     <message>
         <source>Invalid netmask specified in -whitelist: '%s'</source>
-        <translation>Ugyldig netmaske angivet i -whitelist: "%s"</translation>
+        <translation>Ugyldig netmaske angivet i -whitelist: “%s”</translation>
     </message>
     <message>
         <source>Keep at most &lt;n&gt; unconnectable transactions in memory (default: %u)</source>
@@ -3481,7 +3539,7 @@
     </message>
     <message>
         <source>Need to specify a port with -whitebind: '%s'</source>
-        <translation>Nødt til at angive en port med -whitebinde: "%s"</translation>
+        <translation>Nødt til at angive en port med -whitebinde: “%s”</translation>
     </message>
     <message>
         <source>Node relay options:</source>
@@ -3538,10 +3596,6 @@
     <message>
         <source>Transaction amount too small</source>
         <translation>Transaktionsbeløb er for lavt</translation>
-    </message>
-    <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>Transaktionsbeløb skal være positive</translation>
     </message>
     <message>
         <source>Transaction too large for fee policy</source>
@@ -3608,16 +3662,20 @@
         <translation>-maxtxfee er sat meget højt! Gebyrer så store risikeres betalt på en enkelt transaktion.</translation>
     </message>
     <message>
-        <source>-paytxfee is set very high! This is the transaction fee you will pay if you send a transaction.</source>
-        <translation>-paytxfee er sat meget højt! Dette er transaktionsgebyret, som du betaler, hvis du sender en transaktion.</translation>
-    </message>
-    <message>
         <source>Do not keep transactions in the mempool longer than &lt;n&gt; hours (default: %u)</source>
         <translation>Behold ikke transaktioner i hukommelsespuljen i mere end &lt;n&gt; timer (default: %u)</translation>
     </message>
     <message>
+        <source>Equivalent bytes per sigop in transactions for relay and mining (default: %u)</source>
+        <translation>Tilsvarende bytes pr. sigop i transaktioner, som videresendes og mines (standard: %u)</translation>
+    </message>
+    <message>
         <source>Fees (in %s/kB) smaller than this are considered zero fee for transaction creation (default: %s)</source>
         <translation>Gebyrer (i %s/kB) mindre end dette opfattes som intet gebyr under oprettelse af transaktioner (standard: %s)</translation>
+    </message>
+    <message>
+        <source>Force relay of transactions from whitelisted peers even if they violate local relay policy (default: %d)</source>
+        <translation>Gennemtving videresendelse af transaktioner fra hvidlistede knuder, selv om de overtræder lokal videresendelsespolitik (standard: %d)</translation>
     </message>
     <message>
         <source>How thorough the block verification of -checkblocks is (0-4, default: %u)</source>
@@ -3636,8 +3694,24 @@
         <translation>Udskriv fejlsøgningsinformation (standard: %u, angivelse af &lt;kategori&gt; er valgfri)</translation>
     </message>
     <message>
+        <source>Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect/-noconnect)</source>
+        <translation>Forespørg knudeadresser via DNS-opslag hvis antallet af adresser er lavt (standard: 1 med mindre -connect/-noconnect)</translation>
+    </message>
+    <message>
+        <source>Sets the serialization of raw transaction or block hex returned in non-verbose mode, non-segwit(0) or segwit(1) (default: %d)</source>
+        <translation>Indstiller serialiseringen af rå transaktioner eller blok-hex returneret i ikke-verbose tilstand, non-segwit(0) eller sigwit(1) (standard: %d)</translation>
+    </message>
+    <message>
         <source>Support filtering of blocks and transaction with bloom filters (default: %u)</source>
         <translation>Understøt filtrering af blokke og transaktioner med Bloom-filtre (standard: %u)</translation>
+    </message>
+    <message>
+        <source>This is the transaction fee you may pay when fee estimates are not available.</source>
+        <translation>Dette er transaktionsgebyret, du kan betale, når gebyrestimeringer ikke er tilgængelige.</translation>
+    </message>
+    <message>
+        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit %s and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
+        <translation>Dette produkt indeholder software, der er udviklet af OpenSSL-projektet for brug i OpenSSL-værktøjskassen %s, samt kryptografisk software, der er skrevet af Eric Young, samt UPnP-software, der er skrevet af Thomas Bernard.</translation>
     </message>
     <message>
         <source>Total length of network version string (%i) exceeds maximum length (%i). Reduce the number or size of uacomments.</source>
@@ -3660,16 +3734,20 @@
         <translation>Brug separat SOCS5-proxy for at nå knuder via skjulte Tor-tjenester (standard: %s)</translation>
     </message>
     <message>
-        <source>Username and hashed password for JSON-RPC connections. The field &lt;userpw&gt; comes in the format: &lt;USERNAME&gt;:&lt;SALT&gt;$&lt;HASH&gt;. A canonical python script is included in share/rpcuser. This option can be specified multiple times</source>
-        <translation>Brugernavn og hashet adgangskode for JSON-RPC-forbindelser. Feltet &lt;userpw&gt; er i formatet: &lt;BRUGERNAVN&gt;:&lt;SALT&gt;$&lt;HASH&gt;. Et kanonisk Python-skript inkluderes i share/rpcuser. Dette tilvalg kan angives flere gange</translation>
-    </message>
-    <message>
         <source>Warning: Unknown block versions being mined! It's possible unknown rules are in effect</source>
         <translation>Advarsel: Ukendte blokversioner bliver minet! Det er muligt, at ukendte regler er i brug</translation>
     </message>
     <message>
         <source>Warning: Wallet file corrupt, data salvaged! Original %s saved as %s in %s; if your balance or transactions are incorrect you should restore from a backup.</source>
         <translation>Advarsel: Tegnebogsfil ødelagt, data reddet! Oprindelig %s gemt som %s i %s; hvis din saldo eller dine transaktioner er forkert, bør du genskabe fra en sikkerhedskopi.</translation>
+    </message>
+    <message>
+        <source>Whitelist peers connecting from the given IP address (e.g. 1.2.3.4) or CIDR notated network (e.g. 1.2.3.0/24). Can be specified multiple times.</source>
+        <translation>Sæt knuder på hvidliste, som forbinder fra den givne IP-adresse (fx 1.2.3.4) eller CIDR-noteret netværk (fx 1.2.3.0/24). Kan angives flere gange.</translation>
+    </message>
+    <message>
+        <source>%s is set very high!</source>
+        <translation>%s er meget højt sat!</translation>
     </message>
     <message>
         <source>(default: %s)</source>
@@ -3689,7 +3767,11 @@
     </message>
     <message>
         <source>Invalid -proxy address: '%s'</source>
-        <translation>Ugyldig -proxy adresse: "%s"</translation>
+        <translation>Ugyldig -proxy adresse: “%s”</translation>
+    </message>
+    <message>
+        <source>Keypool ran out, please call keypoolrefill first</source>
+        <translation>Nøglepulje løb tør; kald venligst keypoolrefill først</translation>
     </message>
     <message>
         <source>Listen for JSON-RPC connections on &lt;port&gt; (default: %u or testnet: %u)</source>
@@ -3728,9 +3810,17 @@
         <translation>Videresend ikke-P2SH multisig (standard: %u)</translation>
     </message>
     <message>
+        <source>Send transactions with full-RBF opt-in enabled (default: %u)</source>
+        <translation>Send transaktioner med fuld-RBF opt-in aktiveret (standard: %u)</translation>
+    </message>
+    <message>
         <source>Set key pool size to &lt;n&gt; (default: %u)</source>
         <translation>Sæt nøglepuljestørrelse til &lt;n&gt; (standard: %u)
 </translation>
+    </message>
+    <message>
+        <source>Set maximum BIP141 block weight (default: %d)</source>
+        <translation>Sæt maksimal BIP141-blokvægt (standard: %d)</translation>
     </message>
     <message>
         <source>Set the number of threads to service RPC calls (default: %d)</source>
@@ -3753,12 +3843,40 @@
         <translation>Brug ubekræftede byttepenge under afsendelse af transaktioner (standard: %u)</translation>
     </message>
     <message>
+        <source>Starting network threads...</source>
+        <translation>Starter netværkstråde…</translation>
+    </message>
+    <message>
+        <source>The wallet will avoid paying less than the minimum relay fee.</source>
+        <translation>Tegnebogen vil undgå at betale mindre end minimum-videresendelsesgebyret.</translation>
+    </message>
+    <message>
+        <source>This is the minimum transaction fee you pay on every transaction.</source>
+        <translation>Dette er det transaktionsgebyr, du minimum betaler for hver transaktion.</translation>
+    </message>
+    <message>
+        <source>This is the transaction fee you will pay if you send a transaction.</source>
+        <translation>Dette er transaktionsgebyret, som betaler, når du sender en transaktion.</translation>
+    </message>
+    <message>
         <source>Threshold for disconnecting misbehaving peers (default: %u)</source>
         <translation>Grænse for afbrydelse af forbindelse til knuder, der opfører sig upassende (standard: %u)</translation>
     </message>
     <message>
+        <source>Transaction amounts must not be negative</source>
+        <translation>Transaktionsbeløb må ikke være negative</translation>
+    </message>
+    <message>
+        <source>Transaction has too long of a mempool chain</source>
+        <translation>Transaktionen har en for lang hukommelsespuljekæde</translation>
+    </message>
+    <message>
+        <source>Transaction must have at least one recipient</source>
+        <translation>Transaktionen skal have mindst én modtager</translation>
+    </message>
+    <message>
         <source>Unknown network specified in -onlynet: '%s'</source>
-        <translation>Ukendt netværk anført i -onlynet: "%s"</translation>
+        <translation>Ukendt netværk anført i -onlynet: “%s”</translation>
     </message>
     <message>
         <source>Insufficient funds</source>

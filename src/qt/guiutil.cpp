@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,7 +11,7 @@
 
 #include "primitives/transaction.h"
 #include "init.h"
-#include "main.h" // For minRelayTxFee
+#include "policy/policy.h"
 #include "protocol.h"
 #include "script/script.h"
 #include "script/standard.h"
@@ -55,6 +55,8 @@
 #include <QSettings>
 #include <QTextDocument> // for Qt::mightBeRichText
 #include <QThread>
+#include <QMouseEvent>
+#include <QTextStream>
 
 #if QT_VERSION < 0x050000
 #include <QUrl>
@@ -81,6 +83,11 @@ extern double NSAppKitVersionNumber;
 #endif
 
 namespace GUIUtil {
+
+static QString stylesheetDirectory = ":css";
+static QString BZXTheme = "BZXTheme";
+static QString BZXLowTheme = "BZXLowTheme";
+static CCriticalSection cs_css;
 
 QString dateTimeStr(const QDateTime &date)
 {
@@ -116,7 +123,7 @@ static std::string DummyAddress(const CChainParams &params)
     std::vector<unsigned char> sourcedata = params.Base58Prefix(CChainParams::PUBKEY_ADDRESS);
     sourcedata.insert(sourcedata.end(), dummydata, dummydata + sizeof(dummydata));
     for(int i=0; i<256; ++i) { // Try every trailing byte
-        std::string s = EncodeBase58(begin_ptr(sourcedata), end_ptr(sourcedata));
+        std::string s = EncodeBase58(sourcedata.data(), sourcedata.data() + sourcedata.size());
         if (!CBitcoinAddress(s).IsValid())
             return s;
         sourcedata[sourcedata.size()-1] += 1;
@@ -132,8 +139,9 @@ void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)
 #if QT_VERSION >= 0x040700
     // We don't want translators to use own addresses in translations
     // and this is the only place, where this address is supplied.
-    widget->setPlaceholderText(QObject::tr("Enter a BitcoinZero address (e.g. %1)").arg(
-        QString::fromStdString(DummyAddress(Params()))));
+    widget->setPlaceholderText(QObject::tr("Enter a address (e.g. %1)").arg(
+        QString::fromStdString(DummyAddress(Params()))) +
+        QObject::tr(" or a payment code"));
 #endif
     widget->setValidator(new BitcoinAddressEntryValidator(parent));
     widget->setCheckValidator(new BitcoinAddressCheckValidator(parent));
@@ -150,8 +158,8 @@ void setupAmountWidget(QLineEdit *widget, QWidget *parent)
 
 bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out)
 {
-    // return if URI is not valid or is no BitcoinZero: URI
-    if(!uri.isValid() || uri.scheme() != QString("BitcoinZero"))
+    // return if URI is not valid or is no BZX: URI
+    if(!uri.isValid() || uri.scheme() != QString("BZX"))
         return false;
 
     SendCoinsRecipient rv;
@@ -211,13 +219,13 @@ bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out)
 
 bool parseBitcoinURI(QString uri, SendCoinsRecipient *out)
 {
-    // Convert BitcoinZero:// to BitcoinZero:
+    // Convert BZX:// to BZX:
     //
-    //    Cannot handle this later, because BitcoinZero:// will cause Qt to see the part after // as host,
+    //    Cannot handle this later, because BZX:// will cause Qt to see the part after // as host,
     //    which will lower-case it (and thus invalidate the address).
-    if(uri.startsWith("BitcoinZero://", Qt::CaseInsensitive))
+    if(uri.startsWith("BZX://", Qt::CaseInsensitive))
     {
-        uri.replace(0, 10, "BitcoinZero:");
+        uri.replace(0, 10, "BZX:");
     }
     QUrl uriInstance(uri);
     return parseBitcoinURI(uriInstance, out);
@@ -225,7 +233,7 @@ bool parseBitcoinURI(QString uri, SendCoinsRecipient *out)
 
 QString formatBitcoinURI(const SendCoinsRecipient &info)
 {
-    QString ret = QString("BitcoinZero:%1").arg(info.address);
+    QString ret = QString("BZX:%1").arg(info.address);
     int paramCount = 0;
 
     if (info.amount)
@@ -256,7 +264,7 @@ bool isDust(const QString& address, const CAmount& amount)
     CTxDestination dest = CBitcoinAddress(address.toStdString()).Get();
     CScript script = GetScriptForDestination(dest);
     CTxOut txOut(amount, script);
-    return txOut.IsDust(::minRelayTxFee);
+    return txOut.IsDust(dustRelayFee);
 }
 
 QString HtmlEscape(const QString& str, bool fMultiLine)
@@ -291,17 +299,11 @@ void copyEntryData(QAbstractItemView *view, int column, int role)
     }
 }
 
-QString getEntryData(QAbstractItemView *view, int column, int role)
+QList<QModelIndex> getEntryData(QAbstractItemView *view, int column)
 {
     if(!view || !view->selectionModel())
-        return QString();
-    QModelIndexList selection = view->selectionModel()->selectedRows(column);
-
-    if(!selection.isEmpty()) {
-        // Return first item
-        return (selection.at(0).data(role).toString());
-    }
-    return QString();
+        return QList<QModelIndex>();
+    return view->selectionModel()->selectedRows(column);
 }
 
 QString getSaveFileName(QWidget *parent, const QString &caption, const QString &dir,
@@ -462,9 +464,9 @@ void SubstituteFonts(const QString& language)
 #endif
 }
 
-ToolTipToRichTextFilter::ToolTipToRichTextFilter(int size_threshold, QObject *parent) :
+ToolTipToRichTextFilter::ToolTipToRichTextFilter(int _size_threshold, QObject *parent) :
     QObject(parent),
-    size_threshold(size_threshold)
+    size_threshold(_size_threshold)
 {
 
 }
@@ -541,7 +543,7 @@ int TableViewLastColumnResizingFixer::getAvailableWidthForColumn(int column)
     return nResult;
 }
 
-// Make sure we don't make the columns wider than the tables viewport width.
+// Make sure we don't make the columns wider than the table's viewport width.
 void TableViewLastColumnResizingFixer::adjustTableColumnsWidth()
 {
     disconnectViewHeadersSignals();
@@ -575,7 +577,7 @@ void TableViewLastColumnResizingFixer::on_sectionResized(int logicalIndex, int o
     }
 }
 
-// When the tabless geometry is ready, we manually perform the stretch of the "Message" column,
+// When the table's geometry is ready, we manually perform the stretch of the "Message" column,
 // as the "Stretch" resize mode does not allow for interactive resizing.
 void TableViewLastColumnResizingFixer::on_geometriesChanged()
 {
@@ -605,15 +607,21 @@ TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* t
     setViewHeaderResizeMode(lastColumnIndex, QHeaderView::Interactive);
 }
 
+TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth, QObject *parent, int resizeColumnIndex):
+    TableViewLastColumnResizingFixer(table, lastColMinimumWidth, allColsMinimumWidth, parent)
+{
+    secondToLastColumnIndex = resizeColumnIndex;
+}
+
 #ifdef WIN32
 boost::filesystem::path static StartupShortcutPath()
 {
     std::string chain = ChainNameFromCommandLine();
     if (chain == CBaseChainParams::MAIN)
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "BitcoinZero.lnk";
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "BZX.lnk";
     if (chain == CBaseChainParams::TESTNET) // Remove this special case when CBaseChainParams::TESTNET = "testnet4"
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "BitcoinZero (testnet).lnk";
-    return GetSpecialFolderPath(CSIDL_STARTUP) / strprintf("BitcoinZero (%s).lnk", chain);
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "BZX (testnet).lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / strprintf("BZX (%s).lnk", chain);
 }
 
 bool GetStartOnSystemStartup()
@@ -710,8 +718,8 @@ boost::filesystem::path static GetAutostartFilePath()
 {
     std::string chain = ChainNameFromCommandLine();
     if (chain == CBaseChainParams::MAIN)
-        return GetAutostartDir() / "BitcoinZero.desktop";
-    return GetAutostartDir() / strprintf("BitcoinZero-%s.lnk", chain);
+        return GetAutostartDir() / "BZX.desktop";
+    return GetAutostartDir() / strprintf("BZX-%s.lnk", chain);
 }
 
 bool GetStartOnSystemStartup()
@@ -750,13 +758,13 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         if (!optionFile.good())
             return false;
         std::string chain = ChainNameFromCommandLine();
-        // Write a BitcoinZero.desktop file to the autostart directory:
+        // Write a BZX.desktop file to the autostart directory:
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
         if (chain == CBaseChainParams::MAIN)
-            optionFile << "Name=BitcoinZero\n";
+            optionFile << "Name=BZX\n";
         else
-            optionFile << strprintf("Name=BitcoinZero (%s)\n", chain);
+            optionFile << strprintf("Name=BZX (%s)\n", chain);
         optionFile << "Exec=" << pszExePath << strprintf(" -min -testnet=%d -regtest=%d\n", GetBoolArg("-testnet", false), GetBoolArg("-regtest", false));
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
@@ -767,6 +775,8 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 
 
 #elif defined(Q_OS_MAC)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 // based on: https://github.com/Mozketo/LaunchAtLoginController/blob/master/LaunchAtLoginController.m
 
 #include <CoreFoundation/CoreFoundation.h>
@@ -775,7 +785,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl);
 LSSharedFileListItemRef findStartupItemInList(LSSharedFileListRef list, CFURLRef findUrl)
 {
-    // loop through the list of startup items and try to find the BitcoinZero app
+    // loop through the list of startup items and try to find the BZX app
     CFArrayRef listSnapshot = LSSharedFileListCopySnapshot(list, NULL);
     for(int i = 0; i < CFArrayGetCount(listSnapshot); i++) {
         LSSharedFileListItemRef item = (LSSharedFileListItemRef)CFArrayGetValueAtIndex(listSnapshot, i);
@@ -820,7 +830,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     LSSharedFileListItemRef foundItem = findStartupItemInList(loginItems, bitcoinAppUrl);
 
     if(fAutoStart && !foundItem) {
-        // add BitcoinZero app to startup item list
+        // add BZX app to startup item list
         LSSharedFileListInsertItemURL(loginItems, kLSSharedFileListItemBeforeFirst, NULL, NULL, bitcoinAppUrl, NULL, NULL);
     }
     else if(!fAutoStart && foundItem) {
@@ -829,6 +839,7 @@ bool SetStartOnSystemStartup(bool fAutoStart)
     }
     return true;
 }
+#pragma GCC diagnostic pop
 #else
 
 bool GetStartOnSystemStartup() { return false; }
@@ -931,6 +942,9 @@ QString formatServicesStr(quint64 mask)
             case NODE_WITNESS:
                 strList.append("WITNESS");
                 break;
+            case NODE_XTHIN:
+                strList.append("XTHIN");
+                break;
             default:
                 strList.append(QString("%1[%2]").arg("UNKNOWN").arg(check));
             }
@@ -945,7 +959,7 @@ QString formatServicesStr(quint64 mask)
 
 QString formatPingTime(double dPingTime)
 {
-    return dPingTime == 0 ? QObject::tr("N/A") : QString(QObject::tr("%1 ms")).arg(QString::number((int)(dPingTime * 1000), 10));
+    return (dPingTime == std::numeric_limits<int64_t>::max()/1e6 || dPingTime == 0) ? QObject::tr("N/A") : QString(QObject::tr("%1 ms")).arg(QString::number((int)(dPingTime * 1000), 10));
 }
 
 QString formatTimeOffset(int64_t nTimeOffset)
@@ -988,6 +1002,56 @@ QString formatNiceTimeOffset(qint64 secs)
         timeBehindText = QObject::tr("%1 and %2").arg(QObject::tr("%n year(s)", "", years)).arg(QObject::tr("%n week(s)","", remainder/WEEK_IN_SECONDS));
     }
     return timeBehindText;
+}
+
+void ClickableLabel::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_EMIT clicked(event->pos());
+}
+    
+void ClickableProgressBar::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_EMIT clicked(event->pos());
+}
+
+
+void TextElideStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
+{
+    QStyledItemDelegate::initStyleOption(option, index);
+    option->textElideMode = Qt::ElideMiddle;
+}
+
+void loadTheme()
+{
+    AssertLockNotHeld(cs_css);
+    LOCK(cs_css);
+
+    static std::unique_ptr<QString> stylesheet;
+
+    QString fileName = stylesheetDirectory + "/" + BZXTheme;
+    QFile qFile(fileName);
+    if (!qFile.open(QFile::ReadOnly)) {
+        throw std::runtime_error(strprintf("%s: Failed to open file: %s", __func__, fileName.toStdString()));
+    }
+
+    QString strStyle = QLatin1String(qFile.readAll());
+    stylesheet = std::make_unique<QString>(); 
+
+    stylesheet->append(strStyle);
+
+
+    if (QApplication::desktop()->screenGeometry().height() <= 800) {
+        fileName = stylesheetDirectory + "/" + BZXLowTheme;
+        QFile qFile_(fileName);
+        if (!qFile_.open(QFile::ReadOnly)) {
+            throw std::runtime_error(strprintf("%s: Failed to open file: %s", __func__, fileName.toStdString()));
+        }
+
+        QString strLowStyle = QLatin1String(qFile_.readAll());
+        stylesheet->append(strLowStyle);
+    }
+
+    qApp->setStyleSheet(*stylesheet);
 }
 
 } // namespace GUIUtil

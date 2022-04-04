@@ -5,6 +5,8 @@
 #ifndef LOOKUPSPDIALOG_H
 #define LOOKUPSPDIALOG_H
 
+#include "guiutil.h"
+
 #include <QDialog>
 
 class WalletModel;
@@ -18,7 +20,7 @@ namespace Ui {
     class LookupSPDialog;
 }
 
-/** Dialog for looking up Exodus Protocol tokens */
+/** Dialog for looking up Elysium Protocol tokens */
 class LookupSPDialog : public QDialog
 {
     Q_OBJECT
@@ -38,6 +40,8 @@ public Q_SLOTS:
 private:
     Ui::LookupSPDialog *ui;
     WalletModel *model;
+
+    void addDenominationRow(uint8_t id, const std::string& value);
 
 private Q_SLOTS:
     // None

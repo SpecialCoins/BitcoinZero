@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -33,6 +33,8 @@ static const bool DEFAULT_SPLASHSCREEN = true;
 #define COLOR_TX_STATUS_DANGER QColor(200, 100, 100)
 /* Transaction list -- TX status decoration - default color */
 #define COLOR_BLACK QColor(0, 0, 0)
+/* Transaction list -- TX status decoration - LockedByInstantSend color */
+#define COLOR_TX_STATUS_LOCKED QColor(0, 128, 255)
 
 /* Tooltips longer than this (in characters) are converted into rich text,
    so that they can be word-wrapped.
@@ -48,9 +50,9 @@ static const int MAX_URI_LENGTH = 255;
 /* Number of frames in spinner animation */
 #define SPINNER_FRAMES 36
 
-#define QAPP_ORG_NAME "BitcoinZero"
-#define QAPP_ORG_DOMAIN "bitcoinzero.io"
-#define QAPP_APP_NAME_DEFAULT "bitcoinzero-qt"
-#define QAPP_APP_NAME_TESTNET "bitcoinzero-qt-testnet"
+#define QAPP_ORG_NAME "BZX"
+#define QAPP_ORG_DOMAIN "BZX.org"
+#define QAPP_APP_NAME_DEFAULT "BZX-Qt"
+#define QAPP_APP_NAME_TESTNET "BZX-Qt-testnet"
 
 #endif // BITCOIN_QT_GUICONSTANTS_H

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -187,11 +187,21 @@ enum opcodetype
 
     OP_INVALIDOPCODE = 0xff,
 
-    // zerocoin params
-    OP_ZEROCOINMINT = 0xc1,
-    OP_ZEROCOINSPEND = 0xc2,
+    // privcoin params
+    OP_PRIVCOINMINT = 0xc1,
+    OP_PRIVCOINSPEND = 0xc2,
     OP_SIGMAMINT = 0xc3,
     OP_SIGMASPEND = 0xc4,
+
+    // lelantus params
+    OP_LELANTUSMINT = 0xc5,
+    OP_LELANTUSJMINT = 0xc6,
+    OP_LELANTUSJOINSPLIT = 0xc7,
+    // joinsplit in payload
+    OP_LELANTUSJOINSPLITPAYLOAD = 0xc9,
+
+    // input for reminting privcoin to sigma (v3)
+    OP_PRIVCOINTOSIGMAREMINT = 0xc8
 };
 
 const char* GetOpName(opcodetype opcode);
@@ -564,7 +574,8 @@ public:
 
         opcodeRet = (opcodetype)opcode;
 
-        if (opcodeRet == opcodetype::OP_SIGMASPEND|| opcodeRet == opcodetype::OP_SIGMAMINT) {
+        if (opcodeRet == opcodetype::OP_SIGMASPEND || opcodeRet == opcodetype::OP_SIGMAMINT ||
+            opcodeRet == opcodetype::OP_LELANTUSMINT || opcodeRet == opcodetype::OP_LELANTUSJMINT || opcodeRet == opcodetype::OP_LELANTUSJOINSPLIT) {
             if (pvchRet) {
                 pvchRet->assign(pc, end());
             }
@@ -648,13 +659,22 @@ public:
     bool IsPayToWitnessScriptHash() const;
     bool IsWitnessProgram(int& version, std::vector<unsigned char>& program) const;
 
-    // Checks if the script is zerocoin v1 or v2 sigma mint/spend or not.
-    bool IsZerocoinMint() const;
-    bool IsZerocoinSpend() const;
+    // Checks if the script is privcoin v1 or v2 sigma mint/spend or not.
+    bool IsPrivcoinMint() const;
+    bool IsPrivcoinSpend() const;
 
-    // Checks if the script is zerocoin v3 sigma mint/spend or not.
+    // Checks if the script is privcoin v3 sigma mint/spend or not.
     bool IsSigmaMint() const;
     bool IsSigmaSpend() const;
+
+    // Checks if the script is lelantus mint/joinsplit or not.
+    bool IsLelantusMint() const;
+    bool IsLelantusJMint() const;
+    bool IsLelantusJoinSplit() const;
+
+    bool IsPrivcoinRemint() const;
+
+    bool IsMint() const;
 
     // Called by IsStandardTx.
     bool HasCanonicalPushes() const;
@@ -690,6 +710,8 @@ struct CScriptWitness
     CScriptWitness() { }
 
     bool IsNull() const { return stack.empty(); }
+
+    void SetNull() { stack.clear(); stack.shrink_to_fit(); }
 
     std::string ToString() const;
 };

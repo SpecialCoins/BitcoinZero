@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -58,16 +58,18 @@
 #include "feature/client/bridges.h"
 #include "feature/client/entrynodes.h"
 #include "feature/client/transports.h"
-#include "feature/control/control.h"
+#include "feature/control/control_events.h"
 #include "feature/dirauth/reachability.h"
 #include "feature/dircache/consdiffmgr.h"
 #include "feature/dircache/dirserv.h"
 #include "feature/dirclient/dirclient.h"
+#include "feature/dirclient/dirclient_modes.h"
 #include "feature/dirclient/dlstatus.h"
 #include "feature/dircommon/directory.h"
 #include "feature/dircommon/voting_schedule.h"
 #include "feature/dirparse/ns_parse.h"
 #include "feature/hibernate/hibernate.h"
+#include "feature/hs/hs_dos.h"
 #include "feature/nodelist/authcert.h"
 #include "feature/nodelist/dirlist.h"
 #include "feature/nodelist/fmt_routerstatus.h"
@@ -82,6 +84,7 @@
 #include "lib/crypt_ops/crypto_rand.h"
 #include "lib/crypt_ops/crypto_util.h"
 
+#include "feature/dirauth/dirauth_periodic.h"
 #include "feature/dirauth/dirvote.h"
 #include "feature/dirauth/authmode.h"
 #include "feature/dirauth/shared_random.h"
@@ -99,6 +102,7 @@
 #include "feature/nodelist/routerlist_st.h"
 #include "feature/dirauth/vote_microdesc_hash_st.h"
 #include "feature/nodelist/vote_routerstatus_st.h"
+#include "feature/nodelist/routerstatus_st.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -214,10 +218,10 @@ networkstatus_reset_download_failures(void)
 }
 
 /** Return the filename used to cache the consensus of a given flavor */
-static char *
-networkstatus_get_cache_fname(int flav,
-                              const char *flavorname,
-                              int unverified_consensus)
+MOCK_IMPL(char *,
+networkstatus_get_cache_fname,(int flav,
+                               const char *flavorname,
+                               int unverified_consensus))
 {
   char buf[128];
   const char *prefix;
@@ -1160,7 +1164,7 @@ update_consensus_networkstatus_fetch_time_impl(time_t now, int flav)
       }
     }
 
-    if (directory_fetches_dir_info_early(options)) {
+    if (dirclient_fetches_dir_info_early(options)) {
       /* We want to cache the next one at some point after this one
        * is no longer fresh... */
       start = (time_t)(c->fresh_until + min_sec_before_caching);
@@ -1182,7 +1186,7 @@ update_consensus_networkstatus_fetch_time_impl(time_t now, int flav)
 
       /* If we're a bridge user, make use of the numbers we just computed
        * to choose the rest of the interval *after* them. */
-      if (directory_fetches_dir_info_later(options)) {
+      if (dirclient_fetches_dir_info_later(options)) {
         /* Give all the *clients* enough time to download the consensus. */
         start = (time_t)(start + dl_interval + min_sec_before_caching);
         /* But try to get it before ours actually expires. */
@@ -1535,7 +1539,7 @@ networkstatus_consensus_can_use_extra_fallbacks,(const or_options_t *options))
              >= smartlist_len(router_get_trusted_dir_servers()));
   /* If we don't fetch from the authorities, and we have additional mirrors,
    * we can use them. */
-  return (!directory_fetches_from_authorities(options)
+  return (!dirclient_fetches_from_authorities(options)
           && (smartlist_len(router_get_fallback_dir_servers())
               > smartlist_len(router_get_trusted_dir_servers())));
 }
@@ -1575,36 +1579,16 @@ networkstatus_consensus_is_already_downloading(const char *resource)
   return answer;
 }
 
-/* Does the current, reasonably live consensus have IPv6 addresses?
- * Returns 1 if there is a reasonably live consensus and its consensus method
- * includes IPv6 addresses in the consensus.
- * Otherwise, if there is no consensus, or the method does not include IPv6
- * addresses, returns 0. */
-int
-networkstatus_consensus_has_ipv6(const or_options_t* options)
-{
-  const networkstatus_t *cons = networkstatus_get_reasonably_live_consensus(
-                                                    approx_time(),
-                                                    usable_consensus_flavor());
-
-  /* If we have no consensus, we have no IPv6 in it */
-  if (!cons) {
-    return 0;
-  }
-
-  /* Different flavours of consensus gained IPv6 at different times */
-  if (we_use_microdescriptors_for_circuits(options)) {
-    return
-       cons->consensus_method >= MIN_METHOD_FOR_A_LINES_IN_MICRODESC_CONSENSUS;
-  } else {
-    return 1;
-  }
-}
-
-/** Given two router status entries for the same router identity, return 1 if
- * if the contents have changed between them. Otherwise, return 0. */
-static int
-routerstatus_has_changed(const routerstatus_t *a, const routerstatus_t *b)
+/** Given two router status entries for the same router identity, return 1
+ * if the contents have changed between them. Otherwise, return 0.
+ * It only checks for fields that are output by control port.
+ * This should be kept in sync with the struct routerstatus_t
+ * and the printing function routerstatus_format_entry in
+ * NS_CONTROL_PORT mode.
+ **/
+STATIC int
+routerstatus_has_visibly_changed(const routerstatus_t *a,
+                                 const routerstatus_t *b)
 {
   tor_assert(tor_memeq(a->identity_digest, b->identity_digest, DIGEST_LEN));
 
@@ -1623,9 +1607,14 @@ routerstatus_has_changed(const routerstatus_t *a, const routerstatus_t *b)
          a->is_valid != b->is_valid ||
          a->is_possible_guard != b->is_possible_guard ||
          a->is_bad_exit != b->is_bad_exit ||
-         a->is_hs_dir != b->is_hs_dir;
-  // XXXX this function needs a huge refactoring; it has gotten out
-  // XXXX of sync with routerstatus_t, and it will do so again.
+         a->is_hs_dir != b->is_hs_dir ||
+         a->is_staledesc != b->is_staledesc ||
+         a->has_bandwidth != b->has_bandwidth ||
+         a->published_on != b->published_on ||
+         a->ipv6_orport != b->ipv6_orport ||
+         a->is_v2_dir != b->is_v2_dir ||
+         a->bandwidth_kb != b->bandwidth_kb ||
+         tor_addr_compare(&a->ipv6_addr, &b->ipv6_addr, CMP_EXACT);
 }
 
 /** Notify controllers of any router status entries that changed between
@@ -1657,7 +1646,7 @@ notify_control_networkstatus_changed(const networkstatus_t *old_c,
                      tor_memcmp(rs_old->identity_digest,
                             rs_new->identity_digest, DIGEST_LEN),
                      smartlist_add(changed, (void*) rs_new)) {
-    if (routerstatus_has_changed(rs_old, rs_new))
+    if (routerstatus_has_visibly_changed(rs_old, rs_new))
       smartlist_add(changed, (void*)rs_new);
   } SMARTLIST_FOREACH_JOIN_END(rs_old, rs_new);
 
@@ -1673,6 +1662,7 @@ notify_before_networkstatus_changes(const networkstatus_t *old_c,
   notify_control_networkstatus_changed(old_c, new_c);
   dos_consensus_has_changed(new_c);
   relay_consensus_has_changed(new_c);
+  hs_dos_consensus_has_changed(new_c);
 }
 
 /* Called after a new consensus has been put in the global state. It is safe
@@ -1771,7 +1761,7 @@ reload_consensus_from_file(const char *fname,
                                              flavor, flags, source_dir);
     tor_free(content);
   }
-#endif
+#endif /* defined(_WIN32) */
   if (rv < -1) {
     log_warn(LD_GENERAL, "Couldn't set consensus from cache file %s",
              escaped(fname));
@@ -2361,8 +2351,50 @@ char *
 networkstatus_getinfo_helper_single(const routerstatus_t *rs)
 {
   return routerstatus_format_entry(rs, NULL, NULL, NS_CONTROL_PORT,
-                                   ROUTERSTATUS_FORMAT_NO_CONSENSUS_METHOD,
                                    NULL);
+}
+
+/**
+ * Extract status information from <b>ri</b> and from other authority
+ * functions and store it in <b>rs</b>. <b>rs</b> is zeroed out before it is
+ * set.
+ *
+ * We assume that node-\>is_running has already been set, e.g. by
+ *   dirserv_set_router_is_running(ri, now);
+ */
+void
+set_routerstatus_from_routerinfo(routerstatus_t *rs,
+                                 const node_t *node,
+                                 const routerinfo_t *ri)
+{
+  memset(rs, 0, sizeof(routerstatus_t));
+
+  rs->is_authority =
+    router_digest_is_trusted_dir(ri->cache_info.identity_digest);
+
+  /* Set by compute_performance_thresholds or from consensus */
+  rs->is_exit = node->is_exit;
+  rs->is_stable = node->is_stable;
+  rs->is_fast = node->is_fast;
+  rs->is_flagged_running = node->is_running;
+  rs->is_valid = node->is_valid;
+  rs->is_possible_guard = node->is_possible_guard;
+  rs->is_bad_exit = node->is_bad_exit;
+  rs->is_hs_dir = node->is_hs_dir;
+  rs->is_named = rs->is_unnamed = 0;
+
+  rs->published_on = ri->cache_info.published_on;
+  memcpy(rs->identity_digest, node->identity, DIGEST_LEN);
+  memcpy(rs->descriptor_digest, ri->cache_info.signed_descriptor_digest,
+         DIGEST_LEN);
+  rs->addr = ri->addr;
+  strlcpy(rs->nickname, ri->nickname, sizeof(rs->nickname));
+  rs->or_port = ri->or_port;
+  rs->dir_port = ri->dir_port;
+  rs->is_v2_dir = ri->supports_tunnelled_dir_requests;
+
+  tor_addr_copy(&rs->ipv6_addr, &ri->ipv6_addr);
+  rs->ipv6_orport = ri->ipv6_orport;
 }
 
 /** Alloc and return a string describing routerstatuses for the most
@@ -2381,7 +2413,6 @@ networkstatus_getinfo_by_purpose(const char *purpose_string, time_t now)
   smartlist_t *statuses;
   const uint8_t purpose = router_purpose_from_string(purpose_string);
   routerstatus_t rs;
-  const int bridge_auth = authdir_mode_bridge(get_options());
 
   if (purpose == ROUTER_PURPOSE_UNKNOWN) {
     log_info(LD_DIR, "Unrecognized purpose '%s' when listing router statuses.",
@@ -2398,11 +2429,7 @@ networkstatus_getinfo_by_purpose(const char *purpose_string, time_t now)
       continue;
     if (ri->purpose != purpose)
       continue;
-    /* TODO: modifying the running flag in a getinfo is a bad idea */
-    if (bridge_auth && ri->purpose == ROUTER_PURPOSE_BRIDGE)
-      dirserv_set_router_is_running(ri, now);
-    /* then generate and write out status lines for each of them */
-    set_routerstatus_from_routerinfo(&rs, node, ri, now, 0);
+    set_routerstatus_from_routerinfo(&rs, node, ri);
     smartlist_add(statuses, networkstatus_getinfo_helper_single(&rs));
   } SMARTLIST_FOREACH_END(ri);
 
@@ -2410,43 +2437,6 @@ networkstatus_getinfo_by_purpose(const char *purpose_string, time_t now)
   SMARTLIST_FOREACH(statuses, char *, cp, tor_free(cp));
   smartlist_free(statuses);
   return answer;
-}
-
-/** Write out router status entries for all our bridge descriptors. */
-void
-networkstatus_dump_bridge_status_to_file(time_t now)
-{
-  char *status = networkstatus_getinfo_by_purpose("bridge", now);
-  char *fname = NULL;
-  char *thresholds = NULL;
-  char *published_thresholds_and_status = NULL;
-  char published[ISO_TIME_LEN+1];
-  const routerinfo_t *me = router_get_my_routerinfo();
-  char fingerprint[FINGERPRINT_LEN+1];
-  char *fingerprint_line = NULL;
-
-  if (me && crypto_pk_get_fingerprint(me->identity_pkey,
-                                      fingerprint, 0) >= 0) {
-    tor_asprintf(&fingerprint_line, "fingerprint %s\n", fingerprint);
-  } else {
-    log_warn(LD_BUG, "Error computing fingerprint for bridge status.");
-  }
-  format_iso_time(published, now);
-  dirserv_compute_bridge_flag_thresholds();
-  thresholds = dirserv_get_flag_thresholds_line();
-  tor_asprintf(&published_thresholds_and_status,
-               "published %s\nflag-thresholds %s\n%s%s",
-               published, thresholds, fingerprint_line ? fingerprint_line : "",
-               status);
-  fname = get_datadir_fname("networkstatus-bridges");
-  if (write_str_to_file(fname,published_thresholds_and_status,0)<0) {
-    log_warn(LD_DIRSERV, "Unable to write networkstatus-bridges file.");
-  }
-  tor_free(thresholds);
-  tor_free(published_thresholds_and_status);
-  tor_free(fname);
-  tor_free(status);
-  tor_free(fingerprint_line);
 }
 
 /* DOCDOC get_net_param_from_list */

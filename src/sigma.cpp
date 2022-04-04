@@ -1,4 +1,4 @@
-#include "main.h"
+#include "validation.h"
 #include "sigma.h"
 #include "timedata.h"
 #include "chainparams.h"
@@ -11,9 +11,8 @@
 #include "crypto/sha256.h"
 #include "sigma/coinspend.h"
 #include "sigma/coin.h"
-#include "bznode-payments.h"
-#include "bznode-sync.h"
-#include "sigmaentry.h"
+#include "primitives/mint_spend.h"
+#include "batchproof_container.h"
 
 #include <atomic>
 #include <sstream>
@@ -24,17 +23,19 @@
 
 #include <ios>
 
+int64_t nMinimumInputValue = DUST_HARD_LIMIT;
+
 namespace sigma {
 
 static CSigmaState sigmaState;
 
-static bool CheckSigmaSpendSerial(
+bool CheckSigmaSpendSerial(
         CValidationState &state,
         CSigmaTxInfo *sigmaTxInfo,
         const Scalar &serial,
         int nHeight,
         bool fConnectTip) {
-    // check for zerocoin transaction in this block as well
+    // check for privcoin transaction in this block as well
     if (sigmaTxInfo &&
             !sigmaTxInfo->fInfoIsComplete &&
             sigmaTxInfo->spentSerials.find(serial) != sigmaTxInfo->spentSerials.end())
@@ -52,12 +53,17 @@ static bool CheckSigmaSpendSerial(
 
 bool IsSigmaAllowed()
 {
-    if (sporkManager.IsSporkActive(SPORK_19_SIGMA_NEW))
-    {
-        return false;
-    }
+    LOCK(cs_main);
+    return IsSigmaAllowed(chainActive.Height());
+}
 
-    return true;
+bool IsSigmaAllowed(int height)
+{
+    return false;
+}
+
+bool IsRemintWindow(int height) {
+    return false;
 }
 
 secp_primitives::GroupElement ParseSigmaMintScript(const CScript& script)
@@ -125,45 +131,25 @@ CAmount GetSpendAmount(const CTransaction& tx) {
 }
 
 bool CheckSigmaBlock(CValidationState &state, const CBlock& block) {
-    auto& consensus = ::Params().GetConsensus();
+    const auto& consensus = ::Params().GetConsensus();
 
     size_t blockSpendsAmount = 0;
     CAmount blockSpendsValue(0);
 
     for (const auto& tx : block.vtx) {
-
-        auto txSpendsValue = GetSpendAmount(tx);
+        auto txSpendsValue = tx->IsPrivcoinRemint() ? 0 : GetSpendAmount(*tx);
         size_t txSpendsAmount = 0;
 
-        for (const auto& in : tx.vin) {
-            if (in.IsSigmaSpend()) {
+        for (const auto& in : tx->vin) {
+            if (in.IsSigmaSpend() || in.IsPrivcoinRemint()) {
                 txSpendsAmount++;
             }
-        }
-
-        if (txSpendsAmount > consensus.nMaxSigmaInputPerTransaction) {
-            return state.DoS(100, false, REJECT_INVALID,
-                "bad-txns-spend-invalid");
-        }
-
-        if (txSpendsValue > consensus.nMaxValueSigmaSpendPerTransaction) {
-            return state.DoS(100, false, REJECT_INVALID,
-                "bad-txns-spend-invalid");
         }
 
         blockSpendsAmount += txSpendsAmount;
         blockSpendsValue += txSpendsValue;
     }
 
-    if (blockSpendsAmount > consensus.nMaxSigmaInputPerBlock) {
-        return state.DoS(100, false, REJECT_INVALID,
-            "bad-txns-spend-invalid");
-    }
-
-    if (blockSpendsValue > consensus.nMaxValueSigmaSpendPerBlock) {
-        return state.DoS(100, false, REJECT_INVALID,
-            "bad-txns-spend-invalid");
-    }
     return true;
 }
 
@@ -171,17 +157,25 @@ bool CheckSigmaBlock(CValidationState &state, const CBlock& block) {
 // Mixing V2 and sigma spends into the same transaction will fail.
 bool CheckSigmaSpendTransaction(
         const CTransaction &tx,
-        const vector<sigma::CoinDenomination>& targetDenominations,
+        const std::vector<sigma::CoinDenomination>& targetDenominations,
         CValidationState &state,
         uint256 hashTx,
         bool isVerifyDB,
         int nHeight,
+        int nRealHeight,
         bool isCheckWallet,
+        bool fStatefulSigmaCheck,
         CSigmaTxInfo *sigmaTxInfo) {
-
     bool hasSigmaSpendInputs = false, hasNonSigmaInputs = false;
     int vinIndex = -1;
     std::unordered_set<Scalar, sigma::CScalarHash> txSerials;
+
+    Consensus::Params const & params = ::Params().GetConsensus();
+
+    if(!isVerifyDB && !isCheckWallet) {
+        if(true)
+             return state.DoS(100, error("Sigma is disabled at this period."));
+    }
 
     for (const CTxIn &txin : tx.vin)
     {
@@ -204,7 +198,7 @@ bool CheckSigmaSpendTransaction(
                 "CheckSigmaSpendTransaction: invalid spend transaction");
         }
 
-        if (spend->getVersion() != ZEROCOIN_TX_VERSION_3) {
+        if (spend->getVersion() != 30 && spend->getVersion() != 31) {
             return state.DoS(100,
                              false,
                              NSEQUENCE_INCORRECT,
@@ -213,7 +207,7 @@ bool CheckSigmaSpendTransaction(
 
         uint256 txHashForMetadata;
 
-        // Obtain the hash of the transaction sans the zerocoin part
+        // Obtain the hash of the transaction sans the privcoin part
         CMutableTransaction txTemp = tx;
         BOOST_FOREACH(CTxIn &txTempIn, txTemp.vin) {
             if (txTempIn.scriptSig.IsSigmaSpend()) {
@@ -226,14 +220,18 @@ bool CheckSigmaSpendTransaction(
                 spend->getVersion(), txHashForMetadata.ToString(),
                 spend->getCoinSerialNumber().tostring());
 
+        if (!fStatefulSigmaCheck) {
+            continue;
+        }
+
         CSigmaState::SigmaCoinGroupInfo coinGroup;
         if (!sigmaState.GetCoinGroupInfo(targetDenominations[vinIndex], coinGroupId, coinGroup))
-            return state.DoS(100, false, NO_MINT_ZEROCOIN,
+            return state.DoS(100, false, NO_MINT_PRIVCOIN,
                     "CheckSigmaSpendTransaction: Error: no coins were minted with such parameters");
 
         bool passVerify = false;
         CBlockIndex *index = coinGroup.lastBlock;
-        pair<sigma::CoinDenomination, int> denominationAndId = std::make_pair(
+        std::pair<sigma::CoinDenomination, int> denominationAndId = std::make_pair(
             targetDenominations[vinIndex], coinGroupId);
 
         uint256 accumulatorBlockHash = spend->getAccumulatorBlockHash();
@@ -253,16 +251,38 @@ bool CheckSigmaSpendTransaction(
         // This list of public coins is required by function "Verify" of CoinSpend.
         std::vector<sigma::PublicCoin> anonymity_set;
         while(true) {
-            BOOST_FOREACH(const sigma::PublicCoin& pubCoinValue,
-                    index->sigmaMintedPubCoins[denominationAndId]) {
-                anonymity_set.push_back(pubCoinValue);
+            if (index->sigmaMintedPubCoins.count(denominationAndId) > 0) {
+                BOOST_FOREACH(const sigma::PublicCoin& pubCoinValue,
+                        index->sigmaMintedPubCoins[denominationAndId]) {
+                    if (true) {
+                        if (::Params().GetConsensus().sigmaBlacklist.count(pubCoinValue.getValue()) > 0) {
+                            continue;
+                        }
+                    }
+                    anonymity_set.push_back(pubCoinValue);
+                }
             }
             if (index == coinGroup.firstBlock)
                 break;
             index = index->pprev;
         }
 
-        passVerify = spend->Verify(anonymity_set, newMetaData);
+        bool fPadding = spend->getVersion() >= 31;
+        if (!isVerifyDB) {
+            bool fShouldPad = true;
+            if (fPadding != fShouldPad)
+                return state.DoS(1, error("Incorrect sigma spend transaction version"));
+        }
+
+        BatchProofContainer* batchProofContainer = BatchProofContainer::get_instance();
+        // if we are collecting proofs, skip verification and collect proofs
+        passVerify = spend->Verify(anonymity_set, newMetaData, fPadding, batchProofContainer->fCollectProofs);
+
+        // add proofs into container
+        if(batchProofContainer->fCollectProofs) {
+            batchProofContainer->add(spend.get(), fPadding, coinGroupId, anonymity_set.size(), true);
+        }
+
         if (passVerify) {
             Scalar serial = spend->getCoinSerialNumber();
             // do not check for duplicates in case we've seen exact copy of this tx in this block before
@@ -302,10 +322,10 @@ bool CheckSigmaSpendTransaction(
 
     if (hasSigmaSpendInputs) {
         if (hasNonSigmaInputs) {
-            // mixing zerocoin spend input with non-zerocoin inputs is prohibited
+            // mixing privcoin spend input with non-privcoin inputs is prohibited
             return state.DoS(100, false,
                              REJECT_MALFORMED,
-                             "CheckSigmaSpendTransaction: can't mix zerocoin spend input with regular ones");
+                             "CheckSigmaSpendTransaction: can't mix privcoin spend input with regular ones");
         }
     }
 
@@ -316,6 +336,7 @@ bool CheckSigmaMintTransaction(
         const CTxOut &txout,
         CValidationState &state,
         uint256 hashTx,
+        bool fStatefulSigmaCheck,
         CSigmaTxInfo *sigmaTxInfo) {
     secp_primitives::GroupElement pubCoinValue;
 
@@ -351,13 +372,13 @@ bool CheckSigmaMintTransaction(
         }
     }
 
-    if (hasCoin && bznodeSync.IsBlockchainSynced()) {
-        LogPrintf("CheckSigmaMintTransaction: double mint, tx=%s\n",
-                 txout.GetHash().ToString());
-         return state.DoS(100,
-                 false,
-                 PUBCOIN_NOT_VALIDATE,
-                 "CheckSigmaTransaction: double mint");
+    if (hasCoin && fStatefulSigmaCheck) {
+       LogPrintf("CheckSigmaMintTransaction: double mint, tx=%s\n",
+                txout.GetHash().ToString());
+        return state.DoS(100,
+                false,
+                PUBCOIN_NOT_VALIDATE,
+                "CheckSigmaTransaction: double mint");
     }
 
     if (!pubCoin.validate())
@@ -382,36 +403,39 @@ bool CheckSigmaTransaction(
         bool isVerifyDB,
         int nHeight,
         bool isCheckWallet,
+        bool fStatefulSigmaCheck,
         CSigmaTxInfo *sigmaTxInfo)
 {
-    auto& consensus = ::Params().GetConsensus();
+    Consensus::Params const & consensus = ::Params().GetConsensus();
 
     // nHeight have special mode which value is INT_MAX so we need this.
     int realHeight = nHeight;
+
     if (realHeight == INT_MAX) {
         LOCK(cs_main);
         realHeight = chainActive.Height();
     }
 
-    bool allowSigma = (realHeight >= consensus.nSigmaStartBlock);
-
-    if (allowSigma && sigmaState.IsSurgeConditionDetected()) {
+    // accept sigma tx into 5 more blocks, to allow mempool cleared
+    if (!isVerifyDB && realHeight >= (::Params().GetConsensus().nLelantusStartBlock + 5))
         return state.DoS(100, false,
-            REJECT_INVALID,
-            "Sigma surge protection is ON.");
-    }
+                         REJECT_INVALID,
+                         "Sigma already is not available, start using Lelantus.");
+    bool const allowSigma = false;
 
-    if (bznodeSync.IsBlockchainSynced() && sporkManager.IsSporkActive(SPORK_19_SIGMA_NEW))
-    {
-            LogPrintf("CheckSigmaTransaction: SPORK_19_SIGMA_NEW\n");
-            return false;
+    if (!isVerifyDB && !isCheckWallet) {
+        if (allowSigma && sigmaState.IsSurgeConditionDetected()) {
+            return state.DoS(100, false,
+                REJECT_INVALID,
+                "Sigma surge protection is ON.");
+        }
     }
 
     // Check Mint Sigma Transaction
     if (allowSigma) {
         for (const CTxOut &txout : tx.vout) {
             if (!txout.scriptPubKey.empty() && txout.scriptPubKey.IsSigmaMint()) {
-                if (!CheckSigmaMintTransaction(txout, state, hashTx, sigmaTxInfo))
+                if (!CheckSigmaMintTransaction(txout, state, hashTx, fStatefulSigmaCheck, sigmaTxInfo))
                     return false;
             }
         }
@@ -419,26 +443,14 @@ bool CheckSigmaTransaction(
 
     // Check Sigma Spend Transaction
     if(tx.IsSigmaSpend()) {
-        // First check number of inputs does not exceed transaction limit
-        if (tx.vin.size() > consensus.nMaxSigmaInputPerTransaction) {
-            return state.DoS(100, false,
-                REJECT_INVALID,
-                "bad-txns-spend-invalid");
-        }
 
-        if (GetSpendAmount(tx) > consensus.nMaxValueSigmaSpendPerTransaction) {
-            return state.DoS(100, false,
-                REJECT_INVALID,
-                "bad-txns-spend-invalid");
-        }
-
-        vector<sigma::CoinDenomination> denominations;
+        std::vector<sigma::CoinDenomination> denominations;
         uint64_t totalValue = 0;
         BOOST_FOREACH(const CTxIn &txin, tx.vin){
             if(!txin.scriptSig.IsSigmaSpend()) {
                 return state.DoS(100, false,
                                  REJECT_MALFORMED,
-                                 "CheckSigmaSpendTransaction: can't mix zerocoin spend input with regular ones");
+                                 "CheckSigmaSpendTransaction: can't mix privcoin spend input with regular ones");
             }
             // Get the CoinDenomination value of each vin for the CheckSigmaSpendTransaction function
             uint32_t pubcoinId = txin.prevout.n;
@@ -463,8 +475,8 @@ bool CheckSigmaTransaction(
         // Only one loop, we checked on the format before entering this case
         if (!isVerifyDB) {
             if (!CheckSigmaSpendTransaction(
-                tx, denominations, state, hashTx, isVerifyDB, nHeight,
-                isCheckWallet, sigmaTxInfo)) {
+                tx, denominations, state, hashTx, isVerifyDB, nHeight, realHeight,
+                isCheckWallet, fStatefulSigmaCheck, sigmaTxInfo)) {
                     return false;
             }
         }
@@ -497,9 +509,8 @@ void RemoveSigmaSpendsReferencingBlock(CTxMemPool& pool, CBlockIndex* blockIndex
         }
     }
     for (const CTransaction& tx: txn_to_remove) {
-        std::list<CTransaction> removed;
         // Remove txn from mempool.
-        pool.removeRecursive(tx, removed);
+        pool.removeRecursive(tx);
         LogPrintf("DisconnectTipSigma: removed sigma spend which referenced a removed blockchain tip.");
     }
 }
@@ -509,7 +520,7 @@ void DisconnectTipSigma(CBlock& block, CBlockIndex *pindexDelete) {
 
     // Also remove from mempool sigma spends that reference given block hash.
     RemoveSigmaSpendsReferencingBlock(mempool, pindexDelete);
-    RemoveSigmaSpendsReferencingBlock(stempool, pindexDelete);
+    RemoveSigmaSpendsReferencingBlock(txpools.getStemTxPool(), pindexDelete);
 }
 
 Scalar GetSigmaSpendSerialNumber(const CTransaction &tx, const CTxIn &txin) {
@@ -518,7 +529,7 @@ Scalar GetSigmaSpendSerialNumber(const CTransaction &tx, const CTxIn &txin) {
 
     try {
         // NOTE(martun): +1 on the next line stands for 1 byte in which the opcode of
-        // OP_SIGMASPEND is written. In zerocoin you will see +4 instead,
+        // OP_SIGMASPEND is written. In privcoin you will see +4 instead,
         // because the size of serialized spend is also written, probably in 3 bytes.
         CDataStream serializedCoinSpend(
                 (const char *)&*(txin.scriptSig.begin() + 1),
@@ -540,7 +551,7 @@ CAmount GetSigmaSpendInput(const CTransaction &tx) {
         CAmount sum(0);
         BOOST_FOREACH(const CTxIn& txin, tx.vin){
             // NOTE(martun): +1 on the next line stands for 1 byte in which the opcode of
-            // OP_ZEROCOINSPENDV3 is written. In zerocoin you will see +4 instead,
+            // OP_PRIVCOINSPENDV3 is written. In privcoin you will see +4 instead,
             // because the size of serialized spend is also written, probably in 3 bytes.
             CDataStream serializedCoinSpend(
                     (const char *)&*(txin.scriptSig.begin() + 1),
@@ -567,19 +578,19 @@ bool ConnectBlockSigma(
         CBlockIndex *pindexNew,
         const CBlock *pblock,
         bool fJustCheck) {
-    // Add zerocoin transaction information to index
+    // Add privcoin transaction information to index
     if (pblock && pblock->sigmaTxInfo) {
         if (!fJustCheck) {
             pindexNew->sigmaMintedPubCoins.clear();
             pindexNew->sigmaSpentSerials.clear();
         }
 
-        if (!sigma::CheckSigmaBlock(state, *pblock)) {
+        if (!CheckSigmaBlock(state, *pblock)) {
             return false;
         }
 
         BOOST_FOREACH(auto& serial, pblock->sigmaTxInfo->spentSerials) {
-            if (!sigma::CheckSigmaSpendSerial(
+            if (!CheckSigmaSpendSerial(
                     state,
                     pblock->sigmaTxInfo.get(),
                     serial.first,
@@ -609,18 +620,22 @@ bool ConnectBlockSigma(
 bool GetOutPointFromBlock(COutPoint& outPoint, const GroupElement &pubCoinValue, const CBlock &block){
     secp_primitives::GroupElement txPubCoinValue;
     // cycle transaction hashes, looking for this pubcoin.
-    BOOST_FOREACH(CTransaction tx, block.vtx){
+    BOOST_FOREACH(CTransactionRef tx, block.vtx){
         uint32_t nIndex = 0;
-        for (const CTxOut &txout: tx.vout) {
+        for (const CTxOut &txout: tx->vout) {
             if (txout.scriptPubKey.IsSigmaMint()){
 
                 // If you wonder why +1, go to file wallet.cpp and read the comments in function
-                // CWallet::CreateZerocoinMintModelV3 around "scriptSerializedCoin << OP_ZEROCOINMINTV3";
-                vector<unsigned char> coin_serialised(txout.scriptPubKey.begin() + 1,
+                // CWallet::CreatePrivcoinMintModelV3 around "scriptSerializedCoin << OP_PRIVCOINMINTV3";
+                std::vector<unsigned char> coin_serialised(txout.scriptPubKey.begin() + 1,
                                                       txout.scriptPubKey.end());
-                txPubCoinValue.deserialize(&coin_serialised[0]);
+                try {
+                    txPubCoinValue.deserialize(&coin_serialised[0]);
+                } catch (...) {
+                    return false;
+                }
                 if(pubCoinValue==txPubCoinValue){
-                    outPoint = COutPoint(tx.GetHash(), nIndex);
+                    outPoint = COutPoint(tx->GetHash(), nIndex);
                     return true;
                 }
             }
@@ -689,26 +704,22 @@ bool GetOutPoint(COutPoint& outPoint, const uint256 &pubCoinValueHash) {
 }
 
 bool BuildSigmaStateFromIndex(CChain *chain) {
-    sigmaState.Reset();
     for (CBlockIndex *blockIndex = chain->Genesis(); blockIndex; blockIndex=chain->Next(blockIndex))
     {
         sigmaState.AddBlock(blockIndex);
     }
     // DEBUG
     LogPrintf(
-        "Latest IDs for sigma coin groups are %d, %d, %d, %d, %d, %d, %d, %d\n",
-        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_X1),
-        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_X5),
-        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_X10),
-        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_X50),
-        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_X100),
-        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_X500),
-        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_X1000),
-        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_X5000));
+        "Latest IDs for sigma coin groups are %d, %d, %d, %d, %d\n",
+        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_0_1),
+        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_0_5),
+        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_1),
+        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_10),
+        sigmaState.GetLatestCoinID(CoinDenomination::SIGMA_DENOM_100));
     return true;
 }
 
-// CsigmaTxinfo
+// CSigmaTxInfo
 
 void CSigmaTxInfo::Complete() {
     // We need to sort mints lexicographically by serialized value of pubCoin. That's the way old code
@@ -824,14 +835,17 @@ void CSigmaState::AddMintsToStateAndBlockIndex(
         const sigma::CoinDenomination denomination = it.first;
         const std::vector<sigma::PublicCoin>& mintsWithThisDenom = it.second;
 
+        if (mintsWithThisDenom.empty())
+            continue;
+
         if (latestCoinIds[denomination] < 1)
             latestCoinIds[denomination] = 1;
         auto mintCoinGroupId = latestCoinIds[denomination];
 
 
-        SigmaCoinGroupInfo &coinGroup = coinGroups[make_pair(denomination, mintCoinGroupId)];
+        SigmaCoinGroupInfo &coinGroup = coinGroups[std::make_pair(denomination, mintCoinGroupId)];
 
-        if (coinGroup.nCoins + mintsWithThisDenom.size() <= ZC_SPEND_V3_COINSPERID_LIMIT) {
+        if (coinGroup.nCoins + mintsWithThisDenom.size() <= 0) {
             if (coinGroup.nCoins == 0) {
                 // first group of coins for given denomination
                 assert(coinGroup.firstBlock == nullptr);
@@ -869,16 +883,18 @@ void CSigmaState::AddSpend(const Scalar &serial, CoinDenomination denom, int coi
 
 void CSigmaState::AddBlock(CBlockIndex *index) {
     BOOST_FOREACH(
-        const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int), vector<sigma::PublicCoin>) &pubCoins,
+        const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int), std::vector<sigma::PublicCoin>) &pubCoins,
             index->sigmaMintedPubCoins) {
-        if (!pubCoins.second.empty()) {
-            SigmaCoinGroupInfo& coinGroup = coinGroups[pubCoins.first];
 
-            if (coinGroup.firstBlock == NULL)
-                coinGroup.firstBlock = index;
-            coinGroup.lastBlock = index;
-            coinGroup.nCoins += pubCoins.second.size();
-        }
+        if (pubCoins.second.empty())
+            continue;
+
+        SigmaCoinGroupInfo& coinGroup = coinGroups[pubCoins.first];
+
+        if (coinGroup.firstBlock == NULL)
+            coinGroup.firstBlock = index;
+        coinGroup.lastBlock = index;
+        coinGroup.nCoins += pubCoins.second.size();
 
         latestCoinIds[pubCoins.first.first] = pubCoins.first.second;
         BOOST_FOREACH(const sigma::PublicCoin &coin, pubCoins.second) {
@@ -894,11 +910,14 @@ void CSigmaState::AddBlock(CBlockIndex *index) {
 void CSigmaState::RemoveBlock(CBlockIndex *index) {
     // roll back accumulator updates
     BOOST_FOREACH(
-        const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int),vector<sigma::PublicCoin>) &coin,
+        const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int),std::vector<sigma::PublicCoin>) &coin,
         index->sigmaMintedPubCoins)
     {
         SigmaCoinGroupInfo   &coinGroup = coinGroups[coin.first];
         int  nMintsToForget = coin.second.size();
+
+        if (nMintsToForget == 0)
+            continue;
 
         assert(coinGroup.nCoins >= nMintsToForget);
 
@@ -918,12 +937,13 @@ void CSigmaState::RemoveBlock(CBlockIndex *index) {
             do {
                 assert(coinGroup.lastBlock != coinGroup.firstBlock);
                 coinGroup.lastBlock = coinGroup.lastBlock->pprev;
-            } while (coinGroup.lastBlock->sigmaMintedPubCoins.count(coin.first) == 0);
+            } while (coinGroup.lastBlock->sigmaMintedPubCoins.count(coin.first) == 0 ||
+                        coinGroup.lastBlock->sigmaMintedPubCoins[coin.first].size() == 0);
         }
     }
 
     // roll back mints
-    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int),vector<sigma::PublicCoin>) &pubCoins,
+    BOOST_FOREACH(const PAIRTYPE(PAIRTYPE(sigma::CoinDenomination, int),std::vector<sigma::PublicCoin>) &pubCoins,
                   index->sigmaMintedPubCoins) {
         BOOST_FOREACH(const sigma::PublicCoin &coin, pubCoins.second) {
             auto coins = containers.GetMints().equal_range(coin);
@@ -996,7 +1016,7 @@ int CSigmaState::GetCoinSetForSpend(
 
     coins_out.clear();
 
-    pair<sigma::CoinDenomination, int> denomAndId = std::make_pair(denomination, coinGroupID);
+    std::pair<sigma::CoinDenomination, int> denomAndId = std::make_pair(denomination, coinGroupID);
 
     if (coinGroups.count(denomAndId) == 0)
         return 0;
@@ -1007,17 +1027,24 @@ int CSigmaState::GetCoinSetForSpend(
     for (CBlockIndex *block = coinGroup.lastBlock;
             ;
             block = block->pprev) {
-        if (block->sigmaMintedPubCoins[denomAndId].size() > 0) {
+        if (block->sigmaMintedPubCoins.count(denomAndId) > 0 &&
+                block->sigmaMintedPubCoins[denomAndId].size() > 0) {
             if (block->nHeight <= maxHeight) {
                 if (numberOfCoins == 0) {
                     // latest block satisfying given conditions
                     // remember block hash
                     blockHash_out = block->GetBlockHash();
                 }
-                numberOfCoins += block->sigmaMintedPubCoins[denomAndId].size();
-                coins_out.insert(coins_out.end(),
-                        block->sigmaMintedPubCoins[denomAndId].begin(),
-                        block->sigmaMintedPubCoins[denomAndId].end());
+                BOOST_FOREACH(const sigma::PublicCoin& pubCoinValue,
+                        block->sigmaMintedPubCoins[denomAndId]) {
+                    if (true) {
+                        if (::Params().GetConsensus().sigmaBlacklist.count(pubCoinValue.getValue()) > 0) {
+                            continue;
+                        }
+                    }
+                    coins_out.push_back(pubCoinValue);
+                    numberOfCoins++;
+                }
             }
         }
         if (block == coinGroup.firstBlock) {
@@ -1025,6 +1052,46 @@ int CSigmaState::GetCoinSetForSpend(
         }
     }
     return numberOfCoins;
+}
+
+void CSigmaState::GetAnonymitySet(
+        sigma::CoinDenomination denomination,
+        int coinGroupID,
+        bool fStartSigmaBlacklist,
+        std::vector<GroupElement>& coins_out) {
+
+    coins_out.clear();
+
+    std::pair<sigma::CoinDenomination, int> denomAndId = std::make_pair(denomination, coinGroupID);
+
+    if (coinGroups.count(denomAndId) == 0)
+        return;
+
+    SigmaCoinGroupInfo coinGroup = coinGroups[denomAndId];
+    const auto &params = ::Params().GetConsensus();
+    int maxHeight = (chainActive.Height() - (ZC_MINT_CONFIRMATIONS - 1));
+
+    for (CBlockIndex *block = coinGroup.lastBlock;
+            ;
+            block = block->pprev) {
+        if (block->sigmaMintedPubCoins.count(denomAndId) > 0 &&
+                block->sigmaMintedPubCoins[denomAndId].size() > 0) {
+            if (block->nHeight <= maxHeight) {
+                BOOST_FOREACH(const sigma::PublicCoin& pubCoinValue,
+                        block->sigmaMintedPubCoins[denomAndId]) {
+                    if (true) {
+                        if (::Params().GetConsensus().sigmaBlacklist.count(pubCoinValue.getValue()) > 0) {
+                            continue;
+                        }
+                    }
+                    coins_out.push_back(pubCoinValue.getValue());
+                }
+            }
+        }
+        if (block == coinGroup.firstBlock) {
+            break ;
+        }
+    }
 }
 
 std::pair<int, int> CSigmaState::GetMintedCoinHeightAndId(
@@ -1037,7 +1104,7 @@ std::pair<int, int> CSigmaState::GetMintedCoinHeightAndId(
     return std::make_pair(-1, -1);
 }
 
-bool CSigmaState::AddSpendToMempool(const vector<Scalar> &coinSerials, uint256 txHash) {
+bool CSigmaState::AddSpendToMempool(const std::vector<Scalar> &coinSerials, uint256 txHash) {
     BOOST_FOREACH(Scalar coinSerial, coinSerials){
         if (IsUsedCoinSerial(coinSerial) || mempoolCoinSerials.count(coinSerial))
             return false;
@@ -1060,7 +1127,7 @@ void CSigmaState::RemoveSpendFromMempool(const Scalar& coinSerial) {
     mempoolCoinSerials.erase(coinSerial);
 }
 
-void CSigmaState::AddMintsToMempool(const vector<GroupElement>& pubCoins){
+void CSigmaState::AddMintsToMempool(const std::vector<GroupElement>& pubCoins){
     BOOST_FOREACH(const GroupElement& pubCoin, pubCoins){
         mempoolMints.insert(pubCoin);
     }
@@ -1118,7 +1185,7 @@ spend_info_container const & CSigmaState::GetSpends() const {
     return containers.GetSpends();
 }
 
-std::unordered_map<pair<CoinDenomination, int>, CSigmaState::SigmaCoinGroupInfo, CSigmaState::pairhash> const & CSigmaState::GetCoinGroups() const {
+std::unordered_map<std::pair<CoinDenomination, int>, CSigmaState::SigmaCoinGroupInfo, CSigmaState::pairhash> const & CSigmaState::GetCoinGroups() const {
     return coinGroups;
 }
 

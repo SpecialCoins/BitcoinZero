@@ -1,14 +1,16 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_SUPPORT_ALLOCATORS_SECURE_H
 #define BITCOIN_SUPPORT_ALLOCATORS_SECURE_H
 
-#include "support/pagelocker.h"
+#include "support/lockedpool.h"
+#include "support/cleanse.h"
 
 #include <string>
+#include <vector>
 
 //
 // Allocator that locks its contents from being paged
@@ -39,24 +41,21 @@ struct secure_allocator : public std::allocator<T> {
 
     T* allocate(std::size_t n, const void* hint = 0)
     {
-        T* p;
-        p = std::allocator<T>::allocate(n, hint);
-        if (p != NULL)
-            LockedPageManager::Instance().LockRange(p, sizeof(T) * n);
-        return p;
+        return static_cast<T*>(LockedPoolManager::Instance().alloc(sizeof(T) * n));
     }
 
     void deallocate(T* p, std::size_t n)
     {
         if (p != NULL) {
             memory_cleanse(p, sizeof(T) * n);
-            LockedPageManager::Instance().UnlockRange(p, sizeof(T) * n);
         }
-        std::allocator<T>::deallocate(p, n);
+        LockedPoolManager::Instance().free(p);
     }
 };
 
 // This is exactly like std::string, but with a custom allocator.
 typedef std::basic_string<char, std::char_traits<char>, secure_allocator<char> > SecureString;
+// This is exactly like std::vector, but with a custom allocator.
+typedef std::vector<unsigned char, secure_allocator<unsigned char>> SecureVector;
 
 #endif // BITCOIN_SUPPORT_ALLOCATORS_SECURE_H

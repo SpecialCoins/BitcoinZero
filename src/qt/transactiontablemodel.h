@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -30,10 +30,11 @@ public:
     enum ColumnIndex {
         Status = 0,
         Watchonly = 1,
-        Date = 2,
-        Type = 3,
-        ToAddress = 4,
-        Amount = 5
+        InstantSend = 2,
+        Date = 3,
+        Type = 4,
+        ToAddress = 5,
+        Amount = 6
     };
 
     /** Roles to get specific information from a transaction row.
@@ -48,6 +49,10 @@ public:
         WatchonlyRole,
         /** Watch-only icon */
         WatchonlyDecorationRole,
+        /** InstantSend boolean */
+        InstantSendRole,
+        /** InstantSend icon */
+        InstantSendDecorationRole,
         /** Long description (HTML format) */
         LongDescriptionRole,
         /** Address of transaction */
@@ -72,6 +77,8 @@ public:
         StatusRole,
         /** Unprocessed icon */
         RawDecorationRole,
+        /** Payment code */
+        PcodeRole
     };
 
     int rowCount(const QModelIndex &parent) const;
@@ -80,6 +87,10 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const;
     bool processingQueuedTransactions() { return fProcessingQueuedTransactions; }
+    void updateNumISLocks(int numISLocks);
+    void updateChainLockHeight(int chainLockHeight);
+    int getNumISLocks() const;
+    int getChainLockHeight() const;
 
 private:
     CWallet* wallet;
@@ -88,11 +99,13 @@ private:
     TransactionTablePriv *priv;
     bool fProcessingQueuedTransactions;
     const PlatformStyle *platformStyle;
+    int cachedNumISLocks;
+    int cachedChainLockHeight;
 
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
 
-    QString lookupAddress(const std::string &address, bool tooltip) const;
+    QString lookupAddress(const TransactionRecord *wtx, bool tooltip) const;
     QVariant addressColor(const TransactionRecord *wtx) const;
     QString formatTxStatus(const TransactionRecord *wtx) const;
     QString formatTxDate(const TransactionRecord *wtx) const;
@@ -102,6 +115,7 @@ private:
     QString formatTooltip(const TransactionRecord *rec) const;
     QVariant txStatusDecoration(const TransactionRecord *wtx) const;
     QVariant txWatchonlyDecoration(const TransactionRecord *wtx) const;
+    QVariant txInstantSendDecoration(const TransactionRecord *wtx) const;
     QVariant txAddressDecoration(const TransactionRecord *wtx) const;
 
 public Q_SLOTS:

@@ -1,15 +1,14 @@
-// Copyright (c) 2019 The BitcoinZero Core Developers
+// Copyright (c) 2019 The BZX Core Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef BITCOINZERO_MINTPOOL_H
-#define BITCOINZERO_MINTPOOL_H
+#ifndef BZX_MINTPOOL_H
+#define BZX_MINTPOOL_H
 
 #include <map>
 #include <list>
 
-#include "sigmaentry.h"
-#include "libzerocoin/bitcoin_bignum/bignum.h"
+#include "primitives/mint_spend.h"
 #include "uint256.h"
 
 typedef std::tuple<uint160, CKeyID, int32_t> MintPoolEntry;
@@ -27,10 +26,10 @@ class CMintPool : public std::map<uint256, MintPoolEntry> //hashPubcoin mapped t
 
 public:
     CMintPool();
-    void Add(pair<uint256, MintPoolEntry> pMint, bool fVerbose = false);
-    void List(list<pair<uint256, MintPoolEntry>>& listMints);
+    void Add(std::pair<uint256, MintPoolEntry> pMint, bool fVerbose = false);
+    void List(std::list<std::pair<uint256, MintPoolEntry>>& listMints);
     void Reset();
-    bool Get(int32_t nCount, uint160 hashSeedMaster, pair<uint256, MintPoolEntry>& result);
+    bool Get(int32_t nCount, uint160 hashSeedMaster, std::pair<uint256, MintPoolEntry>& result);
 };
 
-#endif // BITCOINZERO_MINTPOOL_H
+#endif // BZX_MINTPOOL_H

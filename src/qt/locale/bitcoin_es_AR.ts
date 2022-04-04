@@ -68,7 +68,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     </context>
 <context>
     <name>CoinControlDialog</name>
@@ -84,6 +84,9 @@
     </context>
 <context>
     <name>Intro</name>
+    </context>
+<context>
+    <name>ModalOverlay</name>
     </context>
 <context>
     <name>OpenURIDialog</name>
@@ -102,6 +105,9 @@
     </context>
 <context>
     <name>QObject</name>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -164,6 +170,6 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     </context>
 </TS>

@@ -87,17 +87,25 @@ uint64_t siphash24(const void *src, unsigned long src_sz, const struct sipkey *k
 		v0 ^= mi;
 	}
 
+#ifdef __COVERITY__
+	{
+		uint64_t mi = 0;
+		memcpy(&mi, m+i, (src_sz-blocks));
+		last7 = _le64toh(mi) | (uint64_t)(src_sz & 0xff) << 56;
+	}
+#else
 	switch (src_sz - blocks) {
-		case 7: last7 |= (uint64_t)m[i + 6] << 48; /* Falls through. */
-		case 6: last7 |= (uint64_t)m[i + 5] << 40; /* Falls through. */
-		case 5:	last7 |= (uint64_t)m[i + 4] << 32; /* Falls through. */
-		case 4: last7 |= (uint64_t)m[i + 3] << 24; /* Falls through. */
-		case 3:	last7 |= (uint64_t)m[i + 2] << 16; /* Falls through. */
-		case 2:	last7 |= (uint64_t)m[i + 1] <<  8; /* Falls through. */
-		case 1: last7 |= (uint64_t)m[i + 0]      ; /* Falls through. */
+		case 7: last7 |= (uint64_t)m[i + 6] << 48; FALLTHROUGH;
+		case 6: last7 |= (uint64_t)m[i + 5] << 40; FALLTHROUGH;
+		case 5:	last7 |= (uint64_t)m[i + 4] << 32; FALLTHROUGH;
+		case 4: last7 |= (uint64_t)m[i + 3] << 24; FALLTHROUGH;
+		case 3:	last7 |= (uint64_t)m[i + 2] << 16; FALLTHROUGH;
+		case 2:	last7 |= (uint64_t)m[i + 1] <<  8; FALLTHROUGH;
+		case 1: last7 |= (uint64_t)m[i + 0]      ; FALLTHROUGH;
 		case 0:
 		default:;
 	}
+#endif
 	v3 ^= last7;
 	DOUBLE_ROUND(v0,v1,v2,v3);
 	v0 ^= last7;

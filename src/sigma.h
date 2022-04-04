@@ -15,18 +15,18 @@
 #include "coin_containers.h"
 
 //tests
-namespace sigma_mintspend_many { struct sigma_mintspend_many; }
-namespace sigma_mintspend { struct sigma_mintspend_test; }
-namespace sigma_partialspend_mempool_tests { struct partialspend; }
-namespace zerocoin_tests3_v3 { struct zerocoin_mintspend_v3; }
+namespace sigma_mintspend_many { class sigma_mintspend_many; }
+namespace sigma_mintspend { class sigma_mintspend_test; }
+namespace sigma_partialspend_mempool_tests { class partialspend; }
+namespace privcoin_tests3_v3 { class privcoin_mintspend_v3; }
 
 namespace sigma {
 
-// Zerocoin transaction info, added to the CBlock to ensure zerocoin mint/spend transactions got their info stored into
+// Sigma transaction info, added to the CBlock to ensure sigma mint/spend transactions got their info stored into
 // index
 class CSigmaTxInfo {
 public:
-    // all the zerocoin transactions encountered so far
+    // all the sigma transactions encountered so far
     std::set<uint256> zcTransactions;
 
     // Vector of <pubCoin> for all the mints.
@@ -45,6 +45,16 @@ public:
 };
 
 bool IsSigmaAllowed();
+bool IsSigmaAllowed(int height);
+
+bool IsRemintWindow(int height);
+
+bool CheckSigmaSpendSerial(
+        CValidationState &state,
+        CSigmaTxInfo *sigmaTxInfo,
+        const Scalar &serial,
+        int nHeight,
+        bool fConnectTip);
 
 secp_primitives::GroupElement ParseSigmaMintScript(const CScript& script);
 std::pair<std::unique_ptr<sigma::CoinSpend>, uint32_t> ParseSigmaSpend(const CTxIn& in);
@@ -53,13 +63,14 @@ CAmount GetSpendAmount(const CTransaction& tx);
 bool CheckSigmaBlock(CValidationState &state, const CBlock& block);
 
 bool CheckSigmaTransaction(
-    const CTransaction &tx,
+  const CTransaction &tx,
 	CValidationState &state,
 	uint256 hashTx,
 	bool isVerifyDB,
 	int nHeight,
-    bool isCheckWallet,
-    CSigmaTxInfo *sigmaTxInfo);
+  bool isCheckWallet,
+  bool fStatefulSigmaCheck,
+  CSigmaTxInfo *sigmaTxInfo);
 
 void DisconnectTipSigma(CBlock &block, CBlockIndex *pindexDelete);
 
@@ -87,7 +98,7 @@ CAmount GetSigmaSpendInput(const CTransaction &tx);
  * State of minted/spent coins as extracted from the index
  */
 class CSigmaState {
-friend bool BuildSigmaStateFromIndex(CChain *, set<CBlockIndex *> &);
+friend bool BuildSigmaStateFromIndex(CChain *, std::set<CBlockIndex *> &);
 public:
     // First and last block where mint with given denomination and id was seen
     struct SigmaCoinGroupInfo {
@@ -148,6 +159,12 @@ public:
         uint256& blockHash_out,
         std::vector<sigma::PublicCoin>& coins_out);
 
+    void GetAnonymitySet(
+            sigma::CoinDenomination denomination,
+            int coinGroupID,
+            bool fStartSigmaBlacklist,
+            std::vector<GroupElement>& coins_out);
+
     // Return height of mint transaction and id of minted coin
     std::pair<int, int> GetMintedCoinHeightAndId(const sigma::PublicCoin& pubCoin);
 
@@ -156,16 +173,20 @@ public:
 
     // Check if there is a conflicting tx in the blockchain or mempool
     bool CanAddSpendToMempool(const Scalar& coinSerial);
+
     bool CanAddMintToMempool(const GroupElement& pubCoin);
 
     // Add spend into the mempool.
     // Check if there is a coin with such serial in either blockchain or mempool
     bool AddSpendToMempool(const Scalar &coinSerial, uint256 txHash);
-    void AddMintsToMempool(const vector<GroupElement>& pubCoins);
-    void RemoveMintFromMempool(const GroupElement& pubCoin);
 
+    // Add spend into the mempool.
     // Check if there is a coin with such serial in either blockchain or mempool
-    bool AddSpendToMempool(const vector<Scalar> &coinSerials, uint256 txHash);
+    bool AddSpendToMempool(const std::vector<Scalar> &coinSerials, uint256 txHash);
+
+    void AddMintsToMempool(const std::vector<GroupElement>& pubCoins);
+
+    void RemoveMintFromMempool(const GroupElement& pubCoin);
 
     // Get conflicting tx hash by coin serial number
     uint256 GetMempoolConflictingTxHash(const Scalar& coinSerial);
@@ -173,13 +194,15 @@ public:
     // Remove spend from the mempool (usually as the result of adding tx to the block)
     void RemoveSpendFromMempool(const Scalar& coinSerial);
 
+
+
     static CSigmaState* GetState();
 
     int GetLatestCoinID(sigma::CoinDenomination denomination) const;
 
     mint_info_container const & GetMints() const;
     spend_info_container const & GetSpends() const;
-    std::unordered_map<pair<CoinDenomination, int>, SigmaCoinGroupInfo, pairhash> const & GetCoinGroups() const ;
+    std::unordered_map<std::pair<CoinDenomination, int>, SigmaCoinGroupInfo, pairhash> const & GetCoinGroups() const ;
     std::unordered_map<CoinDenomination, int> const & GetLatestCoinIds() const;
     std::unordered_map<Scalar, uint256, sigma::CScalarHash> const & GetMempoolCoinSerials() const;
 
@@ -189,14 +212,16 @@ public:
 
 private:
     // Collection of coin groups. Map from <denomination,id> to SigmaCoinGroupInfo structure
-    std::unordered_map<pair<CoinDenomination, int>, SigmaCoinGroupInfo, pairhash> coinGroups;
+    std::unordered_map<std::pair<CoinDenomination, int>, SigmaCoinGroupInfo, pairhash> coinGroups;
 
     // Latest IDs of coins by denomination
     std::unordered_map<CoinDenomination, int> latestCoinIds;
 
     // serials of spends currently in the mempool mapped to tx hashes
     std::unordered_map<Scalar, uint256, CScalarHash> mempoolCoinSerials;
+
     std::unordered_set<GroupElement> mempoolMints;
+
     std::atomic<bool> surgeCondition;
 
     struct Containers {
@@ -213,7 +238,6 @@ private:
         mint_info_container const & GetMints() const;
         spend_info_container const & GetSpends() const;
         bool IsSurgeCondition() const;
-
     private:
         // Set of all minted pubCoin values, keyed by the public coin.
         // Used for checking if the given coin already exists.
@@ -229,7 +253,7 @@ private:
         void CheckSurgeCondition(int groupId, CoinDenomination denom);
 
         friend class sigma_mintspend_many::sigma_mintspend_many;
-        friend class zerocoin_tests3_v3::zerocoin_mintspend_v3;
+        friend class privcoin_tests3_v3::privcoin_mintspend_v3;
         friend class sigma_mintspend::sigma_mintspend_test;
         friend class sigma_partialspend_mempool_tests::partialspend;
     };
@@ -237,7 +261,7 @@ private:
     Containers containers;
 
     friend class sigma_mintspend_many::sigma_mintspend_many;
-    friend class zerocoin_tests3_v3::zerocoin_mintspend_v3;
+    friend class privcoin_tests3_v3::privcoin_mintspend_v3;
     friend class sigma_mintspend::sigma_mintspend_test;
     friend class sigma_partialspend_mempool_tests::partialspend;
 };

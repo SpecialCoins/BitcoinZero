@@ -64,7 +64,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Synchronizing with network...</source>
         <translation>Sincronizando con la red...</translation>
@@ -126,8 +126,8 @@
         <translation>Abrir &amp;URL...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>Enviando monedas a una dirección de BitcoinZero</translation>
+        <source>Send coins to a address</source>
+        <translation>Enviando monedas a una dirección de BZX</translation>
     </message>
     <message>
         <source>Change the passphrase used for wallet encryption</source>
@@ -146,8 +146,8 @@
         <translation>&amp;Verificar Mensaje...</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -210,6 +210,9 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     </context>
 <context>
@@ -226,6 +229,9 @@
     </context>
 <context>
     <name>QObject</name>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -288,10 +294,10 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
-        <source>BitcoinZero Core</source>
-        <translation>BitcoinZero Core</translation>
+        <source>BZX Core</source>
+        <translation>BZX Core</translation>
     </message>
     <message>
         <source>Insufficient funds</source>

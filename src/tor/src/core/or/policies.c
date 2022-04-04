@@ -1,6 +1,6 @@
 /* Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -31,6 +31,7 @@
 #include "ht.h"
 #include "lib/crypt_ops/crypto_rand.h"
 #include "lib/encoding/confline.h"
+#include "trunnel/ed25519_cert.h"
 
 #include "core/or/addr_policy_st.h"
 #include "feature/dirclient/dir_server_st.h"
@@ -932,49 +933,6 @@ fascist_firewall_choose_address_ipv4h(uint32_t ipv4h_addr,
                                        pref_ipv6, ap);
 }
 
-/* Some microdescriptor consensus methods have no IPv6 addresses in rs: they
- * are in the microdescriptors. For these consensus methods, we can't rely on
- * the node's IPv6 address until its microdescriptor is available (when using
- * microdescs).
- * But for bridges, rewrite_node_address_for_bridge() updates node->ri with
- * the configured address, so we can trust bridge addresses.
- * (Bridges could gain an IPv6 address if their microdescriptor arrives, but
- * this will never be their preferred address: that is in the config.)
- * Returns true if the node needs a microdescriptor for its IPv6 address, and
- * false if the addresses in the node are already up-to-date.
- */
-static int
-node_awaiting_ipv6(const or_options_t* options, const node_t *node)
-{
-  tor_assert(node);
-
-  /* There's no point waiting for an IPv6 address if we'd never use it */
-  if (!fascist_firewall_use_ipv6(options)) {
-    return 0;
-  }
-
-  /* If the node has an IPv6 address, we're not waiting */
-  if (node_has_ipv6_addr(node)) {
-    return 0;
-  }
-
-  /* If the current consensus method and flavour has IPv6 addresses, we're not
-   * waiting */
-  if (networkstatus_consensus_has_ipv6(options)) {
-    return 0;
-  }
-
-  /* Bridge clients never use the address from a bridge's md, so there's no
-   * need to wait for it. */
-  if (node_is_a_configured_bridge(node)) {
-    return 0;
-  }
-
-  /* We are waiting if we_use_microdescriptors_for_circuits() and we have no
-   * md. */
-  return (!node->md && we_use_microdescriptors_for_circuits(options));
-}
-
 /** Like fascist_firewall_choose_address_base(), but takes <b>rs</b>.
  * Consults the corresponding node, then falls back to rs if node is NULL.
  * This should only happen when there's no valid consensus, and rs doesn't
@@ -997,7 +955,7 @@ fascist_firewall_choose_address_rs(const routerstatus_t *rs,
   const or_options_t *options = get_options();
   const node_t *node = node_get_by_id(rs->identity_digest);
 
-  if (node && !node_awaiting_ipv6(options, node)) {
+  if (node) {
     fascist_firewall_choose_address_node(node, fw_connection, pref_only, ap);
   } else {
     /* There's no node-specific IPv6 preference, so use the generic IPv6
@@ -1013,6 +971,83 @@ fascist_firewall_choose_address_rs(const routerstatus_t *rs,
                                           rs->dir_port, fw_connection,
                                           pref_only, pref_ipv6, ap);
   }
+}
+
+/** Like fascist_firewall_choose_address_base(), but takes in a smartlist
+ * <b>lspecs</b> consisting of one or more link specifiers. We assume
+ * fw_connection is FIREWALL_OR_CONNECTION as link specifiers cannot
+ * contain DirPorts.
+ */
+void
+fascist_firewall_choose_address_ls(const smartlist_t *lspecs,
+                                   int pref_only, tor_addr_port_t* ap)
+{
+  int have_v4 = 0, have_v6 = 0;
+  uint16_t port_v4 = 0, port_v6 = 0;
+  tor_addr_t addr_v4, addr_v6;
+
+  tor_assert(ap);
+
+  if (lspecs == NULL) {
+    log_warn(LD_BUG, "Unknown or missing link specifiers");
+    return;
+  }
+  if (smartlist_len(lspecs) == 0) {
+    log_warn(LD_PROTOCOL, "Link specifiers are empty");
+    return;
+  }
+
+  tor_addr_make_null(&ap->addr, AF_UNSPEC);
+  ap->port = 0;
+
+  tor_addr_make_null(&addr_v4, AF_INET);
+  tor_addr_make_null(&addr_v6, AF_INET6);
+
+  SMARTLIST_FOREACH_BEGIN(lspecs, const link_specifier_t *, ls) {
+    switch (link_specifier_get_ls_type(ls)) {
+    case LS_IPV4:
+      /* Skip if we already seen a v4. */
+      if (have_v4) continue;
+      tor_addr_from_ipv4h(&addr_v4,
+                          link_specifier_get_un_ipv4_addr(ls));
+      port_v4 = link_specifier_get_un_ipv4_port(ls);
+      have_v4 = 1;
+      break;
+    case LS_IPV6:
+      /* Skip if we already seen a v6, or deliberately skip it if we're not a
+       * direct connection. */
+      if (have_v6) continue;
+      tor_addr_from_ipv6_bytes(&addr_v6,
+          (const char *) link_specifier_getconstarray_un_ipv6_addr(ls));
+      port_v6 = link_specifier_get_un_ipv6_port(ls);
+      have_v6 = 1;
+      break;
+    default:
+      /* Ignore unknown. */
+      break;
+    }
+  } SMARTLIST_FOREACH_END(ls);
+
+  /* If we don't have IPv4 or IPv6 in link specifiers, log a bug and return. */
+  if (!have_v4 && !have_v6) {
+    if (!have_v6) {
+      log_warn(LD_PROTOCOL, "None of our link specifiers have IPv4 or IPv6");
+    } else {
+      log_warn(LD_PROTOCOL, "None of our link specifiers have IPv4");
+    }
+    return;
+  }
+
+  /* Here, don't check for DirPorts as link specifiers are only used for
+   * ORPorts. */
+  const or_options_t *options = get_options();
+  int pref_ipv6 = fascist_firewall_prefer_ipv6_orport(options);
+  /* Assume that the DirPorts are zero as link specifiers only use ORPorts. */
+  fascist_firewall_choose_address_base(&addr_v4, port_v4, 0,
+                                       &addr_v6, port_v6, 0,
+                                       FIREWALL_OR_CONNECTION,
+                                       pref_only, pref_ipv6,
+                                       ap);
 }
 
 /** Like fascist_firewall_choose_address_base(), but takes <b>node</b>, and
@@ -1033,17 +1068,6 @@ fascist_firewall_choose_address_node(const node_t *node,
   }
 
   node_assert_ok(node);
-  /* Calling fascist_firewall_choose_address_node() when the node is missing
-   * IPv6 information breaks IPv6-only clients.
-   * If the node is a hard-coded fallback directory or authority, call
-   * fascist_firewall_choose_address_rs() on the fake (hard-coded) routerstatus
-   * for the node.
-   * If it is not hard-coded, check that the node has a microdescriptor, full
-   * descriptor (routerinfo), or is one of our configured bridges before
-   * calling this function. */
-  if (BUG(node_awaiting_ipv6(get_options(), node))) {
-    return;
-  }
 
   const int pref_ipv6_node = (fw_connection == FIREWALL_OR_CONNECTION
                               ? node_ipv6_or_preferred(node)
@@ -1164,6 +1188,15 @@ authdir_policy_badexit_address(uint32_t addr, uint16_t port)
 #define REJECT(arg) \
   STMT_BEGIN *msg = tor_strdup(arg); goto err; STMT_END
 
+/** Check <b>or_options</b> to determine whether or not we are using the
+ * default options for exit policy. Return true if so, false otherwise. */
+static int
+policy_using_default_exit_options(const or_options_t *or_options)
+{
+  return (or_options->ExitPolicy == NULL && or_options->ExitRelay == -1 &&
+          or_options->ReducedExitPolicy == 0 && or_options->IPv6Exit == 0);
+}
+
 /** Config helper: If there's any problem with the policy configuration
  * options in <b>options</b>, return -1 and set <b>msg</b> to a newly
  * allocated description of the error. Else return 0. */
@@ -1182,9 +1215,8 @@ validate_addr_policies(const or_options_t *options, char **msg)
 
   static int warned_about_nonexit = 0;
 
-  if (public_server_mode(options) &&
-      !warned_about_nonexit && options->ExitPolicy == NULL &&
-      options->ExitRelay == -1 && options->ReducedExitPolicy == 0) {
+  if (public_server_mode(options) && !warned_about_nonexit &&
+      policy_using_default_exit_options(options)) {
     warned_about_nonexit = 1;
     log_notice(LD_CONFIG, "By default, Tor does not run as an exit relay. "
                "If you want to be an exit relay, "
@@ -2141,9 +2173,9 @@ policies_parse_exit_policy_from_options(const or_options_t *or_options,
   int rv = 0;
 
   /* Short-circuit for non-exit relays, or for relays where we didn't specify
-   * ExitPolicy or ReducedExitPolicy and ExitRelay is auto. */
-  if (or_options->ExitRelay == 0 || (or_options->ExitPolicy == NULL &&
-      or_options->ExitRelay == -1 && or_options->ReducedExitPolicy == 0)) {
+   * ExitPolicy or ReducedExitPolicy or IPv6Exit and ExitRelay is auto. */
+  if (or_options->ExitRelay == 0 ||
+      policy_using_default_exit_options(or_options)) {
     append_exit_policy_string(result, "reject *4:*");
     append_exit_policy_string(result, "reject *6:*");
     return 0;
@@ -2756,7 +2788,7 @@ parse_short_policy(const char *summary)
     switch (*next) {
       case ',':
         ++next;
-        /* fall through */
+        FALLTHROUGH;
       case '\0':
         high = low;
         break;

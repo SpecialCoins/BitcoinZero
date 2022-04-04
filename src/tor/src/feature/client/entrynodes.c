@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -114,7 +114,7 @@
 
 #include "core/or/or.h"
 #include "app/config/config.h"
-#include "app/config/confparse.h"
+#include "lib/confmgt/confmgt.h"
 #include "app/config/statefile.h"
 #include "core/mainloop/connection.h"
 #include "core/mainloop/mainloop.h"
@@ -128,7 +128,7 @@
 #include "feature/client/circpathbias.h"
 #include "feature/client/entrynodes.h"
 #include "feature/client/transports.h"
-#include "feature/control/control.h"
+#include "feature/control/control_events.h"
 #include "feature/dircommon/directory.h"
 #include "feature/nodelist/describe.h"
 #include "feature/nodelist/microdesc.h"
@@ -1038,7 +1038,7 @@ get_max_sample_size(guard_selection_t *gs,
  * Return a smartlist of the all the guards that are not currently
  * members of the sample (GUARDS - SAMPLED_GUARDS).  The elements of
  * this list are node_t pointers in the non-bridge case, and
- * bridge_info_t pointers in the bridge case.  Set *<b>n_guards_out/b>
+ * bridge_info_t pointers in the bridge case.  Set *<b>n_guards_out</b>
  * to the number of guards that we found in GUARDS, including those
  * that were already sampled.
  */
@@ -2263,7 +2263,7 @@ entry_guards_note_guard_success(guard_selection_t *gs,
       break;
     default:
       tor_assert_nonfatal_unreached();
-      /* Fall through. */
+      FALLTHROUGH;
     case GUARD_CIRC_STATE_USABLE_IF_NO_BETTER_GUARD:
       if (guard->is_primary) {
         /* XXXX #20832 -- I don't actually like this logic. It seems to make
@@ -2611,6 +2611,10 @@ entry_guards_upgrade_waiting_circuits(guard_selection_t *gs,
     entry_guard_t *guard = entry_guard_handle_get(state->guard);
     if (!guard || guard->in_selection != gs)
       continue;
+    if (TO_CIRCUIT(circ)->marked_for_close) {
+      /* Don't consider any marked for close circuits. */
+      continue;
+    }
 
     smartlist_add(all_circuits, circ);
   } SMARTLIST_FOREACH_END(circ);
@@ -3300,6 +3304,9 @@ num_bridges_usable,(int use_maybe_reachable))
   }
 
   SMARTLIST_FOREACH_BEGIN(gs->sampled_entry_guards, entry_guard_t *, guard) {
+    /* Not a bridge, or not one we are configured to be able to use. */
+    if (! guard->is_filtered_guard)
+      continue;
     /* Definitely not usable */
     if (guard->is_reachable == GUARD_REACHABLE_NO)
       continue;
@@ -3758,7 +3765,8 @@ guard_selection_get_err_str_if_dir_info_missing(guard_selection_t *gs,
 
   /* otherwise return a helpful error string */
   tor_asprintf(&ret_str, "We're missing descriptors for %d/%d of our "
-               "primary entry guards (total %sdescriptors: %d/%d).",
+               "primary entry guards (total %sdescriptors: %d/%d). "
+               "That's ok. We will try to fetch missing descriptors soon.",
                n_missing_descriptors, num_primary_to_check,
                using_mds?"micro":"", num_present, num_usable);
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2019, The Tor Project, Inc. */
+/* Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -11,4 +11,4 @@
 
 extern const struct subsys_fns_t sys_btrack;
 
-#endif  /* defined(TOR_BTRACK_SYS_H) */
+#endif /* !defined(TOR_BTRACK_SYS_H) */

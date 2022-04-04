@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,7 +13,7 @@
 #include "guiutil.h"
 #include "optionsmodel.h"
 
-#include "main.h" // for DEFAULT_SCRIPTCHECK_THREADS and MAX_SCRIPTCHECK_THREADS
+#include "validation.h" // for DEFAULT_SCRIPTCHECK_THREADS and MAX_SCRIPTCHECK_THREADS
 #include "netbase.h"
 #include "txdb.h" // for -dbcache defaults
 
@@ -135,22 +135,22 @@ OptionsDialog::~OptionsDialog()
     delete ui;
 }
 
-void OptionsDialog::setModel(OptionsModel *model)
+void OptionsDialog::setModel(OptionsModel *_model)
 {
-    this->model = model;
+    this->model = _model;
 
-    if(model)
+    if(_model)
     {
         /* check if client restart is needed and show persistent message */
-        if (model->isRestartRequired())
+        if (_model->isRestartRequired())
             showRestartWarning(true);
 
-        QString strLabel = model->getOverriddenByCommandLine();
+        QString strLabel = _model->getOverriddenByCommandLine();
         if (strLabel.isEmpty())
             strLabel = tr("none");
         ui->overriddenByCommandLineLabel->setText(strLabel);
 
-        mapper->setModel(model);
+        mapper->setModel(_model);
         setMapper();
         mapper->toFirst();
 
@@ -164,6 +164,7 @@ void OptionsDialog::setModel(OptionsModel *model)
     connect(ui->threadsScriptVerif, SIGNAL(valueChanged(int)), this, SLOT(showRestartWarning()));
     /* Wallet */
     connect(ui->spendZeroConfChange, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
+    connect(ui->reindexLelantus, SIGNAL(clicked(bool)), this, SLOT(handleEnabledZapChanged()));
     /* Network */
     connect(ui->allowIncoming, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
     connect(ui->connectSocks, SIGNAL(clicked(bool)), this, SLOT(showRestartWarning()));
@@ -182,7 +183,12 @@ void OptionsDialog::setMapper()
 
     /* Wallet */
     mapper->addMapping(ui->spendZeroConfChange, OptionsModel::SpendZeroConfChange);
+    mapper->addMapping(ui->reindexLelantus, OptionsModel::ReindexLelantus);
     mapper->addMapping(ui->coinControlFeatures, OptionsModel::CoinControlFeatures);
+
+    /* Lelantus */
+    mapper->addMapping(ui->autoAnonymize, OptionsModel::AutoAnonymize);
+    mapper->addMapping(ui->lelantusPage, OptionsModel::LelantusPage);
 
     /* Network */
     mapper->addMapping(ui->mapPortUpnp, OptionsModel::MapPortUPnP);
@@ -256,6 +262,23 @@ void OptionsDialog::on_hideTrayIcon_stateChanged(int fState)
         ui->minimizeToTray->setEnabled(true);
     }
 }
+void OptionsDialog::handleEnabledZapChanged(){
+	QMessageBox msgBox;
+
+	if(ui->reindexLelantus->isChecked()){
+        QMessageBox::StandardButton retval = QMessageBox::warning(this, tr("Confirm Reindex Lelantus"),
+                     tr("Warning: On restart, this setting will wipe your transaction list, reindex the blockchain, and restore the list from the seed in your wallet. This will likely take a few hours. Are you sure?"),
+                     QMessageBox::Yes|QMessageBox::Cancel,
+                     QMessageBox::Cancel);
+        if(retval == QMessageBox::Cancel) {
+            ui->reindexLelantus->setChecked(false);
+        }else {
+            showRestartWarning();
+        }
+    }else {
+        clearStatusLabel();
+    }
+}
 
 void OptionsDialog::showRestartWarning(bool fPersistent)
 {
@@ -277,6 +300,9 @@ void OptionsDialog::showRestartWarning(bool fPersistent)
 void OptionsDialog::clearStatusLabel()
 {
     ui->statusLabel->clear();
+    if (model && model->isRestartRequired()) {
+        showRestartWarning(true);
+    }
 }
 
 void OptionsDialog::updateProxyValidationState()
@@ -286,7 +312,7 @@ void OptionsDialog::updateProxyValidationState()
     if (pUiProxyIp->isValid() && (!ui->proxyPort->isEnabled() || ui->proxyPort->text().toInt() > 0) && (!ui->proxyPortTor->isEnabled() || ui->proxyPortTor->text().toInt() > 0))
     {
         setOkButtonState(otherProxyWidget->isValid()); //only enable ok button if both proxys are valid
-        ui->statusLabel->clear();
+        clearStatusLabel();
     }
     else
     {
@@ -327,7 +353,8 @@ QValidator::State ProxyAddressValidator::validate(QString &input, int &pos) cons
 {
     Q_UNUSED(pos);
     // Validate the proxy
-    proxyType addrProxy = proxyType(CService(input.toStdString(), 9050), true);
+    CService serv(LookupNumeric(input.toStdString().c_str(), 9050));
+    proxyType addrProxy = proxyType(serv, true);
     if (addrProxy.IsValid())
         return QValidator::Acceptable;
 

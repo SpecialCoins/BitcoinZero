@@ -1,7 +1,7 @@
 /* Copyright (c) 2001, Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -66,12 +66,37 @@ void crypto_fast_rng_free_(crypto_fast_rng_t *);
 
 unsigned crypto_fast_rng_get_uint(crypto_fast_rng_t *rng, unsigned limit);
 uint64_t crypto_fast_rng_get_uint64(crypto_fast_rng_t *rng, uint64_t limit);
+uint32_t crypto_fast_rng_get_u32(crypto_fast_rng_t *rng);
+uint64_t crypto_fast_rng_uint64_range(crypto_fast_rng_t *rng,
+                                      uint64_t min, uint64_t max);
 double crypto_fast_rng_get_double(crypto_fast_rng_t *rng);
+
+/**
+ * Using the fast_rng <b>rng</b>, yield true with probability
+ * 1/<b>n</b>. Otherwise yield false.
+ *
+ * <b>n</b> must not be zero.
+ **/
+#define crypto_fast_rng_one_in_n(rng, n)        \
+  (0 == (crypto_fast_rng_get_uint((rng), (n))))
+
+crypto_fast_rng_t *get_thread_fast_rng(void);
+
+#ifdef CRYPTO_PRIVATE
+/* These are only used from crypto_init.c */
+void destroy_thread_fast_rng(void);
+void crypto_rand_fast_init(void);
+void crypto_rand_fast_shutdown(void);
+#endif /* defined(CRYPTO_PRIVATE) */
 
 #if defined(TOR_UNIT_TESTS)
 /* Used for white-box testing */
 size_t crypto_fast_rng_get_bytes_used_per_stream(void);
-#endif
+/* For deterministic prng implementations */
+void crypto_fast_rng_disable_reseed(crypto_fast_rng_t *rng);
+/* To override the prng for testing. */
+crypto_fast_rng_t *crypto_replace_thread_fast_rng(crypto_fast_rng_t *rng);
+#endif /* defined(TOR_UNIT_TESTS) */
 
 #ifdef CRYPTO_RAND_PRIVATE
 

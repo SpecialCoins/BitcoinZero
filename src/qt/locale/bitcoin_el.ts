@@ -28,7 +28,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Quit application</source>
         <translation>Κλείσιμο εφαρμογής</translation>
@@ -82,6 +82,9 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     </context>
 <context>
@@ -102,6 +105,9 @@
     </context>
 <context>
     <name>QObject</name>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -184,7 +190,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Insufficient funds</source>
         <translation>Κεφάλαια μη επαρκή</translation>

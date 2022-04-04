@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabMain">
       <attribute name="title">
@@ -163,6 +163,39 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="reindexLelantus">
+            <property name="toolTip">
+             <string>Restore all Lelantus transactions following a reindex.</string>
+            </property>
+            <property name="text">
+             <string>&amp;Reindex Lelantus</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="lelantusGroupBox">
+         <property name="title">
+          <string>Lelantus</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QCheckBox" name="autoAnonymize">
+            <property name="text">
+             <string>Enable &amp;auto-anonymize features</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="lelantusPage">
+            <property name="text">
+             <string>Enable &amp;lelantus manual-anonymize page</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -189,7 +222,7 @@
        <item>
         <widget class="QCheckBox" name="mapPortUpnp">
          <property name="toolTip">
-          <string>Automatically open the Bitcoin client port on the router. This only works when your router supports UPnP and it is enabled.</string>
+          <string>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</string>
          </property>
          <property name="text">
           <string>Map port using &amp;UPnP</string>
@@ -209,7 +242,7 @@
        <item>
         <widget class="QCheckBox" name="connectSocks">
          <property name="toolTip">
-          <string>Connect to the Bitcoin network through a SOCKS5 proxy.</string>
+          <string>Connect to the BZX network through a SOCKS5 proxy.</string>
          </property>
          <property name="text">
           <string>&amp;Connect through SOCKS5 proxy (default proxy):</string>
@@ -396,7 +429,7 @@
        <item>
         <widget class="QCheckBox" name="connectSocksTor">
          <property name="toolTip">
-          <string>Connect to the Bitcoin network through a separate SOCKS5 proxy for Tor hidden services.</string>
+          <string>Connect to the BZX network through a separate SOCKS5 proxy for Tor hidden services.</string>
          </property>
          <property name="text">
           <string>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</string>

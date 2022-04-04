@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Bitcoin Core developers
+// Copyright (c) 2015-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -22,10 +22,10 @@ static const struct {
     /** Extra padding/spacing in transactionview */
     const bool useExtraSpacing;
 } platform_styles[] = {
-    {"macosx", false, false, true},
-    {"windows", true, false, false},
+    {"macosx", false, true, true},
+    {"windows", false, true, false},
     /* Other: linux, unix, ... */
-    {"other", true, true, false}
+    {"other", false, true, false}
 };
 static const unsigned platform_styles_count = sizeof(platform_styles)/sizeof(*platform_styles);
 
@@ -33,6 +33,20 @@ namespace {
 /* Local functions for colorizing single-color images */
 
 void MakeSingleColorImage(QImage& img, const QColor& colorbase)
+{
+    img = img.convertToFormat(QImage::Format_ARGB32);
+    for (int x = img.width(); x--; )
+    {
+        for (int y = img.height(); y--; )
+        {
+            const QRgb rgb = img.pixel(x, y);
+            // set default pink
+            img.setPixel(x, y, qRgba(111, 7, 113, qAlpha(rgb))); //#6f0771
+        }
+    }
+}
+
+void MakeLockColorImage(QImage& img, const QColor& colorbase)
 {
     img = img.convertToFormat(QImage::Format_ARGB32);
     for (int x = img.width(); x--; )
@@ -58,10 +72,18 @@ QIcon ColorizeIcon(const QIcon& ico, const QColor& colorbase)
     return new_ico;
 }
 
+
 QImage ColorizeImage(const QString& filename, const QColor& colorbase)
 {
     QImage img(filename);
     MakeSingleColorImage(img, colorbase);
+    return img;
+}
+
+QImage ColorizeLockImage(const QString& filename, const QColor& colorbase)
+{
+    QImage img(filename);
+    MakeLockColorImage(img, colorbase);
     return img;
 }
 
@@ -70,14 +92,19 @@ QIcon ColorizeIcon(const QString& filename, const QColor& colorbase)
     return QIcon(QPixmap::fromImage(ColorizeImage(filename, colorbase)));
 }
 
+QIcon ColorizeLockIcon(const QString& filename, const QColor& colorbase)
+{
+    return QIcon(QPixmap::fromImage(ColorizeLockImage(filename, colorbase)));
+}
+
 }
 
 
-PlatformStyle::PlatformStyle(const QString &name, bool imagesOnButtons, bool colorizeIcons, bool useExtraSpacing):
-    name(name),
-    imagesOnButtons(imagesOnButtons),
-    colorizeIcons(colorizeIcons),
-    useExtraSpacing(useExtraSpacing),
+PlatformStyle::PlatformStyle(const QString &_name, bool _imagesOnButtons, bool _colorizeIcons, bool _useExtraSpacing):
+    name(_name),
+    imagesOnButtons(_imagesOnButtons),
+    colorizeIcons(_colorizeIcons),
+    useExtraSpacing(_useExtraSpacing),
     singleColor(0,0,0),
     textColor(0,0,0)
 {
@@ -94,8 +121,8 @@ PlatformStyle::PlatformStyle(const QString &name, bool imagesOnButtons, bool col
             colorbase = colorHighlightFg;
         singleColor = colorbase;
     }
-    // Determine text color
-    textColor = QColor(QApplication::palette().color(QPalette::WindowText));
+    // Determine text color // customized in stylesheet
+    textColor = QColor(0,0,0);
 }
 
 QImage PlatformStyle::SingleColorImage(const QString& filename) const
@@ -117,6 +144,13 @@ QIcon PlatformStyle::SingleColorIcon(const QIcon& icon) const
     if (!colorizeIcons)
         return icon;
     return ColorizeIcon(icon, SingleColor());
+}
+
+QIcon PlatformStyle::LockIcon(const QString& filename) const
+{
+    if (!colorizeIcons)
+        return QIcon(filename);
+    return ColorizeLockIcon(filename, SingleColor());
 }
 
 QIcon PlatformStyle::TextColorIcon(const QString& filename) const

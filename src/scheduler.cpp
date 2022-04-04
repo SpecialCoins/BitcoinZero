@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The Bitcoin Core developers
+// Copyright (c) 2015-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,7 +7,7 @@
 #include "reverselock.h"
 
 #include <assert.h>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <utility>
 
 CScheduler::CScheduler() : nThreadsServicingQueue(0), stopRequested(false), stopWhenEmpty(false)

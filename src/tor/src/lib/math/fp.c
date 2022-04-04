@@ -1,6 +1,6 @@
 /* Copyright (c) 2003, Roger Dingledine
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -62,16 +62,20 @@ clamp_double_to_int64(double number)
 {
   int exponent;
 
-#if defined(MINGW_ANY) && GCC_VERSION >= 409
+#if (defined(MINGW_ANY)||defined(__FreeBSD__)) && GCC_VERSION >= 409
 /*
   Mingw's math.h uses gcc's __builtin_choose_expr() facility to declare
   isnan, isfinite, and signbit.  But as implemented in at least some
   versions of gcc, __builtin_choose_expr() can generate type warnings
   even from branches that are not taken.  So, suppress those warnings.
+
+  FreeBSD's math.h uses an __fp_type_select() macro, which dispatches
+  based on sizeof -- again, this can generate type warnings from
+  branches that are not taken.
 */
 #define PROBLEMATIC_FLOAT_CONVERSION_WARNING
-DISABLE_GCC_WARNING(float-conversion)
-#endif /* defined(MINGW_ANY) && GCC_VERSION >= 409 */
+DISABLE_GCC_WARNING("-Wfloat-conversion")
+#endif /* (defined(MINGW_ANY)||defined(__FreeBSD__)) && GCC_VERSION >= 409 */
 
 /*
   With clang 4.0 we apparently run into "double promotion" warnings here,
@@ -80,7 +84,7 @@ DISABLE_GCC_WARNING(float-conversion)
 #if defined(__clang__)
 #if __has_warning("-Wdouble-promotion")
 #define PROBLEMATIC_DOUBLE_PROMOTION_WARNING
-DISABLE_GCC_WARNING(double-promotion)
+DISABLE_GCC_WARNING("-Wdouble-promotion")
 #endif
 #endif /* defined(__clang__) */
 
@@ -111,10 +115,10 @@ DISABLE_GCC_WARNING(double-promotion)
   return signbit(number) ? INT64_MIN : INT64_MAX;
 
 #ifdef PROBLEMATIC_DOUBLE_PROMOTION_WARNING
-ENABLE_GCC_WARNING(double-promotion)
+ENABLE_GCC_WARNING("-Wdouble-promotion")
 #endif
 #ifdef PROBLEMATIC_FLOAT_CONVERSION_WARNING
-ENABLE_GCC_WARNING(float-conversion)
+ENABLE_GCC_WARNING("-Wfloat-conversion")
 #endif
 }
 
@@ -123,22 +127,17 @@ int
 tor_isinf(double x)
 {
   /* Same as above, work around the "double promotion" warnings */
-#if defined(MINGW_ANY) && GCC_VERSION >= 409
-#define PROBLEMATIC_FLOAT_CONVERSION_WARNING
-DISABLE_GCC_WARNING(float-conversion)
-#endif /* defined(MINGW_ANY) && GCC_VERSION >= 409 */
-#if defined(__clang__)
-#if __has_warning("-Wdouble-promotion")
-#define PROBLEMATIC_DOUBLE_PROMOTION_WARNING
-DISABLE_GCC_WARNING(double-promotion)
+#ifdef PROBLEMATIC_FLOAT_CONVERSION_WARNING
+DISABLE_GCC_WARNING("-Wfloat-conversion")
 #endif
-#endif /* defined(__clang__) */
+#ifdef PROBLEMATIC_DOUBLE_PROMOTION_WARNING
+DISABLE_GCC_WARNING("-Wdouble-promotion")
+#endif
   return isinf(x);
 #ifdef PROBLEMATIC_DOUBLE_PROMOTION_WARNING
-ENABLE_GCC_WARNING(double-promotion)
+ENABLE_GCC_WARNING("-Wdouble-promotion")
 #endif
 #ifdef PROBLEMATIC_FLOAT_CONVERSION_WARNING
-ENABLE_GCC_WARNING(float-conversion)
+ENABLE_GCC_WARNING("-Wfloat-conversion")
 #endif
 }
-

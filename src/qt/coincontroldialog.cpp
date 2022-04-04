@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,9 +13,10 @@
 #include "txmempool.h"
 #include "walletmodel.h"
 
-#include "coincontrol.h"
+#include "wallet/coincontrol.h"
 #include "init.h"
-#include "main.h" // For minRelayTxFee
+#include "policy/policy.h"
+#include "validation.h" // For mempool
 #include "wallet/wallet.h"
 
 #include <boost/assign/list_of.hpp> // for 'map_list_of()'
@@ -42,11 +43,12 @@ bool CCoinControlWidgetItem::operator<(const QTreeWidgetItem &other) const {
     return QTreeWidgetItem::operator<(other);
 }
 
-CoinControlDialog::CoinControlDialog(const PlatformStyle *platformStyle, QWidget *parent) :
+CoinControlDialog::CoinControlDialog(bool anonymousMode, const PlatformStyle *_platformStyle, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CoinControlDialog),
     model(0),
-    platformStyle(platformStyle)
+    platformStyle(_platformStyle),
+    anonymousMode(anonymousMode)
 {
     ui->setupUi(this);
 
@@ -83,7 +85,6 @@ CoinControlDialog::CoinControlDialog(const PlatformStyle *platformStyle, QWidget
     QAction *clipboardFeeAction = new QAction(tr("Copy fee"), this);
     QAction *clipboardAfterFeeAction = new QAction(tr("Copy after fee"), this);
     QAction *clipboardBytesAction = new QAction(tr("Copy bytes"), this);
-    QAction *clipboardPriorityAction = new QAction(tr("Copy priority"), this);
     QAction *clipboardLowOutputAction = new QAction(tr("Copy dust"), this);
     QAction *clipboardChangeAction = new QAction(tr("Copy change"), this);
 
@@ -92,7 +93,6 @@ CoinControlDialog::CoinControlDialog(const PlatformStyle *platformStyle, QWidget
     connect(clipboardFeeAction, SIGNAL(triggered()), this, SLOT(clipboardFee()));
     connect(clipboardAfterFeeAction, SIGNAL(triggered()), this, SLOT(clipboardAfterFee()));
     connect(clipboardBytesAction, SIGNAL(triggered()), this, SLOT(clipboardBytes()));
-    connect(clipboardPriorityAction, SIGNAL(triggered()), this, SLOT(clipboardPriority()));
     connect(clipboardLowOutputAction, SIGNAL(triggered()), this, SLOT(clipboardLowOutput()));
     connect(clipboardChangeAction, SIGNAL(triggered()), this, SLOT(clipboardChange()));
 
@@ -101,7 +101,6 @@ CoinControlDialog::CoinControlDialog(const PlatformStyle *platformStyle, QWidget
     ui->labelCoinControlFee->addAction(clipboardFeeAction);
     ui->labelCoinControlAfterFee->addAction(clipboardAfterFeeAction);
     ui->labelCoinControlBytes->addAction(clipboardBytesAction);
-    ui->labelCoinControlPriority->addAction(clipboardPriorityAction);
     ui->labelCoinControlLowOutput->addAction(clipboardLowOutputAction);
     ui->labelCoinControlChange->addAction(clipboardChangeAction);
 
@@ -131,12 +130,11 @@ CoinControlDialog::CoinControlDialog(const PlatformStyle *platformStyle, QWidget
     ui->treeWidget->headerItem()->setText(COLUMN_CHECKBOX, QString());
 
     ui->treeWidget->setColumnWidth(COLUMN_CHECKBOX, 84);
-    ui->treeWidget->setColumnWidth(COLUMN_AMOUNT, 100);
-    ui->treeWidget->setColumnWidth(COLUMN_LABEL, 170);
-    ui->treeWidget->setColumnWidth(COLUMN_ADDRESS, 290);
-    ui->treeWidget->setColumnWidth(COLUMN_DATE, 110);
-    ui->treeWidget->setColumnWidth(COLUMN_CONFIRMATIONS, 100);
-    ui->treeWidget->setColumnWidth(COLUMN_PRIORITY, 100);
+    ui->treeWidget->setColumnWidth(COLUMN_AMOUNT, 110);
+    ui->treeWidget->setColumnWidth(COLUMN_LABEL, 190);
+    ui->treeWidget->setColumnWidth(COLUMN_ADDRESS, 320);
+    ui->treeWidget->setColumnWidth(COLUMN_DATE, 130);
+    ui->treeWidget->setColumnWidth(COLUMN_CONFIRMATIONS, 110);
     ui->treeWidget->setColumnHidden(COLUMN_TXHASH, true);         // store transaction hash in this column, but don't show it
     ui->treeWidget->setColumnHidden(COLUMN_VOUT_INDEX, true);     // store vout index in this column, but don't show it
 
@@ -161,15 +159,15 @@ CoinControlDialog::~CoinControlDialog()
     delete ui;
 }
 
-void CoinControlDialog::setModel(WalletModel *model)
+void CoinControlDialog::setModel(WalletModel *_model)
 {
-    this->model = model;
+    this->model = _model;
 
-    if(model && model->getOptionsModel() && model->getAddressTableModel())
+    if(_model && _model->getOptionsModel() && _model->getAddressTableModel())
     {
         updateView();
         updateLabelLocked();
-        CoinControlDialog::updateLabels(model, this);
+        CoinControlDialog::updateLabels(_model, this, anonymousMode);
     }
 }
 
@@ -199,7 +197,7 @@ void CoinControlDialog::buttonSelectAllClicked()
     ui->treeWidget->setEnabled(true);
     if (state == Qt::Unchecked)
         coinControl->UnSelectAll(); // just to be sure
-    CoinControlDialog::updateLabels(model, this);
+    CoinControlDialog::updateLabels(model, this, anonymousMode);
 }
 
 // context menu
@@ -276,7 +274,7 @@ void CoinControlDialog::lockCoin()
     COutPoint outpt(uint256S(contextMenuItem->text(COLUMN_TXHASH).toStdString()), contextMenuItem->text(COLUMN_VOUT_INDEX).toUInt());
     model->lockCoin(outpt);
     contextMenuItem->setDisabled(true);
-    contextMenuItem->setIcon(COLUMN_CHECKBOX, platformStyle->SingleColorIcon(":/icons/lock_closed"));
+    contextMenuItem->setIcon(COLUMN_CHECKBOX, platformStyle->LockIcon(":/icons/lock_closed"));
     updateLabelLocked();
 }
 
@@ -318,12 +316,6 @@ void CoinControlDialog::clipboardAfterFee()
 void CoinControlDialog::clipboardBytes()
 {
     GUIUtil::setClipboard(ui->labelCoinControlBytes->text().replace(ASYMP_UTF8, ""));
-}
-
-// copy label "Priority" to clipboard
-void CoinControlDialog::clipboardPriority()
-{
-    GUIUtil::setClipboard(ui->labelCoinControlPriority->text());
 }
 
 // copy label "Dust" to clipboard
@@ -398,7 +390,7 @@ void CoinControlDialog::viewItemChanged(QTreeWidgetItem* item, int column)
 
         // selection changed -> update labels
         if (ui->treeWidget->isEnabled()) // do not update on every click for (un)select all
-            CoinControlDialog::updateLabels(model, this);
+            CoinControlDialog::updateLabels(model, this, anonymousMode);
     }
 
     // TODO: Remove this temporary qt5 fix after Qt5.3 and Qt5.4 are no longer used.
@@ -410,25 +402,6 @@ void CoinControlDialog::viewItemChanged(QTreeWidgetItem* item, int column)
             item->setCheckState(COLUMN_CHECKBOX, Qt::Checked);
     }
 #endif
-}
-
-// return human readable label for priority number
-QString CoinControlDialog::getPriorityLabel(double dPriority, double mempoolEstimatePriority)
-{
-    double dPriorityMedium = mempoolEstimatePriority;
-
-    if (dPriorityMedium <= 0)
-        dPriorityMedium = AllowFreeThreshold(); // not enough data, back to hard-coded
-
-    if      (dPriority / 1000000 > dPriorityMedium) return tr("highest");
-    else if (dPriority / 100000 > dPriorityMedium)  return tr("higher");
-    else if (dPriority / 10000 > dPriorityMedium)   return tr("high");
-    else if (dPriority / 1000 > dPriorityMedium)    return tr("medium-high");
-    else if (dPriority > dPriorityMedium)           return tr("medium");
-    else if (dPriority * 10 > dPriorityMedium)      return tr("low-medium");
-    else if (dPriority * 100 > dPriorityMedium)     return tr("low");
-    else if (dPriority * 1000 > dPriorityMedium)    return tr("lower");
-    else                                            return tr("lowest");
 }
 
 // shows count of locked unspent outputs
@@ -444,7 +417,7 @@ void CoinControlDialog::updateLabelLocked()
     else ui->labelLocked->setVisible(false);
 }
 
-void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
+void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog, bool anonymousMode)
 {
     if (!model)
         return;
@@ -461,12 +434,11 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
         {
             CTxOut txout(amount, (CScript)std::vector<unsigned char>(24, 0));
             txDummy.vout.push_back(txout);
-            if (txout.IsDust(::minRelayTxFee))
+            if (txout.IsDust(dustRelayFee))
                fDust = true;
         }
     }
 
-    QString sPriorityLabel      = tr("none");
     CAmount nAmount             = 0;
     CAmount nPayFee             = 0;
     CAmount nAfterFee           = 0;
@@ -486,6 +458,20 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
     model->getOutputs(vCoinControl, vOutputs);
 
     BOOST_FOREACH(const COutput& out, vOutputs) {
+        // filter out outputs that don't match with mode
+        {
+            auto const &script = out.tx->tx->vout[out.i].scriptPubKey;
+            auto isMint = script.IsPrivcoinMint()
+                        || script.IsSigmaMint()
+                        || script.IsPrivcoinRemint()
+                        || script.IsLelantusMint()
+                        || script.IsLelantusJMint();
+
+            if (isMint != anonymousMode) {
+                continue;
+            }
+        }
+
         // unselect already spent, very unlikely scenario, this could happen
         // when selected are spent elsewhere, like rpc or another computer
         uint256 txhash = out.tx->GetHash();
@@ -500,21 +486,25 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
         nQuantity++;
 
         // Amount
-        nAmount += out.tx->vout[out.i].nValue;
+        if(out.tx->tx->vout[out.i].scriptPubKey.IsLelantusJMint()) {
+            nAmount += model->GetJMintCredit(out.tx->tx->vout[out.i]);
+        } else {
+            nAmount += out.tx->tx->vout[out.i].nValue;
+        }
 
         // Priority
-        dPriorityInputs += (double)out.tx->vout[out.i].nValue * (out.nDepth+1);
+        dPriorityInputs += (double)out.tx->tx->vout[out.i].nValue * (out.nDepth+1);
 
         // Bytes
         CTxDestination address;
         int witnessversion = 0;
         std::vector<unsigned char> witnessprogram;
-        if (out.tx->vout[out.i].scriptPubKey.IsWitnessProgram(witnessversion, witnessprogram))
+        if (out.tx->tx->vout[out.i].scriptPubKey.IsWitnessProgram(witnessversion, witnessprogram))
         {
             nBytesInputs += (32 + 4 + 1 + (107 / WITNESS_SCALE_FACTOR) + 4);
             fWitness = true;
         }
-        else if(ExtractDestination(out.tx->vout[out.i].scriptPubKey, address))
+        else if(ExtractDestination(out.tx->tx->vout[out.i].scriptPubKey, address))
         {
             CPubKey pubkey;
             CKeyID *keyid = boost::get<CKeyID>(&address);
@@ -533,71 +523,74 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
     // calculation
     if (nQuantity > 0)
     {
-        // Bytes
-        nBytes = nBytesInputs + ((CoinControlDialog::payAmounts.size() > 0 ? CoinControlDialog::payAmounts.size() + 1 : 2) * 34) + 10; // always assume +1 output for change here
-        if (fWitness)
-        {
-            // there is some fudging in these numbers related to the actual virtual transaction size calculation that will keep this estimate from being exact.
-            // usually, the result will be an overestimate within a couple of satoshis so that the confirmation dialog ends up displaying a slightly smaller fee.
-            // also, the witness stack size value value is a variable sized integer. usually, the number of stack items will be well under the single byte var int limit.
-            nBytes += 2; // account for the serialized marker and flag bytes
-            nBytes += nQuantity; // account for the witness byte that holds the number of stack items for each input.
-        }
-
-        // Priority
-        double mempoolEstimatePriority = mempool.estimateSmartPriority(nTxConfirmTarget);
-        dPriority = dPriorityInputs / (nBytes - nBytesInputs + (nQuantityUncompressed * 29)); // 29 = 180 - 151 (uncompressed public keys are over the limit. max 151 bytes of the input are ignored for priority)
-        sPriorityLabel = CoinControlDialog::getPriorityLabel(dPriority, mempoolEstimatePriority);
-
-        // in the subtract fee from amount case, we can tell if zero change already and subtract the bytes, so that fee calculation afterwards is accurate
-        if (CoinControlDialog::fSubtractFeeFromAmount)
-            if (nAmount - nPayAmount == 0)
-                nBytes -= 34;
-
-        // Fee
-        nPayFee = CWallet::GetMinimumFee(nBytes, nTxConfirmTarget, mempool);
-        if (nPayFee > 0 && coinControl->nMinimumTotalFee > nPayFee)
-            nPayFee = coinControl->nMinimumTotalFee;
-
-
-        // Allow free? (require at least hard-coded threshold and default to that if no estimate)
-        double dPriorityNeeded = std::max(mempoolEstimatePriority, AllowFreeThreshold());
-        fAllowFree = (dPriority >= dPriorityNeeded);
-
-        if (fSendFreeTransactions)
-            if (fAllowFree && nBytes <= MAX_FREE_TRANSACTION_CREATE_SIZE)
-                nPayFee = 0;
-
-        if (nPayAmount > 0)
-        {
-            nChange = nAmount - nPayAmount;
-            if (!CoinControlDialog::fSubtractFeeFromAmount)
-                nChange -= nPayFee;
-
-            // Never create dust outputs; if we would, just add the dust to the fee.
-            if (nChange > 0 && nChange < MIN_CHANGE)
+        if (anonymousMode) {
+            // 1054 is constant part, mainly Schnorr and Range proofs, 2560 is for each sigma/aux data
+            // 83 assuming 1 jmint, 34 is the size of each normal vout,  10 is the size of empty transaction, 52 other constant parts
+            nBytes = 1054 + 2560 * vOutputs.size() + 83 + CoinControlDialog::payAmounts.size()  * 34  + 10 + 52;
+            nPayFee = CWallet::GetMinimumFee(nBytes, nTxConfirmTarget, mempool);
+            if (nPayAmount > 0) {
+                nChange = nAmount - nPayAmount;
+                if (!CoinControlDialog::fSubtractFeeFromAmount)
+                    nChange -= nPayFee;
+            }
+        } else {
+            // Bytes
+            nBytes = nBytesInputs + ((CoinControlDialog::payAmounts.size() > 0 ? CoinControlDialog::payAmounts.size() + 1 : 2) * 34) + 10; // always assume +1 output for change here
+            if (fWitness)
             {
-                CTxOut txout(nChange, (CScript)std::vector<unsigned char>(24, 0));
-                if (txout.IsDust(::minRelayTxFee))
-                {
-                    if (CoinControlDialog::fSubtractFeeFromAmount) // dust-change will be raised until no dust
-                        nChange = txout.GetDustThreshold(::minRelayTxFee);
-                    else
-                    {
-                        nPayFee += nChange;
-                        nChange = 0;
-                    }
-                }
+                // there is some fudging in these numbers related to the actual virtual transaction size calculation that will keep this estimate from being exact.
+                // usually, the result will be an overestimate within a couple of satoshis so that the confirmation dialog ends up displaying a slightly smaller fee.
+                // also, the witness stack size value value is a variable sized integer. usually, the number of stack items will be well under the single byte var int limit.
+                nBytes += 2; // account for the serialized marker and flag bytes
+                nBytes += nQuantity; // account for the witness byte that holds the number of stack items for each input.
             }
 
-            if (nChange == 0 && !CoinControlDialog::fSubtractFeeFromAmount)
-                nBytes -= 34;
+            // in the subtract fee from amount case, we can tell if zero change already and subtract the bytes, so that fee calculation afterwards is accurate
+            if (CoinControlDialog::fSubtractFeeFromAmount)
+                if (nAmount - nPayAmount == 0)
+                    nBytes -= 34;
+
+            // Fee
+            nPayFee = CWallet::GetMinimumFee(nBytes, nTxConfirmTarget, mempool);
+            if (nPayFee > 0 && coinControl->nMinimumTotalFee > nPayFee)
+                nPayFee = coinControl->nMinimumTotalFee;
+
+            // Allow free? (require at least hard-coded threshold and default to that if no estimate)
+            double mempoolEstimatePriority = mempool.estimateSmartPriority(nTxConfirmTarget);
+            dPriority = dPriorityInputs / (nBytes - nBytesInputs + (nQuantityUncompressed *
+                                                                    29)); // 29 = 180 - 151 (uncompressed public keys are over the limit. max 151 bytes of the input are ignored for priority)
+            double dPriorityNeeded = std::max(mempoolEstimatePriority, AllowFreeThreshold());
+            fAllowFree = (dPriority >= dPriorityNeeded);
+
+            if (fSendFreeTransactions)
+                if (fAllowFree && nBytes <= MAX_FREE_TRANSACTION_CREATE_SIZE)
+                    nPayFee = 0;
+
+            if (nPayAmount > 0) {
+                nChange = nAmount - nPayAmount;
+                if (!CoinControlDialog::fSubtractFeeFromAmount)
+                    nChange -= nPayFee;
+
+                // Never create dust outputs; if we would, just add the dust to the fee.
+                if (nChange > 0 && nChange < MIN_CHANGE) {
+                    CTxOut txout(nChange, (CScript) std::vector<unsigned char>(24, 0));
+                    if (txout.IsDust(dustRelayFee)) {
+                        if (CoinControlDialog::fSubtractFeeFromAmount) // dust-change will be raised until no dust
+                            nChange = txout.GetDustThreshold(dustRelayFee);
+                        else {
+                            nPayFee += nChange;
+                            nChange = 0;
+                        }
+                    }
+                }
+
+                if (nChange == 0 && !CoinControlDialog::fSubtractFeeFromAmount)
+                    nBytes -= 34;
+            }
         }
 
         // after fee
-        nAfterFee = nAmount - nPayFee;
-        if (nAfterFee < 0)
-            nAfterFee = 0;
+        nAfterFee = std::max<CAmount>(nAmount - nPayFee, 0);
     }
 
     // actually update labels
@@ -610,7 +603,6 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
     QLabel *l3 = dialog->findChild<QLabel *>("labelCoinControlFee");
     QLabel *l4 = dialog->findChild<QLabel *>("labelCoinControlAfterFee");
     QLabel *l5 = dialog->findChild<QLabel *>("labelCoinControlBytes");
-    QLabel *l6 = dialog->findChild<QLabel *>("labelCoinControlPriority");
     QLabel *l7 = dialog->findChild<QLabel *>("labelCoinControlLowOutput");
     QLabel *l8 = dialog->findChild<QLabel *>("labelCoinControlChange");
 
@@ -626,7 +618,6 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
     l3->setText(BitcoinUnits::formatWithUnit(nDisplayUnit, nPayFee));        // Fee
     l4->setText(BitcoinUnits::formatWithUnit(nDisplayUnit, nAfterFee));      // After Fee
     l5->setText(((nBytes > 0) ? ASYMP_UTF8 : "") + QString::number(nBytes));        // Bytes
-    l6->setText(sPriorityLabel);                                             // Priority
     l7->setText(fDust ? tr("yes") : tr("no"));                               // Dust
     l8->setText(BitcoinUnits::formatWithUnit(nDisplayUnit, nChange));        // Change
     if (nPayFee > 0 && (coinControl->nMinimumTotalFee < nPayFee))
@@ -637,21 +628,11 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
             l8->setText(ASYMP_UTF8 + l8->text());
     }
 
-    // turn labels "red"
-    l5->setStyleSheet((nBytes >= MAX_FREE_TRANSACTION_CREATE_SIZE) ? "color:red;" : "");// Bytes >= 1000
-    l6->setStyleSheet((dPriority > 0 && !fAllowFree) ? "color:red;" : "");              // Priority < "medium"
-    l7->setStyleSheet((fDust) ? "color:red;" : "");                                     // Dust = "yes"
+    // turn label red when dust
+    l7->setStyleSheet((fDust) ? "color:red;" : "");
 
     // tool tips
-    QString toolTip1 = tr("This label turns red if the transaction size is greater than 1000 bytes.") + "<br /><br />";
-    toolTip1 += tr("This means a fee of at least %1 per kB is required.").arg(BitcoinUnits::formatHtmlWithUnit(nDisplayUnit, CWallet::GetRequiredFee(1000))) + "<br /><br />";
-    toolTip1 += tr("Can vary +/- 1 byte per input.");
-
-    QString toolTip2 = tr("Transactions with higher priority are more likely to get included into a block.") + "<br /><br />";
-    toolTip2 += tr("This label turns red if the priority is smaller than \"medium\".") + "<br /><br />";
-    toolTip2 += tr("This means a fee of at least %1 per kB is required.").arg(BitcoinUnits::formatHtmlWithUnit(nDisplayUnit, CWallet::GetRequiredFee(1000)));
-
-    QString toolTip3 = tr("This label turns red if any recipient receives an amount smaller than the current dust threshold.");
+    QString toolTipDust = tr("This label turns red if any recipient receives an amount smaller than the current dust threshold.");
 
     // how many satoshis the estimated fee can vary per byte we guess wrong
     double dFeeVary;
@@ -664,14 +645,11 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
 
     l3->setToolTip(toolTip4);
     l4->setToolTip(toolTip4);
-    l5->setToolTip(toolTip1);
-    l6->setToolTip(toolTip2);
-    l7->setToolTip(toolTip3);
+    l7->setToolTip(toolTipDust);
     l8->setToolTip(toolTip4);
     dialog->findChild<QLabel *>("labelCoinControlFeeText")      ->setToolTip(l3->toolTip());
     dialog->findChild<QLabel *>("labelCoinControlAfterFeeText") ->setToolTip(l4->toolTip());
     dialog->findChild<QLabel *>("labelCoinControlBytesText")    ->setToolTip(l5->toolTip());
-    dialog->findChild<QLabel *>("labelCoinControlPriorityText") ->setToolTip(l6->toolTip());
     dialog->findChild<QLabel *>("labelCoinControlLowOutputText")->setToolTip(l7->toolTip());
     dialog->findChild<QLabel *>("labelCoinControlChangeText")   ->setToolTip(l8->toolTip());
 
@@ -690,15 +668,14 @@ void CoinControlDialog::updateView()
 
     ui->treeWidget->clear();
     ui->treeWidget->setEnabled(false); // performance, otherwise updateLabels would be called for every checked checkbox
-    ui->treeWidget->setAlternatingRowColors(!treeMode);
+    ui->treeWidget->setAlternatingRowColors(true);
     QFlags<Qt::ItemFlag> flgCheckbox = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
     QFlags<Qt::ItemFlag> flgTristate = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsTristate;
 
     int nDisplayUnit = model->getOptionsModel()->getDisplayUnit();
-    double mempoolEstimatePriority = mempool.estimateSmartPriority(nTxConfirmTarget);
 
     std::map<QString, std::vector<COutput> > mapCoins;
-    model->listCoins(mapCoins);
+    model->listCoins(mapCoins, anonymousMode ? CoinType::ONLY_MINTS : CoinType::ALL_COINS);
 
     BOOST_FOREACH(const PAIRTYPE(QString, std::vector<COutput>)& coins, mapCoins) {
         CCoinControlWidgetItem *itemWalletAddress = new CCoinControlWidgetItem();
@@ -724,12 +701,16 @@ void CoinControlDialog::updateView()
         }
 
         CAmount nSum = 0;
-        double dPrioritySum = 0;
         int nChildren = 0;
-        int nInputSum = 0;
         BOOST_FOREACH(const COutput& out, coins.second) {
-            int nInputSize = 0;
-            nSum += out.tx->vout[out.i].nValue;
+            CAmount amount;
+            if(out.tx->tx->vout[out.i].scriptPubKey.IsLelantusJMint()) {
+                amount = model->GetJMintCredit(out.tx->tx->vout[out.i]);
+            } else {
+                amount = out.tx->tx->vout[out.i].nValue;
+            }
+
+            nSum += amount;
             nChildren++;
 
             CCoinControlWidgetItem *itemOutput;
@@ -741,18 +722,13 @@ void CoinControlDialog::updateView()
             // address
             CTxDestination outputAddress;
             QString sAddress = "";
-            if(ExtractDestination(out.tx->vout[out.i].scriptPubKey, outputAddress))
+            if(ExtractDestination(out.tx->tx->vout[out.i].scriptPubKey, outputAddress))
             {
                 sAddress = QString::fromStdString(CBitcoinAddress(outputAddress).ToString());
 
-                // if listMode or change => show BitcoinZero address. In tree mode, address is not shown again for direct wallet address outputs
+                // if listMode or change => show address. In tree mode, address is not shown again for direct wallet address outputs
                 if (!treeMode || (!(sAddress == sWalletAddress)))
                     itemOutput->setText(COLUMN_ADDRESS, sAddress);
-
-                CPubKey pubkey;
-                CKeyID *keyid = boost::get<CKeyID>(&outputAddress);
-                if (keyid && model->getPubKey(*keyid, pubkey) && !pubkey.IsCompressed())
-                    nInputSize = 29; // 29 = 180 - 151 (public key is 180 bytes, priority free area is 151 bytes)
             }
 
             // label
@@ -760,7 +736,14 @@ void CoinControlDialog::updateView()
             {
                 // tooltip from where the change comes from
                 itemOutput->setToolTip(COLUMN_LABEL, tr("change from %1 (%2)").arg(sWalletLabel).arg(sWalletAddress));
-                itemOutput->setText(COLUMN_LABEL, tr("(change)"));
+                if(out.tx->tx->IsSigmaMint()) {
+                    itemOutput->setText(COLUMN_LABEL, tr("(sigma mint)"));
+                } else if(out.tx->tx->IsLelantusMint()) {
+                    itemOutput->setText(COLUMN_LABEL, tr("(mint)"));
+                } else {
+                    itemOutput->setText(COLUMN_LABEL, tr("(change)"));
+                }
+
             }
             else if (!treeMode)
             {
@@ -771,8 +754,8 @@ void CoinControlDialog::updateView()
             }
 
             // amount
-            itemOutput->setText(COLUMN_AMOUNT, BitcoinUnits::format(nDisplayUnit, out.tx->vout[out.i].nValue));
-            itemOutput->setData(COLUMN_AMOUNT, Qt::UserRole, QVariant((qlonglong)out.tx->vout[out.i].nValue)); // padding so that sorting works correctly
+            itemOutput->setText(COLUMN_AMOUNT, BitcoinUnits::format(nDisplayUnit, amount));
+            itemOutput->setData(COLUMN_AMOUNT, Qt::UserRole, QVariant((qlonglong)amount)); // padding so that sorting works correctly
 
             // date
             itemOutput->setText(COLUMN_DATE, GUIUtil::dateTimeStr(out.tx->GetTxTime()));
@@ -782,15 +765,8 @@ void CoinControlDialog::updateView()
             itemOutput->setText(COLUMN_CONFIRMATIONS, QString::number(out.nDepth));
             itemOutput->setData(COLUMN_CONFIRMATIONS, Qt::UserRole, QVariant((qlonglong)out.nDepth));
 
-            // priority
-            double dPriority = ((double)out.tx->vout[out.i].nValue  / (nInputSize + 78)) * (out.nDepth+1); // 78 = 2 * 34 + 10
-            itemOutput->setText(COLUMN_PRIORITY, CoinControlDialog::getPriorityLabel(dPriority, mempoolEstimatePriority));
-            itemOutput->setData(COLUMN_PRIORITY, Qt::UserRole, QVariant((qlonglong)dPriority));
-            dPrioritySum += (double)out.tx->vout[out.i].nValue  * (out.nDepth+1);
-            nInputSum    += nInputSize;
-
             // transaction hash
-            uint256 txhash = out.tx->GetHash();
+            uint256 txhash = out.tx->tx->GetHash();
             itemOutput->setText(COLUMN_TXHASH, QString::fromStdString(txhash.GetHex()));
 
             // vout index
@@ -802,7 +778,7 @@ void CoinControlDialog::updateView()
                 COutPoint outpt(txhash, out.i);
                 coinControl->UnSelect(outpt); // just to be sure
                 itemOutput->setDisabled(true);
-                itemOutput->setIcon(COLUMN_CHECKBOX, platformStyle->SingleColorIcon(":/icons/lock_closed"));
+                itemOutput->setIcon(COLUMN_CHECKBOX, platformStyle->LockIcon(":/icons/lock_closed"));
             }
 
             // set checkbox
@@ -813,12 +789,9 @@ void CoinControlDialog::updateView()
         // amount
         if (treeMode)
         {
-            dPrioritySum = dPrioritySum / (nInputSum + 78);
             itemWalletAddress->setText(COLUMN_CHECKBOX, "(" + QString::number(nChildren) + ")");
             itemWalletAddress->setText(COLUMN_AMOUNT, BitcoinUnits::format(nDisplayUnit, nSum));
             itemWalletAddress->setData(COLUMN_AMOUNT, Qt::UserRole, QVariant((qlonglong)nSum));
-            itemWalletAddress->setText(COLUMN_PRIORITY, CoinControlDialog::getPriorityLabel(dPrioritySum, mempoolEstimatePriority));
-            itemWalletAddress->setData(COLUMN_PRIORITY, Qt::UserRole, QVariant((qlonglong)dPrioritySum));
         }
     }
 

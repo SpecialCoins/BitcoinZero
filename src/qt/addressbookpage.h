@@ -32,7 +32,7 @@ class AddressBookPage : public QDialog
 public:
     enum Tabs {
         SendingTab = 0,
-        ReceivingTab = 1,
+        ReceivingTab = 1
     };
 
     enum Mode {
@@ -55,8 +55,9 @@ private:
     Mode mode;
     Tabs tab;
     QString returnValue;
-    QSortFilterProxyModel *proxyModel;
+    QSortFilterProxyModel *proxyModel, *proxyModelPcode;
     QMenu *contextMenu;
+    QAction *copyAddressAction;
     QAction *deleteAction; // to be able to explicitly disable it
     QString newAddressToSelect;
 

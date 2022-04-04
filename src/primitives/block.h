@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,7 +13,8 @@
 #include "serialize.h"
 #include "uint256.h"
 #include "definition.h"
-#include "sigma_params.h"
+
+#include "priv_params.h"
 
 // Can't include sigma.h
 namespace sigma {
@@ -21,10 +22,10 @@ class CSigmaTxInfo;
 
 } // namespace sigma.
 
-inline int GetZerocoinChainID()
-{
-    return 0x0001; // We are the first :)
-}
+namespace lelantus {
+class CLelantusTxInfo;
+
+} // namespace lelantus
 
 class CBlockHeader
 {
@@ -37,11 +38,7 @@ public:
     uint32_t nBits;
     uint32_t nNonce;
 
-    static const int CURRENT_VERSION = 2;
-
-    // uint32_t lastHeight;
-    uint256 powHash;
-    int32_t isComputed;
+    static const int CURRENT_VERSION = 3;
 
     CBlockHeader()
     {
@@ -55,7 +52,7 @@ public:
     class CWriteBlockHeader : public CSerActionSerialize, public CSerializeBlockHeader {};
 
     template <typename Stream, typename Operation, typename = typename std::enable_if<!std::is_base_of<CSerializeBlockHeader,Operation>::value>::type>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(this->nVersion);
         READWRITE(hashPrevBlock);
         READWRITE(hashMerkleRoot);
@@ -65,7 +62,7 @@ public:
     }
 
     template <typename Stream>
-    inline void SerializationOp(Stream &s, CReadBlockHeader ser_action, int nType, int) {
+    inline void SerializationOp(Stream &s, CReadBlockHeader ser_action) {
         READWRITE(this->nVersion);
         READWRITE(hashPrevBlock);
         READWRITE(hashMerkleRoot);
@@ -76,29 +73,17 @@ public:
 
     void SetNull()
     {
-        nVersion = CBlockHeader::CURRENT_VERSION | (GetZerocoinChainID() * BLOCK_VERSION_CHAIN_START);
+        nVersion = CBlockHeader::CURRENT_VERSION;
         hashPrevBlock.SetNull();
         hashMerkleRoot.SetNull();
         nTime = 0;
         nBits = 0;
         nNonce = 0;
-        isComputed = -1;
-        powHash.SetNull();
-    }
-
-    int GetChainID() const
-    {
-        return nVersion / BLOCK_VERSION_CHAIN_START;
     }
 
     bool IsNull() const
     {
         return (nBits == 0);
-    }
-
-    bool IsComputed() const
-    {
-        return (isComputed <= 0);
     }
 
     uint256 GetPoWHash(int nHeight) const;
@@ -109,57 +94,56 @@ public:
     {
         return (int64_t)nTime;
     }
+
 };
 
 class CBlock : public CBlockHeader
 {
 public:
     // network and disk
-    std::vector<CTransaction> vtx;
+    std::vector<CTransactionRef> vtx;
 
     // memory only
-    mutable CTxOut txoutBznode; // bznode payment
+    mutable CTxOut txoutMasternode; // masternode payment
     mutable bool fChecked;
 
-    // memory only, zerocoin tx info after V3-sigma.
+    // memory only, sigma tx info
     mutable std::shared_ptr<sigma::CSigmaTxInfo> sigmaTxInfo;
+
+    mutable std::shared_ptr<lelantus::CLelantusTxInfo> lelantusTxInfo;
 
     CBlock()
     {
-        sigmaTxInfo = NULL;
         SetNull();
     }
 
     CBlock(const CBlockHeader &header)
     {
-        sigmaTxInfo = NULL;
         SetNull();
         *((CBlockHeader*)this) = header;
     }
 
     ~CBlock() {
-        ZerocoinClean();
     }
 
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(*(CBlockHeader*)this);
         READWRITE(vtx);
     }
 
     template <typename Stream>
-    inline void SerializationOp(Stream &s, CReadBlockHeader ser_action, int nType, int nVersion) {
-        CBlockHeader::SerializationOp(s, ser_action, nType, nVersion);
+    inline void SerializationOp(Stream &s, CReadBlockHeader ser_action) {
+        CBlockHeader::SerializationOp(s, ser_action);
     }
 
     void SetNull()
     {
-        ZerocoinClean();
         CBlockHeader::SetNull();
         vtx.clear();
-        txoutBznode = CTxOut();
+        txoutMasternode = CTxOut();
         fChecked = false;
     }
 
@@ -178,7 +162,6 @@ public:
 
     std::string ToString() const;
 
-    void ZerocoinClean() const;
 };
 
 /** Describes a place in the block chain to another node such that if the
@@ -199,8 +182,9 @@ struct CBlockLocator
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        if (!(nType & SER_GETHASH))
+    inline void SerializationOp(Stream& s, Operation ser_action) {
+        int nVersion = s.GetVersion();
+        if (!(s.GetType() & SER_GETHASH))
             READWRITE(nVersion);
         READWRITE(vHave);
     }

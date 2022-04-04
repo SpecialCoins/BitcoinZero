@@ -48,7 +48,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>&amp;Transactions</source>
         <translation>&amp;Транзакциялар</translation>
@@ -70,7 +70,7 @@
         <translation>Құпия сөзді өзгерту</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
+        <source>BZX</source>
         <translation>Биткоин</translation>
     </message>
     <message>
@@ -92,26 +92,6 @@
     <message>
         <source>&amp;Help</source>
         <translation>Көмек</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n сағат</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n күн</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n апта</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 немесе %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n жыл</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -141,10 +121,6 @@
         <translation>Саны</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>Басымдық</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>Комиссия</translation>
     </message>
@@ -172,10 +148,6 @@
         <source>Confirmed</source>
         <translation>Растық</translation>
     </message>
-    <message>
-        <source>Priority</source>
-        <translation>Басымдық</translation>
-    </message>
     </context>
 <context>
     <name>EditAddressDialog</name>
@@ -202,6 +174,9 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     </context>
 <context>
@@ -226,6 +201,13 @@
         <source>Amount</source>
         <translation>Саны</translation>
     </message>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 немесе %2</translation>
+    </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -255,10 +237,6 @@
     <message>
         <source>Amount:</source>
         <translation>Саны</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Басымдық</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -320,7 +298,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Information</source>
         <translation>Информация</translation>

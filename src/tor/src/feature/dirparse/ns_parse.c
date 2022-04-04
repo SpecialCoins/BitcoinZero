@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -36,6 +36,7 @@
 #include "feature/nodelist/networkstatus_st.h"
 #include "feature/nodelist/networkstatus_voter_info_st.h"
 #include "feature/nodelist/vote_routerstatus_st.h"
+#include "feature/dirparse/authcert_members.h"
 
 #undef log
 #include <math.h>
@@ -84,7 +85,7 @@ static token_rule_t networkstatus_token_table[] = {
   T01("required-relay-protocols",    K_REQUIRED_RELAY_PROTOCOLS,
       CONCAT_ARGS, NO_OBJ ),
 
-#include "feature/dirparse/authcert_members.i"
+  AUTHCERT_MEMBERS,
 
   T0N("opt",                 K_OPT,             CONCAT_ARGS, OBJ_OK ),
   T1( "contact",             K_CONTACT,         CONCAT_ARGS, NO_OBJ ),
@@ -1478,7 +1479,7 @@ networkstatus_parse_vote_from_string(const char *s,
     SMARTLIST_FOREACH_BEGIN(ns->routerstatus_list, vote_routerstatus_t *,
                             vrs) {
       if (! vrs->has_ed25519_listing ||
-          tor_mem_is_zero((const char *)vrs->ed25519_id, DIGEST256_LEN))
+          fast_mem_is_zero((const char *)vrs->ed25519_id, DIGEST256_LEN))
         continue;
       if (digest256map_get(ed_id_map, vrs->ed25519_id) != NULL) {
         log_warn(LD_DIR, "Vote networkstatus ed25519 identities were not "

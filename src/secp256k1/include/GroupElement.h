@@ -10,6 +10,7 @@
 
 #include <stddef.h>
 
+
 namespace secp_primitives {
 
 class GroupElement final {
@@ -46,13 +47,19 @@ public:
 
   void square();
 
+
+  bool isMember() const;
+
+  bool isInfinity() const;
+
+
   bool operator==(const GroupElement&other) const;
 
   bool operator!=(const GroupElement&other) const;
 
-  bool isMember() const;
-
   GroupElement& generate(unsigned char* seed);
+
+  void normalSha256(unsigned char* result) const;
 
   void sha256(unsigned char* result) const;
 
@@ -67,20 +74,17 @@ public:
         return os;
   }
 
-  size_t memoryRequired() const;
+  static constexpr size_t memoryRequired() { return serialize_size; }
   unsigned char* serialize() const;
   unsigned char* serialize(unsigned char* buffer) const;
+  // The function deserializes the GroupElement and checks the validity,
+  // it accepts infinity point, handle it based on your use case
   unsigned const char* deserialize(unsigned const char* buffer);
 
   // These functions are for READWRITE() in serialize.h
-  unsigned int GetSerializeSize(int nType=0, int nVersion=0) const
-  {
-     return memoryRequired();
-  }
-
   template<typename Stream>
-  inline void Serialize(Stream& s, int nType, int nVersion) const {
-        int size = memoryRequired();
+  inline void Serialize(Stream& s) const {
+        constexpr int size = memoryRequired();
         unsigned char buffer[size];
         serialize(buffer);
         char* b = (char*)buffer;
@@ -88,8 +92,8 @@ public:
   }
 
   template<typename Stream>
-  inline void Unserialize(Stream& s, int nType, int nVersion) {
-        int size = memoryRequired();
+  inline void Unserialize(Stream& s) {
+        constexpr int size = memoryRequired();
         unsigned char buffer[size];
         char* b = (char*)buffer;
         s.read(b, size);
@@ -100,6 +104,8 @@ public:
   std::vector<unsigned char> getvch() const;
 
   std::size_t hash() const;
+
+  std::size_t get_hash() const;
 
   GroupElement& set_base_g();
 
@@ -123,7 +129,7 @@ namespace std {
     {
         size_t operator()(const secp_primitives::GroupElement& g) const
         {
-            return g.hash();
+            return g.get_hash();
         }
     };
 } // namespace std

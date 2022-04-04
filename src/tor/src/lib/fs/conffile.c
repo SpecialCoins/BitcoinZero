@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -153,16 +153,18 @@ config_process_include(const char *path, int recursion_level, int extended,
   int rv = -1;
   SMARTLIST_FOREACH_BEGIN(config_files, const char *, config_file) {
     config_line_t *included_config = NULL;
+    config_line_t *included_config_last = NULL;
     if (config_get_included_config(config_file, recursion_level, extended,
-                                   &included_config, list_last,
+                                   &included_config, &included_config_last,
                                    opened_lst) < 0) {
       goto done;
     }
 
     *next = included_config;
-    if (*list_last)
-      next = &(*list_last)->next;
-
+    if (included_config_last) {
+      next = &included_config_last->next;
+      *list_last = included_config_last;
+    }
   } SMARTLIST_FOREACH_END(config_file);
   *list = ret_list;
   rv = 0;

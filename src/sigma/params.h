@@ -1,5 +1,5 @@
-#ifndef BITCOINZERO_SIGMA_PARAMS_H
-#define BITCOINZERO_SIGMA_PARAMS_H
+#ifndef BZX_SIGMA_PARAMS_H
+#define BZX_SIGMA_PARAMS_H
 #include <secp256k1/include/Scalar.h>
 #include <secp256k1/include/GroupElement.h>
 #include <serialize.h>
@@ -31,4 +31,4 @@ private:
 
 }//namespace sigma
 
-#endif //BITCOINZERO_SIGMA_PARAMS_H
+#endif //BZX_SIGMA_PARAMS_H

@@ -60,7 +60,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>I-sign ing &amp;mensayi</translation>
@@ -122,8 +122,8 @@
         <translation>Address king pamag-Tanggap</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>Magpadalang barya king BitcoinZero address</translation>
+        <source>Send coins to a address</source>
+        <translation>Magpadalang barya king address</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -146,8 +146,8 @@
         <translation>&amp;Beripikan ing message...</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -225,7 +225,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>Maka-&lt;b&gt;encrypt&lt;/b&gt; ya ing wallet at kasalukuyan yang maka-&lt;b&gt;locked&lt;/b&gt;</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -294,6 +294,17 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>Tatauling oras na ning block</translation>
+    </message>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     </context>
 <context>
@@ -311,8 +322,8 @@
         <translation>&amp;Network</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Ibuklat yang antimanu ing BitcoinZero client port king router. Gagana yamu ini istung ing router mu susuporta yang UPnP at magsilbi ya.</translation>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Ibuklat yang antimanu ing BZX client port king router. Gagana yamu ini istung ing router mu susuporta yang UPnP at magsilbi ya.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -386,8 +397,8 @@
         <translation>Form</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
-        <translation>Ing makaltong impormasion mapalyaring luma ne. Ing kekang wallet otomatiku yang mag-synchronize keng BitcoinZero network istung mekakonekta ne king network, oneng ing prosesung ini ali ya pa kumpletu.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
+        <translation>Ing makaltong impormasion mapalyaring luma ne. Ing kekang wallet otomatiku yang mag-synchronize keng BZX network istung mekakonekta ne king network, oneng ing prosesung ini ali ya pa kumpletu.</translation>
     </message>
     <message>
         <source>Your current spendable balance</source>
@@ -430,6 +441,9 @@
         <source>N/A</source>
         <translation>N/A</translation>
     </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -641,8 +655,8 @@
         <translation>Kopyan ing kasalungsungan pirma king system clipboard</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
-        <translation>Pirman ing mensayi ban patune na keka ya ining BitcoinZero address</translation>
+        <source>Sign the message to prove you own this address</source>
+        <translation>Pirman ing mensayi ban patune na keka ya ining address</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -661,8 +675,8 @@
         <translation>&amp;Beripikan ing Mensayi</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
-        <translation>Beripikan ing mensayi ban asiguradu a me pirma ya ini gamit ing mepiling BitcoinZero address</translation>
+        <source>Verify the message to ensure it was signed with the specified address</source>
+        <translation>Beripikan ing mensayi ban asiguradu a me pirma ya ini gamit ing mepiling address</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -712,7 +726,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Pipamilian:</translation>
@@ -738,20 +752,12 @@
         <translation>Gumana king gulut bilang daemon at tumanggap commands</translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>Tumanggap koneksion menibat king kilwal (default: 1 if no -proxy or -connect)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
-        <translation>Kapilubluban ning BitcoinZero</translation>
+        <source>BZX Core</source>
+        <translation>Kapilubluban ning BZX</translation>
     </message>
     <message>
         <source>Block creation options:</source>
         <translation>Pipamilian king pamag-gawang block:</translation>
-    </message>
-    <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>Kumunekta mu king mepiling node(s)</translation>
     </message>
     <message>
         <source>Corrupted block database detected</source>

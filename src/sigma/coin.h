@@ -1,25 +1,29 @@
-#ifndef BITCOINZERO_SIGMA_COIN_H
-#define BITCOINZERO_SIGMA_COIN_H
+#ifndef BZX_SIGMA_COIN_H
+#define BZX_SIGMA_COIN_H
 
 #include "params.h"
 #include "sigma_primitives.h"
-
+#include "../priv_params.h"
 #include "../consensus/validation.h"
-#include "../libzerocoin/Zerocoin.h"
+#include "../uint256.h"
+
+#include <secp256k1.h>
+#include <secp256k1_recovery.h>
+#include <secp256k1_ecdh.h>
+
 
 #include <cinttypes>
 
 namespace sigma {
 
 enum class CoinDenomination : std::uint8_t {
-    SIGMA_DENOM_X1 = 5,
-    SIGMA_DENOM_X5 = 7,
-    SIGMA_DENOM_X10 = 0,
-    SIGMA_DENOM_X50 = 1,
-    SIGMA_DENOM_X100 = 2,
-    SIGMA_DENOM_X500 = 3,
-    SIGMA_DENOM_X1000 = 6,
-    SIGMA_DENOM_X5000 = 4
+    SIGMA_DENOM_0_05 = 5,
+    SIGMA_DENOM_0_1 = 0,
+    SIGMA_DENOM_0_5 = 1,
+    SIGMA_DENOM_1 = 2,
+    SIGMA_DENOM_10 = 3,
+    SIGMA_DENOM_25 = 6,
+    SIGMA_DENOM_100 = 4
 };
 
 // for LogPrintf.
@@ -53,8 +57,8 @@ public:
     size_t GetSerializeSize(int nType, int nVersion) const;
 
     template<typename Stream>
-    inline void Serialize(Stream& s, int nType, int nVersion) const {
-        int size = value.memoryRequired();
+    inline void Serialize(Stream& s) const {
+        constexpr int size = GroupElement::memoryRequired();
         unsigned char buffer[size + sizeof(int32_t)];
         value.serialize(buffer);
         std::memcpy(buffer + size, &denomination, sizeof(denomination));
@@ -63,8 +67,8 @@ public:
     }
 
     template<typename Stream>
-    inline void Unserialize(Stream& s, int nType, int nVersion) {
-        int size = value.memoryRequired();
+    inline void Unserialize(Stream& s) {
+        constexpr int size = GroupElement::memoryRequired();
         unsigned char buffer[size + sizeof(int32_t)];
         char* b = (char*)buffer;
         s.read(b, size + sizeof(int32_t));
@@ -87,7 +91,7 @@ public:
 
     PrivateCoin(const Params* p,
         CoinDenomination denomination,
-        int version = ZEROCOIN_TX_VERSION_3);
+        int version = 30);
 
     const Params * getParams() const;
     const PublicCoin& getPublicCoin() const;
@@ -122,22 +126,17 @@ private:
 
 // Serialization support for CoinDenomination
 
-inline unsigned int GetSerializeSize(CoinDenomination d, int nType, int nVersion)
+template<typename Stream>
+void Serialize(Stream& os, CoinDenomination d)
 {
-    return sizeof(d);
+    Serialize(os, static_cast<std::uint8_t>(d));
 }
 
 template<typename Stream>
-void Serialize(Stream& os, CoinDenomination d, int nType, int nVersion)
-{
-    Serialize(os, static_cast<std::uint8_t>(d), nType, nVersion);
-}
-
-template<typename Stream>
-void Unserialize(Stream& is, CoinDenomination& d, int nType, int nVersion)
+void Unserialize(Stream& is, CoinDenomination& d)
 {
     std::uint8_t v;
-    Unserialize(is, v, nType, nVersion);
+    Unserialize(is, v);
     d = static_cast<CoinDenomination>(v);
 }
 
@@ -155,4 +154,4 @@ template<> struct hash<sigma::CoinDenomination> {
 
 }// namespace std
 
-#endif // BITCOINZERO_SIGMA_COIN_H
+#endif // BZX_SIGMA_COIN_H

@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,8 +7,6 @@
 
 #include "tinyformat.h"
 #include "utilstrencodings.h"
-
-using namespace std;
 
 const char* GetOpName(opcodetype opcode)
 {
@@ -129,7 +127,7 @@ const char* GetOpName(opcodetype opcode)
     case OP_CHECKMULTISIG          : return "OP_CHECKMULTISIG";
     case OP_CHECKMULTISIGVERIFY    : return "OP_CHECKMULTISIGVERIFY";
 
-    // expanson
+    // expansion
     case OP_NOP1                   : return "OP_NOP1";
     case OP_CHECKLOCKTIMEVERIFY    : return "OP_CHECKLOCKTIMEVERIFY";
     case OP_CHECKSEQUENCEVERIFY    : return "OP_CHECKSEQUENCEVERIFY";
@@ -143,13 +141,17 @@ const char* GetOpName(opcodetype opcode)
 
     case OP_INVALIDOPCODE          : return "OP_INVALIDOPCODE";
 
-    // zerocoin
-    case OP_ZEROCOINMINT           : return "OP_ZEROCOINMINT";
-    case OP_ZEROCOINSPEND          : return "OP_ZEROCOINSPEND";
-    case OP_SIGMAMINT              : return "OP_SIGMAMINT";
-    case OP_SIGMASPEND             : return "OP_SIGMASPEND";
-
-
+    // privcoin
+    case OP_PRIVCOINMINT           : return "OP_PRIVCOINMINT";
+    case OP_PRIVCOINSPEND          : return "OP_PRIVCOINSPEND";
+    case OP_SIGMAMINT         : return "OP_SIGMAMINT";
+    case OP_SIGMASPEND        : return "OP_SIGMASPEND";
+    case OP_PRIVCOINTOSIGMAREMINT  : return "OP_PRIVCOINTOSIGMAREMINT";
+    // lelantus
+    case OP_LELANTUSMINT       : return "OP_LELANTUSMINT";
+    case OP_LELANTUSJMINT      : return "OP_LELANTUSJMINT";
+    case OP_LELANTUSJOINSPLIT  : return "OP_LELANTUSJOINSPLIT";
+    case OP_LELANTUSJOINSPLITPAYLOAD: return "OP_LELANTUSJOINSPLITPAYLOAD";
 
     // Note:
     //  The template matching params OP_SMALLINTEGER/etc are defined in opcodetype enum
@@ -194,7 +196,7 @@ unsigned int CScript::GetSigOpCount(const CScript& scriptSig) const
     // get the last item that the scriptSig
     // pushes onto the stack:
     const_iterator pc = scriptSig.begin();
-    vector<unsigned char> data;
+    std::vector<unsigned char> data;
     while (pc < scriptSig.end())
     {
         opcodetype opcode;
@@ -280,21 +282,21 @@ bool CScript::IsWitnessProgram(int& version, std::vector<unsigned char>& program
     return false;
 }
 
-bool CScript::IsZerocoinMint() const
+bool CScript::IsPrivcoinMint() const
 {
-    // Extra-fast test for Zerocoin Mint CScripts:
+    // Extra-fast test for Privcoin Mint CScripts:
     return (this->size() > 0 &&
-            (*this)[0] == OP_ZEROCOINMINT);
+            (*this)[0] == OP_PRIVCOINMINT);
 }
 
-bool CScript::IsZerocoinSpend() const {
+bool CScript::IsPrivcoinSpend() const {
     return (this->size() > 0 &&
-            (*this)[0] == OP_ZEROCOINSPEND);
+            (*this)[0] == OP_PRIVCOINSPEND);
 }
 
 bool CScript::IsSigmaMint() const
 {
-    // Extra-fast test for Zerocoin Mint CScripts:
+    // Extra-fast test for Privcoin Mint CScripts:
     return (this->size() > 0 &&
             (*this)[0] == OP_SIGMAMINT);
 }
@@ -302,6 +304,30 @@ bool CScript::IsSigmaMint() const
 bool CScript::IsSigmaSpend() const {
     return (this->size() > 0 &&
             (*this)[0] == OP_SIGMASPEND);
+}
+
+bool CScript::IsPrivcoinRemint() const {
+    return (this->size() > 0 &&
+            (*this)[0] == OP_PRIVCOINTOSIGMAREMINT);
+}
+
+bool CScript::IsLelantusMint() const {
+    return (this->size() > 0 &&
+            (*this)[0] == OP_LELANTUSMINT);
+}
+
+bool CScript::IsLelantusJMint() const {
+    return (this->size() > 0 &&
+            (*this)[0] == OP_LELANTUSJMINT);
+}
+
+bool CScript::IsLelantusJoinSplit() const {
+    return (this->size() > 0 &&
+            ((*this)[0] == OP_LELANTUSJOINSPLIT || (*this)[0] == OP_LELANTUSJOINSPLITPAYLOAD));
+}
+
+bool CScript::IsMint() const {
+    return IsPrivcoinMint() || IsSigmaMint() || IsPrivcoinRemint() || IsLelantusMint() || IsLelantusJMint();
 }
 
 bool CScript::HasCanonicalPushes() const

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,8 +7,8 @@
 #include "policy/policy.h"
 #include "wallet/wallet.h"
 
-WalletModelTransaction::WalletModelTransaction(const QList<SendCoinsRecipient> &recipients) :
-    recipients(recipients),
+WalletModelTransaction::WalletModelTransaction(const QList<SendCoinsRecipient> &_recipients) :
+    recipients(_recipients),
     walletTransaction(0),
     keyChange(0),
     fee(0)
@@ -64,7 +64,7 @@ void WalletModelTransaction::reassignAmounts(int nChangePosRet)
                 if (out.amount() <= 0) continue;
                 if (i == nChangePosRet)
                     i++;
-                subtotal += walletTransaction->vout[i].nValue;
+                subtotal += walletTransaction->tx->vout[i].nValue;
                 i++;
             }
             rcp.amount = subtotal;
@@ -73,7 +73,7 @@ void WalletModelTransaction::reassignAmounts(int nChangePosRet)
         {
             if (i == nChangePosRet)
                 i++;
-            rcp.amount = walletTransaction->vout[i].nValue;
+            rcp.amount = walletTransaction->tx->vout[i].nValue;
             i++;
         }
     }
@@ -97,4 +97,19 @@ void WalletModelTransaction::newPossibleKeyChange(CWallet *wallet)
 CReserveKey *WalletModelTransaction::getPossibleKeyChange()
 {
     return keyChange;
+}
+
+std::vector<CLelantusEntry>& WalletModelTransaction::getSpendCoins()
+{
+    return spendCoins;
+}
+
+std::vector<CSigmaEntry>& WalletModelTransaction::getSigmaSpendCoins()
+{
+    return sigmaSpendCoins;
+}
+
+std::vector<CHDMint>& WalletModelTransaction::getMintCoins()
+{
+    return mintCoins;
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -29,6 +29,7 @@ class UnitDisplayStatusBarControl;
 class WalletFrame;
 class WalletModel;
 class HelpMessageDialog;
+class ModalOverlay;
 
 class CWallet;
 
@@ -60,7 +61,7 @@ public:
 
 #ifdef ENABLE_WALLET
     /** Set the wallet model.
-        The wallet model represents a BitcoinZero wallet, and offers access to the list of transactions, address book and sending
+        The wallet model represents a BZX wallet, and offers access to the list of transactions, address book and sending
         functionality.
     */
     bool addWallet(const QString& name, WalletModel *walletModel);
@@ -82,21 +83,24 @@ private:
     WalletFrame *walletFrame;
 
     UnitDisplayStatusBarControl *unitDisplayControl;
-    QLabel *labelEncryptionIcon;
-    QLabel *labelConnectionsIcon;
+    QLabel *labelWalletEncryptionIcon;
+    QLabel *labelWalletHDStatusIcon;
+    QLabel *connectionsControl;
     QLabel *labelBlocksIcon;
-    QLabel *labelExodusPendingIcon;
-    QLabel *labelExodusPendingText;
+    QLabel *labelElysiumPendingIcon;
+    QLabel *labelElysiumPendingText;
     QLabel *progressBarLabel;
     QProgressBar *progressBar;
     QProgressDialog *progressDialog;
 
     QMenuBar *appMenuBar;
     QAction *overviewAction;
-    QAction *exoAssetsAction;
+#ifdef ENABLE_ELYSIUM
+    QAction *elyAssetsAction;
+    QAction *toolboxAction;
+#endif
     QAction *historyAction;
     QAction *quitAction;
-    QAction *toolboxAction;
     QAction *sendCoinsAction;
     QAction *sendCoinsMenuAction;
     QAction *usedSendingAddressesAction;
@@ -115,14 +119,18 @@ private:
     QAction *openRPCConsoleAction;
     QAction *openAction;
     QAction *showHelpMessageAction;
-    QAction *sigmaAction;
-    QAction *bznodeAction;
+    QAction *lelantusAction;
+    QAction *masternodeAction;
+    QAction *createPcodeAction;
+    QAction *logoAction;
+    QAction *openRepairAction;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     Notificator *notificator;
     RPCConsole *rpcConsole;
     HelpMessageDialog *helpMessageDialog;
+    ModalOverlay *modalOverlay;
 
     /** Keep track of previous number of blocks, to detect progress */
     int prevBlocks;
@@ -149,19 +157,32 @@ private:
     /** Disconnect core signals from GUI client */
     void unsubscribeFromCoreSignals();
 
+    /** Updates Masternode visibility */
+    void checkMasternodeVisibility(int numBlocks);
+    /** Updates Lelantus visibility */
+    void checkLelantusVisibility(int numBlocks);
+    /** Update UI with latest network info from model. */
+    void updateNetworkState();
+
+    void updateHeadersSyncProgressLabel();
+
 Q_SIGNALS:
     /** Signal raised when a URI was entered or dragged to the GUI */
     void receivedURI(const QString &uri);
+    /** Restart handling */
     void requestedRestart(QStringList args);
 
 public Q_SLOTS:
     /** Set number of connections shown in the UI */
     void setNumConnections(int count);
+    /** Get restart command-line parameters and request restart */
+    void handleRestart(QStringList args);
+    /** Set network state shown in the UI */
+    void setNetworkActive(bool networkActive);
     /** Set number of blocks and last block date shown in the UI */
     void setNumBlocks(int count, const QDateTime& blockDate, double nVerificationProgress, bool headers);
     /** Set additional data sync status shown in the UI */
-    void setAdditionalDataSyncProgress(int count, double nSyncProgress);
-    void handleRestart(QStringList args);
+    void setAdditionalDataSyncProgress(double nSyncProgress);
 
     /** Notify the user of an event from the core network or transaction handling code.
        @param[in] title     the message box / notification title
@@ -179,8 +200,13 @@ public Q_SLOTS:
     */
     void setEncryptionStatus(int status);
 
-    /** Set the Exodus pending transactions label **/
-    void setExodusPendingStatus(bool pending);
+    /** Set the Elysium pending transactions label **/
+    void setElysiumPendingStatus(bool pending);
+    /** Set the hd-enabled status as shown in the UI.
+     @param[in] status            current hd enabled status
+     @see WalletModel::EncryptionStatus
+     */
+    void setHDStatus(int hdEnabled);
 
     bool handlePaymentRequest(const SendCoinsRecipient& recipient);
 
@@ -192,24 +218,28 @@ private Q_SLOTS:
 #ifdef ENABLE_WALLET
     /** Switch to overview (home) page */
     void gotoOverviewPage();
-    /** Switch to ExoAssets page */
-    void gotoExoAssetsPage();
-    /** Switch to history (transactions) page */
-    void gotoHistoryPage();
-    /** Switch directly to Exodus history tab */
-    void gotoExodusHistoryTab();
-    /** Switch directly to BitcoinZero history tab */
-    void gotoBitcoinHistoryTab();
+#ifdef ENABLE_ELYSIUM
+    /** Switch to ElyAssets page */
+    void gotoElyAssetsPage();
     /** Switch to utility page */
     void gotoToolboxPage();
-    /** Switch to bznode page */
-    void gotoBznodePage();
+    /** Switch directly to Elysium history tab */
+    void gotoElysiumHistoryTab();
+#endif
+    /** Switch to history (transactions) page */
+    void gotoHistoryPage();
+    /** Switch directly to BZX history tab */
+    void gotoBitcoinHistoryTab();
+    /** Switch to masternode page */
+    void gotoMasternodePage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
+    /** Switch to create payment code page */
+    void gotoCreatePcodePage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
-    /** Switch to sigma page */
-    void gotoSigmaPage();
+    /** Switch to lelantus page */
+    void gotoLelantusPage();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
@@ -229,6 +259,7 @@ private Q_SLOTS:
     void showDebugWindowActivateConsole();
     /** Show help message dialog */
     void showHelpMessageClicked();
+    void showRepair();
 #ifndef Q_OS_MAC
     /** Handle tray icon clicked */
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -245,8 +276,19 @@ private Q_SLOTS:
     /** Show progress dialog e.g. for verifychain */
     void showProgress(const QString &title, int nProgress);
 
+    /** Update progress bar label text */
+    void updateProgressBarLabel(const QString& text);
+
     /** When hideTrayIcon setting is changed in OptionsModel hide or show the icon accordingly. */
     void setTrayIconVisible(bool);
+
+    /** Toggle networking */
+    void toggleNetworkActive();
+
+    void showModalOverlay();
+
+    /** Update Lelantus page visibility */
+    void updateLelantusPage();
 };
 
 class UnitDisplayStatusBarControl : public QLabel

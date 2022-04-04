@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2019, The Tor Project, Inc. */
+/* Copyright (c) 2007-2020, The Tor Project, Inc. */
 
 /**
  * \file orconn_event_sys.h
@@ -9,4 +9,4 @@
 
 extern const struct subsys_fns_t sys_orconn_event;
 
-#endif  /* defined(TOR_ORCONN_SYS_H) */
+#endif /* !defined(TOR_ORCONN_EVENT_SYS_H) */

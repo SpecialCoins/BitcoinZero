@@ -1,4 +1,4 @@
-<TS language="zh_CN" version="2.2">
+<TS language="zh_CN" version="2.1">
 <context>
     <name>AddressBookPage</name>
     <message>
@@ -23,7 +23,7 @@
     </message>
     <message>
         <source>C&amp;lose</source>
-        <translation>关闭(&amp;l)</translation>
+        <translation>关闭(&amp;L)</translation>
     </message>
     <message>
         <source>Delete the currently selected address from the list</source>
@@ -51,7 +51,7 @@
     </message>
     <message>
         <source>C&amp;hoose</source>
-        <translation>选择</translation>
+        <translation>选择(&amp;H)</translation>
     </message>
     <message>
         <source>Sending addresses</source>
@@ -62,24 +62,24 @@
         <translation>收款地址</translation>
     </message>
     <message>
-        <source>These are your BitcoinZero addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>这些是你要付款过去的零币地址。在付钱之前，务必要检查金额和收款地址是否正确。</translation>
+        <source>These are your addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>这些是你要付款过去的 BZX 地址。在付钱之前，务必要检查金额和收款地址是否正确。</translation>
     </message>
     <message>
-        <source>These are your BitcoinZero addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>这些是你用来收款的零币地址。建议在每次交易时，都使用一个新的收款地址。</translation>
+        <source>These are your addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>这些是你用来收款的 BZX 地址。建议在每次交易时，都使用一个新的收款地址。</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
-        <translation>复制地址</translation>
+        <translation>复制地址(&amp;C)</translation>
     </message>
     <message>
         <source>Copy &amp;Label</source>
-        <translation>复制标签</translation>
+        <translation>复制标签(&amp;L)</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>编辑</translation>
+        <translation>编辑(&amp;E)</translation>
     </message>
     <message>
         <source>Export Address List</source>
@@ -97,6 +97,123 @@
         <source>There was an error trying to save the address list to %1. Please try again.</source>
         <translation>存储地址列表到 %1 时发生错误。请再试一次。</translation>
     </message>
+    <message>
+        <source>Addresses</source>
+        <translation>地址</translation>
+    </message>
+    <message>
+        <source>RAP addresses</source>
+        <translation>RAP 地址</translation>
+    </message>
+    <message>
+        <source>&amp;Copy RAP address</source>
+        <translation>复制 RAP 地址(&amp;C)</translation>
+    </message>
+</context>
+<context>
+    <name>Recover</name>
+    <message>
+        <source>Create or Recover Wallet</source>
+        <translation>创建或恢复钱包</translation>
+    </message>
+    <message>
+        <source>Let's create your BZX wallet!
+
+Please save these words on paper (order is important). These words serve as your seed and will allow you to recover your wallet in case of a computer failure.
+
+By default we create a 24 word seed but you may choose a 12 word seed should you require it for compatibility reasons.
+
+You can also choose to further encrypt your seed with a passphrase for added security.
+
+Warning:
+* Never disclose your seed
+* Never type it on a website
+* Do not store it electronically.
+* If you encrypt your seed with an additional passphrase, please also record this.
+
+If you have an existing seed that you wish to restore, please select "Recover existing wallet" and enter your passphrase (if you have set one for your seed).
+
+Advanced: If you don't wish to generate a wallet with a seed phrase backup (not recommended), you can set usemnemonic=0 in BZXBETA.conf.
+      </source>
+        <translation>让我们一起创建你的 BZX 钱包吧！
+
+请将这些字保存在纸上（顺序很重要）。这些字将作为你的种子，以便于允许你在计算机故障的情况下恢复你的钱包。
+
+默认情况下，我们会创建一个 24 个字的种子，但如果你出于兼容性的原因需要，你也可以选择一个 12 个字的种子。
+
+你也可以选择用密码口令进一步加密你的种子，以增加安全性。
+
+警告：
+* 切勿透露你的种子
+* 不要在网站上打出来
+* 请不要以电子方式存储
+* 如果你用额外的口令加密种子，也请记录下来。
+
+如果你有一个想要恢复的现有种子，请选择“恢复现有钱包”，然后输入你的密码（如果你已经为种子设置了密码）。
+
+高级设置：如果你不希望生成一个带有种子短语备份的钱包（不推荐），你可以在 BZXBETA.conf 中设置 usemnemonic=0。
+        </translation>
+    </message>
+    <message>
+        <source>Create new wallet</source>
+        <translation>创建新钱包</translation>
+    </message>
+    <message>
+        <source>Recover existing wallet</source>
+        <translation>恢复现有钱包</translation>
+    </message>
+    <message>
+        <source>12 Words</source>
+        <translation>12 个字</translation>
+    </message>
+    <message>
+        <source>24 Words</source>
+        <translation>24 个字</translation>
+    </message>
+    <message>
+        <source>Input words here:</source>
+        <translation>请在这里输入：</translation>
+    </message>
+    <message>
+        <source>Use seed passphrase (optional):</source>
+        <translation>使用种子口令（可选）：</translation>
+    </message>
+    <message>
+        <source>Input mnemonic passphrase here:</source>
+        <translation>在这里输入记忆口令：</translation>
+    </message>
+    <message>
+        <source>Input mnemonic passphrase again:</source>
+        <translation>再次输入记忆口令：</translation>
+    </message>
+    <message>
+        <source>Wrong number of words. Please try again.</source>
+        <translation>字数错误。请再试一次。</translation>
+    </message>
+    <message>
+        <source>Mnemonic can't be empty.</source>
+        <translation>助记词不能是空的。</translation>
+    </message>
+    <message>
+        <source>Something went wrong. Please try again.</source>
+        <translation>出现问题。请再试一次。</translation>
+    </message>
+    <message>
+        <source>Passphrases don't match.</source>
+        <translation>密码口令不匹配。</translation>
+    </message>
+    <message>
+        <source>Passphrase can't be empty.</source>
+        <translation>密码口令不能为空。</translation>
+    </message>
+    <message>
+        <source>RAP addresses to be created:</source>
+        <translation>将要创建的 RAP 地址数量：</translation>
+    </message>
+    <message>
+        <source>The number of RAP addresses will be created in the wallet for the initial blockchain scan</source>
+        <translation>将在钱包中创建的 RAP 地址的数量，用于初始区块链扫描</translation>
+    </message>
 </context>
 <context>
     <name>AddressTableModel</name>
@@ -111,6 +228,17 @@
     <message>
         <source>(no label)</source>
         <translation>(无标签)</translation>
+    </message>
+</context>
+<context>
+    <name>PcodeAddressTableModel</name>
+    <message>
+        <source>RAP payment code</source>
+        <translation>RAP 支付码</translation>
+    </message>
+    <message>
+        <source>Copy RAP address</source>
+        <translation>复制 RAP 地址</translation>
     </message>
 </context>
 <context>
@@ -168,8 +296,8 @@
         <translation>确认钱包加密</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR BITCOINZEROS&lt;/b&gt;!</source>
-        <translation>警告: 如果把钱包加密后又忘记密码，你就会从此&lt;b&gt;失去其中所有的零币了&lt;/b&gt;！</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR BZXS&lt;/b&gt;!</source>
+        <translation>警告：如果把钱包加密后又忘记密码，你就会从此&lt;b&gt;失去其中所有的 BZX 了&lt;/b&gt;！</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -180,12 +308,16 @@
         <translation>钱包已加密</translation>
     </message>
     <message>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your bitcoinzeros from being stolen by malware infecting your computer.</source>
+        <source>BZX Core</source>
+        <translation>BZX 核心</translation>
+    </message>
+    <message>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your BZXs from being stolen by malware infecting your computer.</source>
         <translation>%1 现在要关闭，以完成加密过程。请注意，加密钱包不能完全防止入侵你的电脑的恶意程序偷取钱币。</translation>
     </message>
     <message>
         <source>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. For security reasons, previous backups of the unencrypted wallet file will become useless as soon as you start using the new, encrypted wallet.</source>
-        <translation>重要: 请改用新产生的有加密的钱包文件，来取代旧钱包文件的备份。为了安全性，当你开始使用新的有加密的钱包后，旧钱包文件的备份就不能再使用了。</translation>
+        <translation>重要：请改用新产生的有加密的钱包文件，来取代旧钱包文件的备份。为了安全性，当你开始使用新的有加密的钱包后，旧钱包文件的备份就不能再使用了。</translation>
     </message>
     <message>
         <source>Wallet encryption failed</source>
@@ -197,7 +329,7 @@
     </message>
     <message>
         <source>The supplied passphrases do not match.</source>
-        <translation>提供的密码不yi'zhi。</translation>
+        <translation>提供的密码不一致。</translation>
     </message>
     <message>
         <source>Wallet unlock failed</source>
@@ -217,7 +349,7 @@
     </message>
     <message>
         <source>Warning: The Caps Lock key is on!</source>
-        <translation>警告: 大写字母锁定已开启！</translation>
+        <translation>警告：大写字母锁定已开启！</translation>
     </message>
 </context>
 <context>
@@ -232,7 +364,11 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
+    <message>
+        <source>BZX Core</source>
+        <translation>BZX 核心</translation>
+    </message>
     <message>
         <source>Sign &amp;message...</source>
         <translation>消息签名(&amp;M)...</translation>
@@ -244,6 +380,22 @@
     <message>
         <source>&amp;Overview</source>
         <translation>概况(&amp;O)</translation>
+    </message>
+    <message>
+        <source>&amp;Masternodes</source>
+        <translation>主节点(&amp;M)</translation>
+    </message>
+    <message>
+        <source>RA&amp;P addresses</source>
+        <translation>RAP 地址(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Create RAP addresses (BIP47 payment codes)</source>
+        <translation>创建 RAP 地址（BIP47 支付码）</translation>
+    </message>
+    <message>
+        <source>Syncing Headers (%1%)...</source>
+        <translation>同步区块头 (%1%)...</translation>
     </message>
     <message>
         <source>Node</source>
@@ -260,6 +412,14 @@
     <message>
         <source>Browse transaction history</source>
         <translation>查看交易历史</translation>
+    </message>
+    <message>
+        <source>Anonymize your coins</source>
+        <translation>匿名化你的币</translation>
+    </message>
+    <message>
+        <source>Browse masternodes</source>
+        <translation>查看主节点</translation>
     </message>
     <message>
         <source>E&amp;xit</source>
@@ -307,23 +467,35 @@
     </message>
     <message>
         <source>&amp;Sending addresses...</source>
-        <translation>正在发送地址(&amp;S)...</translation>
+        <translation>付款地址(&amp;S)...</translation>
     </message>
     <message>
         <source>&amp;Receiving addresses...</source>
-        <translation>正在接收地址(&amp;R)...</translation>
+        <translation>收款地址(&amp;R)...</translation>
     </message>
     <message>
         <source>Open &amp;URI...</source>
         <translation>打开 &amp;URI...</translation>
     </message>
     <message>
+        <source>Click to disable network activity.</source>
+        <translation>点击禁用网络活动。</translation>
+    </message>
+    <message>
+        <source>Network activity disabled.</source>
+        <translation>网络活动已禁用。</translation>
+    </message>
+    <message>
+        <source>Click to enable network activity again.</source>
+        <translation>点击重新开启网络活动。</translation>
+    </message>
+    <message>
         <source>Reindexing blocks on disk...</source>
         <translation>正在为数据块重建索引...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>向一个零币地址发送零币</translation>
+        <source>Send coins to a address</source>
+        <translation>向一个 BZX 地址发送 BZX</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -346,8 +518,8 @@
         <translation>验证消息(&amp;V)...</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>零币</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -374,12 +546,12 @@
         <translation>对钱包中的私钥加密</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
-        <translation>用零币地址关联的私钥为消息签名，以证明您拥有这个零币地址</translation>
+        <source>Sign messages with your addresses to prove you own them</source>
+        <translation>用 BZX 地址关联的私钥为消息签名，以证明你拥有这个 BZX 地址</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
-        <translation>校验消息，确保该消息是由指定的零币地址所有者签名的</translation>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
+        <translation>校验消息，确保该消息是由指定的 BZX 地址所有者签名的</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -398,8 +570,8 @@
         <translation>分页工具栏</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>请求支付 (生成二维码和 BitcoinZero: URI)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>请求支付 (生成二维码和 BZX: URI)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -410,16 +582,16 @@
         <translation>显示用过的接收地址和标签的列表</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>打开一个 BitcoinZero: URI 或支付请求</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>打开一个 BZX: URI 或支付请求</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>命令行选项(&amp;C)</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to BitcoinZero network</source>
-        <translation><numerusform>%n 个到零币网络的活动连接</numerusform></translation>
+        <source>%n active connection(s) to BZX network</source>
+        <translation><numerusform>%n 个到 BZX 网络的活动连接</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -429,33 +601,9 @@
         <source>Processing blocks on disk...</source>
         <translation>正在处理数据块...</translation>
     </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>沒有可用的区块来源...</translation>
-    </message>
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
         <translation><numerusform>已处理 %n 个交易历史数据块。</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n 小时</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n 天</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n 周</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 和 %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n 年</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -486,8 +634,16 @@
         <translation>已是最新</translation>
     </message>
     <message>
+        <source>Show the %1 help message to get a list with possible BZX command-line options</source>
+        <translation>显示 %1 帮助信息，获取可用命令行选项列表</translation>
+    </message>
+    <message>
         <source>%1 client</source>
         <translation>%1 客戶</translation>
+    </message>
+    <message>
+        <source>Connecting to peers...</source>
+        <translation>正在连接到节点……</translation>
     </message>
     <message>
         <source>Catching up...</source>
@@ -539,6 +695,209 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>钱包已被&lt;b&gt;加密&lt;/b&gt;，当前为&lt;b&gt;锁定&lt;/b&gt;状态</translation>
     </message>
+    <message>
+        <source>A fatal error occurred. BZX can no longer continue safely and will quit.</source>
+        <translation>发生严重错误。客户端无法安全地继续运行，即将退出。</translation>
+    </message>
+</context>
+<context>
+    <name>CreatePcodeDialog</name>
+    <message>
+        <source>Copy RAP Address</source>
+        <translation>复制 RAP 地址</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use this form to create a Receiver Address Privacy (BIP47) payment code.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;使用此表单创建一个接收方地址隐私（BIP47）支付码。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&amp;Label:</source>
+        <translation>标签(&amp;L)：</translation>
+    </message>
+    <message>
+        <source>An optional label to associate with the new receiving address.</source>
+        <translation>可为新建的收款地址添加一个标签。</translation>
+    </message>
+    <message>
+        <source>A mandatory label to associate with the new payment code.</source>
+        <translation>与新支付码相关联的强制性标签。</translation>
+    </message>
+    <message>
+        <source>Recent payment codes</source>
+        <translation>最近的支付码</translation>
+    </message>
+    <message>
+        <source>The label should not be empty.</source>
+        <translation>标签不应为空。</translation>
+    </message>
+    <message>
+        <source>The label should be unique.</source>
+        <translation>标签应该是唯一的。</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <source>C&amp;reate payment code</source>
+        <translation>创建支付码(&amp;R)</translation>
+    </message>
+    <message>
+        <source>Show more info on the selected payment code (does the same as double clicking an entry)</source>
+        <translation>显示所选支付码的更多信息（与双击条目的作用相同）</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>显示</translation>
+    </message>
+    <message>
+        <source>Copy Notification Address</source>
+        <translation>复制通知地址</translation>
+    </message>
+    <message>
+        <source>Show QR Code</source>
+        <translation>显示二维码</translation>
+    </message>
+    <message>
+        <source>Clear all fields of the form.</source>
+        <translation>清除此表单的所有字段。</translation>
+    </message>
+    <message>
+        <source>RAP address creation failed with error: "%1"</source>
+        <translation>创建 RAP 地址失败，出现错误：「%1」</translation>
+    </message>
+    <message>
+        <source>Double click on Label to edit, on other columns for more info</source>
+        <translation>双击标签进行编辑，双击其他列查看更多信息</translation>
+    </message>
+</context>
+<context>
+    <name>PcodeModel</name>
+    <message>
+        <source>RAP address</source>
+        <translation>RAP 地址</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>标签</translation>
+    </message>
+</context>
+<context>
+    <name>SendtoPcodeDialog</name>
+    <message>
+        <source>RAP info</source>
+        <translation>RAP 信息</translation>
+    </message>
+    <message>
+        <source>A one time connection fee is required when sending to a new RAP address.
+Once this fee is paid, all future sends to this RAP address do not incur any additional fee.
+</source>
+        <translation>在向一个新的 RAP 地址发送时，需要一次性的连接费。
+一旦支付了这笔费用，今后向该 RAP 地址发送的所有交易都不会产生任何额外费用。</translation>
+    </message>
+    <message>
+        <source>This is the first time you are sending to this RAP address:</source>
+        <translation>这是你第一次发送到此 RAP 地址：</translation>
+    </message>
+    <message>
+        <source>Connection transaction</source>
+        <translation>连接交易</translation>
+    </message>
+    <message>
+        <source>Sends the connection transaction</source>
+        <translation>发送连接交易</translation>
+    </message>
+    <message>
+        <source>notificationTxId</source>
+        <translation>通知交易 ID</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>帮助</translation>
+    </message>
+    <message>
+        <source>Requires a notification tx to be confirmed</source>
+        <translation>需要通知交易被确认</translation>
+    </message>
+    <message>
+        <source>Send Now</source>
+        <translation>立即发送</translation>
+    </message>
+    <message>
+        <source>&lt;i&gt;Please click Connect button to start.&lt;/i&gt;</source>
+        <translation>&lt;i&gt;请点击连接按钮开始。&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>Ready to connect</source>
+        <translation>准备连接</translation>
+    </message>
+    <message>
+        <source>&lt;i&gt;The balance is not enough.&lt;/i&gt;</source>
+        <translation>&lt;i&gt;余额不足。&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>Balance is not enough</source>
+        <translation>余额不足</translation>
+    </message>
+    <message>
+        <source>&lt;i&gt;Please wait until the connection transaction has confirmed.&amp;nbsp;It is safe to close this dialog box while waiting for the confirmation.&amp;nbsp;Once confirmed, you can send your BZX to the RAP address on the Send tab.&lt;/i&gt;</source>
+        <translation>&lt;i&gt;请等待，直到连接交易得到确认。在等待确认的过程中，关闭这个对话框是安全的。一旦确认，你可以将你的 BZX 发送到发送选项卡上的 RAP 地址。&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>Waiting for confirmation</source>
+        <translation>等待确认中</translation>
+    </message>
+    <message>
+        <source>&lt;i&gt;BZX can be sent now.&lt;/i&gt;</source>
+        <translation>&lt;i&gt;现在可以发送 BZX。&lt;/i&gt;</translation>
+    </message>
+    <message>
+        <source>Ready</source>
+        <translation>准备就绪</translation>
+    </message>
+    <message>
+        <source>Send to RAP address</source>
+        <translation>发送到 RAP 地址</translation>
+    </message>
+    <message>
+        <source>Lelantus balance</source>
+        <translation>Lelantus 余额</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>无</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>连接</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Sending funds to a RAP address requires a notification transaction to be sent by the payer prior to the first payment.&#32;
+Notification transactions use Lelantus facilities to enhance privacy.
+After the notification transaction is received by the RAP address issuer, funds can be privately sent to the RAP secret addresses.
+</source>
+        <translation>向 RAP 地址发送资金需要付款人在第一次付款前发送通知交易。
+通知交易使用 Lelantus 功能来增强隐私。
+在 RAP 地址发布者收到通知交易后，资金可以被私下发送到 RAP 秘密地址。</translation>
+    </message>
+    <message>
+        <source>The recommended workflow is as follows:
+1. Send a notification transaction
+2. Make sure it is included in a block with a block explorer
+3. Send funds to the RAP address in one or more transactions</source>
+        <translation>推荐的工作流程如下：
+1. 发送一个通知交易
+2. 使用区块浏览器确保它包含在一个区块中
+3. 在一笔或多笔交易中向 RAP 地址发送资金</translation>
+    </message>
 </context>
 <context>
     <name>CoinControlDialog</name>
@@ -559,10 +918,6 @@
         <translation>金额：</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>优先级：</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>费用：</translation>
     </message>
@@ -572,11 +927,11 @@
     </message>
     <message>
         <source>After Fee:</source>
-        <translation>加上交易费用后:</translation>
+        <translation>加上交易费用后：</translation>
     </message>
     <message>
         <source>Change:</source>
-        <translation>变更 : </translation>
+        <translation>变更：</translation>
     </message>
     <message>
         <source>(un)select all</source>
@@ -615,10 +970,6 @@
         <translation>已确认</translation>
     </message>
     <message>
-        <source>Priority</source>
-        <translation>优先级</translation>
-    </message>
-    <message>
         <source>Copy address</source>
         <translation>复制地址</translation>
     </message>
@@ -632,7 +983,7 @@
     </message>
     <message>
         <source>Copy transaction ID</source>
-        <translation>复制交易识别码</translation>
+        <translation>复制交易 ID</translation>
     </message>
     <message>
         <source>Lock unspent</source>
@@ -659,10 +1010,6 @@
         <translation>复制字节数</translation>
     </message>
     <message>
-        <source>Copy priority</source>
-        <translation>复制优先度</translation>
-    </message>
-    <message>
         <source>Copy dust</source>
         <translation>复制零散金额</translation>
     </message>
@@ -671,48 +1018,8 @@
         <translation>复制找零金额</translation>
     </message>
     <message>
-        <source>highest</source>
-        <translation>最高</translation>
-    </message>
-    <message>
-        <source>higher</source>
-        <translation>很高</translation>
-    </message>
-    <message>
-        <source>high</source>
-        <translation>高</translation>
-    </message>
-    <message>
-        <source>medium-high</source>
-        <translation>中高</translation>
-    </message>
-    <message>
-        <source>medium</source>
-        <translation>中等</translation>
-    </message>
-    <message>
-        <source>low-medium</source>
-        <translation>中低</translation>
-    </message>
-    <message>
-        <source>low</source>
-        <translation>低</translation>
-    </message>
-    <message>
-        <source>lower</source>
-        <translation>很低</translation>
-    </message>
-    <message>
-        <source>lowest</source>
-        <translation>最低</translation>
-    </message>
-    <message>
         <source>(%1 locked)</source>
         <translation>(锁定 %1 枚)</translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation>无</translation>
     </message>
     <message>
         <source>yes</source>
@@ -721,26 +1028,6 @@
     <message>
         <source>no</source>
         <translation>否</translation>
-    </message>
-    <message>
-        <source>This label turns red if the transaction size is greater than 1000 bytes.</source>
-        <translation>当交易大小大于 1000 字节时，文字会变红色。</translation>
-    </message>
-    <message>
-        <source>This means a fee of at least %1 per kB is required.</source>
-        <translation>表示每一千字节(kB)需要至少 %1 的手续费。</translation>
-    </message>
-    <message>
-        <source>Can vary +/- 1 byte per input.</source>
-        <translation>每组输入可能会误差多或少 1 个字节。</translation>
-    </message>
-    <message>
-        <source>Transactions with higher priority are more likely to get included into a block.</source>
-        <translation>优先度较高的交易比较有可能被接受放进区块中。</translation>
-    </message>
-    <message>
-        <source>This label turns red if the priority is smaller than "medium".</source>
-        <translation>当优先度低于“中等”时，文字会变红色。</translation>
     </message>
     <message>
         <source>This label turns red if any recipient receives an amount smaller than the current dust threshold.</source>
@@ -802,8 +1089,8 @@
         <translation>编辑付款地址</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid BitcoinZero address.</source>
-        <translation>输入的地址 %1 并不是有效的零币地址。</translation>
+        <source>The entered address "%1" is not a valid address.</source>
+        <translation>输入的地址 %1 并不是有效的 BZX 地址。</translation>
     </message>
     <message>
         <source>The entered address "%1" is already in the address book.</source>
@@ -816,6 +1103,22 @@
     <message>
         <source>New key generation failed.</source>
         <translation>产生新的密钥失败了。</translation>
+    </message>
+    <message>
+        <source>New RAP payment code</source>
+        <translation>新建 RAP 支付码</translation>
+    </message>
+    <message>
+        <source>Edit RAP payment code</source>
+        <translation>编辑 RAP 支付码</translation>
+    </message>
+    <message>
+        <source>RAP address</source>
+        <translation>RAP 地址</translation>
+    </message>
+    <message>
+        <source>New RAP address validation failed.</source>
+        <translation>新建 RAP 地址验证失败。</translation>
     </message>
 </context>
 <context>
@@ -830,7 +1133,7 @@
     </message>
     <message>
         <source>Directory already exists. Add %1 if you intend to create a new directory here.</source>
-        <translation>目录已存在。如果您打算在这里创建一个新目录，添加 %1。</translation>
+        <translation>目录已存在。如果你打算在这里创建一个新目录，添加 %1。</translation>
     </message>
     <message>
         <source>Path already exists, and is not a directory.</source>
@@ -843,6 +1146,10 @@
 </context>
 <context>
     <name>HelpMessageDialog</name>
+    <message>
+        <source>BZX Core</source>
+        <translation>BZX 核心</translation>
+    </message>
     <message>
         <source>version</source>
         <translation>版本</translation>
@@ -897,6 +1204,41 @@
     </message>
 </context>
 <context>
+    <name>NotifyMnemonic</name>
+    <message>
+        <source>Notification</source>
+        <translation>注意</translation>
+    </message>
+    <message>
+        <source>Please write down these words and keep them in a secure location such as a safe.</source>
+        <translation>请写下这些单词，并将其保存在安全的地方，如保险箱。</translation>
+    </message>
+    <message>
+        <source>Your wallet has been created successfully. Using the following sequence of words, you will be able to recover your wallet at any time.</source>
+        <translation>你的钱包已经创建成功。使用下面的顺序词，你就可以随时找回你的钱包。</translation>
+    </message>
+    <message>
+        <source>Mnemonic words:</source>
+        <translation>助记词：</translation>
+    </message>
+    <message>
+        <source>WARNING: Anyone with access to these words can recover your wallet and will have control over your funds!</source>
+        <translation>警告：任何有机会接触到这些词的人都可以找回你的钱包，并将控制你的资金！</translation>
+    </message>
+    <message>
+        <source>Please re-enter the mnemonic words to ensure that you have written it down correctly.</source>
+        <translation>请重新输入助记词，以确保你正确地写下了它。</translation>
+    </message>
+    <message>
+        <source>Your entered words do not match, please press back to re-check your mnemonic.</source>
+        <translation>你输入的词不匹配，请返回以重新检查你的助记词。</translation>
+    </message>
+    <message>
+        <source>Are you sure you wish to proceed without confirming whether you have written down your seed words correctly?</source>
+        <translation>你确定要在不确认自己的种子短语是否正确写下的情况下继续吗？</translation>
+    </message>
+</context>
+<context>
     <name>Intro</name>
     <message>
         <source>Welcome</source>
@@ -905,15 +1247,15 @@
     <message>
         <source>Welcome to %1.</source>
         <translation>
-欢迎来到 %1</translation>
+歡迎來到 %1</translation>
     </message>
     <message>
         <source>As this is the first time the program is launched, you can choose where %1 will store its data.</source>
-        <translation>由于这是第一次启动此程序，您可以选择%1的数据所存储的位置</translation>
+        <translation>由于这是第一次启动此程序，你可以选择%1的数据所存储的位置</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the BitcoinZero block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
-        <translation>%1 会下载并存储一份零币区块链的副本。至少有 %2GB 的数据会存储到这个目录中，并且还会持续增长。另外钱包资料也会储存在这个目录。</translation>
+        <source>%1 will download and store a copy of the BZX block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <translation>%1 会下载并存储一份 BZX 区块链的副本。至少有 %2GB 的数据会存储到这个目录中，并且还会持续增长。另外钱包资料也会储存在这个目录。</translation>
     </message>
     <message>
         <source>Use the default data directory</source>
@@ -938,6 +1280,57 @@
     <message numerus="yes">
         <source>(of %n GB needed)</source>
         <translation><numerusform>(需要%n GB空间)</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>表单</translation>
+    </message>
+    <message>
+        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the BZX network, as detailed below.</source>
+        <translation>近期交易可能尚未显示，因此当前余额可能不准确。以上信息将在与 BZX 网络完全同步后更正。详情如下</translation>
+    </message>
+    <message>
+        <source>Attempting to spend BZXs that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
+        <translation>尝试使用受未可见交易影响的余额将不被网络接受。</translation>
+    </message>
+    <message>
+        <source>Number of blocks left</source>
+        <translation>剩余区块数量</translation>
+    </message>
+    <message>
+        <source>Unknown...</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>上一数据块时间</translation>
+    </message>
+    <message>
+        <source>Progress</source>
+        <translation>进度</translation>
+    </message>
+    <message>
+        <source>Progress increase per hour</source>
+        <translation>每小时进度增加</translation>
+    </message>
+    <message>
+        <source>calculating...</source>
+        <translation>正在计算</translation>
+    </message>
+    <message>
+        <source>Estimated time left until synced</source>
+        <translation>预计剩余同步时间</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>隐藏</translation>
+    </message>
+    <message>
+        <source>Unknown. Syncing Headers (%1)...</source>
+        <translation>未知。正在同步区块头 (%1)...</translation>
     </message>
 </context>
 <context>
@@ -1011,7 +1404,7 @@
     </message>
     <message>
         <source>Third party URLs (e.g. a block explorer) that appear in the transactions tab as context menu items. %s in the URL is replaced by transaction hash. Multiple URLs are separated by vertical bar |.</source>
-        <translation>出现在交易的选项卡的上下文菜单项的第三方网址 (例如：区块链接查询) 。 %s的URL被替换为交易哈希。多个的URL需要竖线 | 分隔。</translation>
+        <translation>出现在交易的选项卡的上下文菜单项的第三方网址 (例如：区块链接查询) 。%s的URL被替换为交易哈希。多个的URL需要竖线 | 分隔。</translation>
     </message>
     <message>
         <source>Third party transaction URLs</source>
@@ -1047,27 +1440,43 @@
     </message>
     <message>
         <source>Enable coin &amp;control features</source>
-        <translation>启动货币控制功能(&amp;C)</translation>
+        <translation>启用手动选币功能(&amp;C)</translation>
     </message>
     <message>
         <source>If you disable the spending of unconfirmed change, the change from a transaction cannot be used until that transaction has at least one confirmation. This also affects how your balance is computed.</source>
-        <translation>如果禁用未确认的零钱，则零钱至少需要1个确认才能使用。同时账户余额计算会受到影响。</translation>
+        <translation>如果禁用未确认的零钱，则零钱至少需要 1 个确认才能使用。同时账户余额计算会受到影响。</translation>
+    </message>
+    <message>
+        <source>Enable &amp;auto-anonymize features</source>
+        <translation>启用自动匿名化功能</translation>
+    </message>
+    <message>
+        <source>Enable &amp;lelantus manual-anonymize page</source>
+        <translation>启用 Lelantus 手动匿名化界面</translation>
     </message>
     <message>
         <source>&amp;Spend unconfirmed change</source>
         <translation>使用未经确认的零钱(&amp;S)</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>自动在路由器中打开零币端口。只有当您的路由器开启了 UPnP 选项时此功能才有效。</translation>
+        <source>&amp;Reindex Lelantus</source>
+        <translation>重新索引 Lelantus(&amp;R)</translation>
+    </message>
+    <message>
+        <source>Restore all Lelantus transactions following a reindex.</source>
+        <translation>在重新索引后恢复所有 Lelantus 交易。</translation>
+    </message>
+    <message>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>自动在路由器中打开 BZX 端口。只有当你的路由器开启了 UPnP 选项时此功能才有效。</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>使用 &amp;UPnP 映射端口</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a SOCKS5 proxy.</source>
-        <translation>通过 SOCKS5 代理连接零币网络。</translation>
+        <source>Connect to the BZX network through a SOCKS5 proxy.</source>
+        <translation>通过 SOCKS5 代理连接 BZX 网络。</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -1106,8 +1515,8 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>在 Tor 匿名网络下通过不同的 SOCKS5 代理连接零币网络</translation>
+        <source>Connect to the BZX network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>在 Tor 匿名网络下通过不同的 SOCKS5 代理连接 BZX 网络</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</source>
@@ -1151,15 +1560,15 @@
     </message>
     <message>
         <source>&amp;Unit to show amounts in:</source>
-        <translation>零币金额单位(&amp;U)：</translation>
+        <translation>BZX 金额单位(&amp;U)：</translation>
     </message>
     <message>
         <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
-        <translation>选择零币单位。</translation>
+        <translation>选择 BZX 单位。</translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
-        <translation>是否需要交易源地址控制功能。</translation>
+        <translation>是否显示手动选币功能面板。</translation>
     </message>
     <message>
         <source>&amp;OK</source>
@@ -1187,7 +1596,7 @@
     </message>
     <message>
         <source>Client will be shut down. Do you want to proceed?</source>
-        <translation>客户端即将关闭，您想继续吗？</translation>
+        <translation>客户端即将关闭，你想继续吗？</translation>
     </message>
     <message>
         <source>This change would require a client restart.</source>
@@ -1197,36 +1606,511 @@
         <source>The supplied proxy address is invalid.</source>
         <translation>提供的代理服务器地址无效。</translation>
     </message>
+    <message>
+        <source>Confirm Reindex Lelantus</source>
+        <translation>确认重新索引 Lelantus</translation>
+    </message>
+    <message>
+        <source>Warning: On restart, this setting will wipe your transaction list, reindex the blockchain, and restore the list from the seed in your wallet. This will likely take a few hours. Are you sure?</source>
+        <translation>警告：在重新启动时，该设置将擦除你的交易列表，重新索引区块链，并从你钱包中的种子恢复列表。这可能需要几个小时。你确定吗？</translation>
+    </message>
 </context>
 <context>
-    <name>OverviewPage</name>
+    <name>AutomintNotification</name>
+    <message>
+        <source>You have incoming transaction(s)!</source>
+        <translation>你有刚收到的交易！</translation>
+    </message>
+    <message>
+        <source>Do you want to anonymize all transparent funds?</source>
+        <translation>你想把所有公开的资金匿名化吗？</translation>
+    </message>
+    <message>
+        <source>Anonymize</source>
+        <translation>匿名化</translation>
+    </message>
+    <message>
+        <source>Dismiss</source>
+        <translation>忽略</translation>
+    </message>
+</context>
+<context>
+    <name>AutoMintDialog</name>
+    <message>
+        <source>Anonymize Funds</source>
+        <translation>资金匿名化</translation>
+    </message>
+    <message>
+        <source>Do you want to anonymize all transparent funds?</source>
+        <translation>你想把所有的公开资金匿名化吗？</translation>
+    </message>
+    <message>
+        <source>Anonymize</source>
+        <translation>匿名化</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Unlock your wallet to anonymize all transparent funds.</source>
+        <translation>解锁钱包，将所有公开资金匿名化</translation>
+    </message>
+    <message>
+        <source>Lock wallet immediately after anonymizing</source>
+        <translation>匿名化后立即锁上你的钱包</translation>
+    </message>
+    <message>
+        <source>Enter passphrase</source>
+        <translation>输入密码</translation>
+    </message>
+    <message>
+        <source>Wallet unlock failed</source>
+        <translation>钱包解锁失败</translation>
+    </message>
+    <message>
+        <source>The passphrase was incorrect.</source>
+        <translation>密码不正确。</translation>
+    </message>
+    <message>
+        <source>Unlocking wallet...</source>
+        <translation>解锁钱包中...</translation>
+    </message>
+    <message>
+        <source>Anonymizing...</source>
+        <translation>匿名化中...</translation>
+    </message>
+    <message>
+        <source>Unable to generate mint</source>
+        <translation>无法铸币</translation>
+    </message>
+    <message>
+        <source>Unable to generate mint: Blockchain not yet synced.</source>
+        <translation>无法铸币：区块链尚未同步。</translation>
+    </message>
+</context>
+<context>
+    <name>AutoMintModel</name>
+    <message>
+        <source>Auto Anonymize</source>
+        <translation>自动匿名化</translation>
+    </message>
+    <message>
+        <source>Fail to mint, %1</source>
+        <translation>铸币失败，%1</translation>
+    </message>
+    <message>
+        <source>Fail to unlock wallet</source>
+        <translation>解锁钱包失败</translation>
+    </message>
+    <message>
+        <source>Successfully anonymized %1</source>
+        <translation>成功匿名化 %1</translation>
+    </message>
+    <message>
+        <source>Unable to generate mint: Blockchain not yet synced.</source>
+        <translation>无法铸币：区块链尚未同步。</translation>
+    </message>
+    <message>
+        <source>Unable to generate mint: HashSeedMaster not set</source>
+        <translation>无法铸币：没有设置 HashSeedMaster</translation>
+    </message>
+</context>
+<context>
+    <name>LelantusDialog</name>
+    <message>
+        <source>Coin Control Features</source>
+        <translation>手动选币功能</translation>
+    </message>
+    <message>
+        <source>Inputs...</source>
+        <translation>输入...</translation>
+    </message>
+    <message>
+        <source>automatically selected</source>
+        <translation>自动选择</translation>
+    </message>
+    <message>
+        <source>Insufficient funds!</source>
+        <translation>存款不足！</translation>
+    </message>
+    <message>
+        <source>Quantity:</source>
+        <translation>总量：</translation>
+    </message>
+    <message>
+        <source>Bytes:</source>
+        <translation>字节：</translation>
+    </message>
+    <message>
+        <source>Amount:</source>
+        <translation>金额：</translation>
+    </message>
+    <message>
+        <source>Fee:</source>
+        <translation>费用：</translation>
+    </message>
+    <message>
+        <source>After Fee:</source>
+        <translation>加上交易费用后：</translation>
+    </message>
+    <message>
+        <source>Change:</source>
+        <translation>变更：</translation>
+    </message>
+        <message>
+        <source>If this is activated, but the change address is empty or invalid, change will be sent to a newly generated address.</source>
+        <translation>如果激活该选项，但是零钱地址用光或者非法，将会新生成零钱地址，转入零钱。</translation>
+    </message>
+    <message>
+        <source>Custom change address</source>
+        <translation>自定义零钱地址</translation>
+    </message>
+    <message>
+        <source>Transaction Fee:</source>
+        <translation>交易费用：</translation>
+    </message>
+    <message>
+        <source>Choose...</source>
+        <translation>选择... </translation>
+    </message>
+    <message>
+        <source>collapse fee-settings</source>
+        <translation>收起  费用设置 </translation>
+    </message>
+    <message>
+        <source>per kilobyte</source>
+        <translation>每kb</translation>
+    </message>
+    <message>
+        <source>If the custom fee is set to 1000 satoshis and the transaction is only 250 bytes, then "per kilobyte" only pays 250 satoshis in fee, while "total at least" pays 1000 satoshis. For transactions bigger than a kilobyte both pay by kilobyte.</source>
+        <translation>如果自定义交易费设置为 1000 聪而交易大小只有 250 字节，则“每千字节”模式只支付 250 聪交易费，而“最少”模式则支付 1000 聪。大于 1000 字节的交易按每千字节付费。</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>隐藏</translation>
+    </message>
+    <message>
+        <source>total at least</source>
+        <translation>最小额 </translation>
+    </message>
+    <message>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BZX transactions than the network can process.</source>
+        <translation>交易量小时只支付最小交易费是可以的。但是请注意，当交易量大到超出网络可处理时你的交易可能永远无法确认。</translation>
+    </message>
+    <message>
+        <source>(read the tooltip)</source>
+        <translation>(请注意提示信息)</translation>
+    </message>
+    <message>
+        <source>Recommended:</source>
+        <translation>推荐：</translation>
+    </message>
+    <message>
+        <source>Custom:</source>
+        <translation>自定义：</translation>
+    </message>
+        <message>
+        <source>(Smart fee not initialized yet. This usually takes a few blocks...)</source>
+        <translation>(智能交易费用 尚未初始化。需要再下载一些数据块...)</translation>
+    </message>
+    <message>
+        <source>normal</source>
+        <translation>一般</translation>
+    </message>
+    <message>
+        <source>fast</source>
+        <translation>快速</translation>
+    </message>
+    <message>
+        <source>Pay only the required fee of %1</source>
+        <translation>只支付必要费用 %1</translation>
+    </message>
+        <message numerus="yes">
+        <source>Estimated to begin confirmation within %n block(s).</source>
+        <translation><numerusform>预计 %n 个数据块后被确认。</numerusform></translation>
+    </message>
+        <message numerus="yes">
+        <source>%n block(s)</source>
+        <translation><numerusform>%n 个区块</numerusform></translation>
+    </message>
+    <message>
+        <source>Global Lelantus Pool:</source>
+        <translation>整个 Lelantus 池</translation>
+    </message>
+    <message>
+        <source>Total:</source>
+        <translation>总数：</translation>
+    </message>
+    <message>
+        <source>Latest group:</source>
+        <translation>最新一组：</translation>
+    </message>
+    <message>
+        <source>Unspent:</source>
+        <translation>未花费的：</translation>
+    </message>
+    <message>
+        <source>Your Anonymized Coins:</source>
+        <translation>你的匿名币：</translation>
+    </message>
+    <message>
+        <source>Spendable:</source>
+        <translation>可花费：</translation>
+    </message>
+    <message>
+        <source>Unconfirmed:</source>
+        <translation>未确认：</translation>
+    </message>
+    <message>
+        <source>Amount to anonymize:</source>
+        <translation>要匿名化的金额：</translation>
+    </message>
+    <message numerus="yes">
+        <source>Available amount to anonymize %1</source>
+        <translation><numerusform>可匿名化的金额：%1</numerusform></translation>
+    </message>
+    <message>
+        <source>Anonymize</source>
+        <translation>匿名化</translation>
+    </message>
+    <message>
+        <source>Warning: Fee estimation is currently not possible.</source>
+        <translation>警告：目前无法进行手续费估计。</translation>
+    </message>
+    <message>
+        <source>Using the fallbackfee can result in sending a transaction that will take several hours or days (or never) to confirm. Consider choosing your fee manually or wait until your have validated the complete chain.</source>
+        <translation>如果使用备用手续费设置，有可能会导致交易经过几个小时、几天（甚至永远）无法被确认。请考虑手动选择手续费，或等待整个链完成验证。</translation>
+    </message>
+    <message>
+        <source>Confirmation time target:</source>
+        <translation>目标确认时间：</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to anonymize %1?</source>
+        <translation>你确定要匿名化 %1？</translation>
+    </message>
+    <message>
+        <source>added as transaction fee</source>
+        <translation>已添加交易费</translation>
+    </message>
+    <message>
+        <source>Total Amount %1</source>
+        <translation>总金额 %1</translation>
+    </message>
+    <message>
+        <source>or</source>
+        <translation>或</translation>
+    </message>
+    <message>
+        <source>Confirm anonymize coins</source>
+        <translation>确认匿名化货币</translation>
+    </message>
+    <message>
+        <source>Anonymize Coins</source>
+        <translation>匿名化货币</translation>
+    </message>
+    <message>
+        <source>The amount exceeds your balance.</source>
+        <translation>金额超出你的账上余额。</translation>
+    </message>
+    <message>
+        <source>The total exceeds your balance when the %1 transaction fee is included.</source>
+        <translation>计入 %1 交易费后的金额超出你的账上余额。</translation>
+    </message>
+    <message>
+        <source>The amount to pay must be larger than 0.</source>
+        <translation>支付金额必须大于 0。</translation>
+    </message>
+    <message>
+        <source>each transaction at least</source>
+        <translation>每笔交易至少</translation>
+    </message>
+    <message>
+        <source>Transaction creation failed!</source>
+        <translation>交易创建失败！</translation>
+    </message>
+</context>
+<context>
+    <name>MasternodeList</name>
     <message>
         <source>Form</source>
         <translation>表单</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
-        <translation>现在显示的消息可能是过期的。在连接上零币网络节点后，您的钱包将自动与网络同步，但是这个过程还没有完成。</translation>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <source>Filter List:</source>
+        <translation>筛选列表：</translation>
+    </message>
+    <message>
+        <source>Filter masternode list</source>
+        <translation>筛选主节点列表</translation>
+    </message>
+    <message>
+        <source>Node Count:</source>
+        <translation>节点数：</translation>
+    </message>
+    <message>
+        <source>Show only masternodes this wallet has keys for.</source>
+        <translation>仅显示此钱包拥有私钥的主节点</translation>
+    </message>
+    <message>
+        <source>My masternodes only</source>
+        <translation>仅我的主节点</translation>
+    </message>
+    <message>
+        <source>Service</source>
+        <translation>服务</translation>
+    </message>
+    <message>
+        <source>PoSe Score</source>
+        <translation>PoSe 评分</translation>
+    </message>
+    <message>
+        <source>Registered (Block)</source>
+        <translation>已注册的（区块）</translation>
+    </message>
+    <message>
+        <source>Last Paid (Block)</source>
+        <translation>最近支付（区块）</translation>
+    </message>
+    <message>
+        <source>Next Payment (Block)</source>
+        <translation>下次支付（区块）</translation>
+    </message>
+    <message>
+        <source>Payout Address</source>
+        <translation>付款地址</translation>
+    </message>
+    <message>
+        <source>Operator Reward</source>
+        <translation>运行者奖励</translation>
+    </message>
+    <message>
+        <source>Collateral Address</source>
+        <translation>保证金地址</translation>
+    </message>
+    <message>
+        <source>Owner Address</source>
+        <translation>所有者地址</translation>
+    </message>
+    <message>
+        <source>Voting Address</source>
+        <translation>投票地址</translation>
+    </message>
+    <message>
+        <source>Copy ProTx Hash</source>
+        <translation>复制 ProTx Hash</translation>
+    </message>
+    <message>
+        <source>Copy Collateral Outpoint</source>
+        <translation>复制保证金输出点</translation>
+    </message>
+    <message>
+        <source>Updating...</source>
+        <translation>更新中...</translation>
+    </message>
+    <message>
+        <source>ENABLED</source>
+        <translation>ENABLED</translation>
+    </message>
+    <message>
+        <source>POSE_BANNED</source>
+        <translation>POSE_BANNED</translation>
+    </message>
+    <message>
+        <source>UNKNOWN</source>
+        <translation>UNKNOWN</translation>
+    </message>
+    <message>
+        <source>to %1</source>
+        <translation>至 %1</translation>
+    </message>
+    <message>
+        <source>to UNKNOWN</source>
+        <translation>至 UNKNOWN</translation>
+    </message>
+    <message>
+        <source>but not claimed</source>
+        <translation>但未认领</translation>
+    </message>
+    <message>
+        <source>NONE</source>
+        <translation>NONE</translation>
+    </message>
+    <message>
+        <source>Filter by any property (e.g. address or protx hash)</source>
+        <translation>按任何属性筛选 (例. 地址或protx hash)</translation>
+    </message>
+    <message>
+        <source>Please wait...</source>
+        <translation>请稍等...</translation>
+    </message>
+    <message>
+        <source>Additional information for DIP3 Masternode %1</source>
+        <translation>DIP3 主节点 %1 的额外信息</translation>
+    </message>
+</context>
+<context>
+    <name>OverviewPage</name>
+    <message>
+        <source>Please restart the BZX wallet to route your connection through Tor to protect your IP address. &lt;br&gt;Syncing your wallet might be slower with TOR. &lt;br&gt;Note that -torsetup in BZXBETA.conf will always override any changes made here.</source>
+        <translation>请重新启动 BZX 钱包，通过 Tor 来路由你的连接，以保护你的 IP 地址。&lt;br&gt;使用 Tor 同步你的钱包可能会比较慢。&lt;br&gt;请注意，BZXBETA.conf 中的 -torsetup 将始终覆盖这里的任何更改。</translation>
+    </message>
+    <message>
+        <source>Please restart the BZX wallet to disable routing of your connection through Tor to protect your IP address. &lt;br&gt;Note that -torsetup in BZXBETA.conf will always override any changes made here.</source>
+        <translation>请重新启动 BZX 钱包，以禁用通过 Tor 来路由你的连接以保护你的 IP 地址。&lt;br&gt;请注意，BZXBETA.conf 中的 -torsetup 将始终覆盖这里的任何更改。</translation>
+    </message>
+    <message>
+        <source>Form</source>
+        <translation>表单</translation>
+    </message>
+    <message>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
+        <translation>现在显示的消息可能是过期的。在连接上 BZX 网络节点后，你的钱包将自动与网络同步，但是这个过程还没有完成。</translation>
+    </message>
+    <message>
+        <source>Private Balances</source>
+        <translation>匿名的余额</translation>
+    </message>
+    <message>
+        <source>Transparent Balances</source>
+        <translation>公开的余额</translation>
+    </message>
+    <message>
+        <source>Anonymizable:</source>
+        <translation>可匿名化：</translation>
+    </message>
+    <message>
+        <source>Anonymize All</source>
+        <translation>全部匿名化</translation>
     </message>
     <message>
         <source>Watch-only:</source>
-        <translation>查看-只有:</translation>
+        <translation>查看-只有：</translation>
     </message>
     <message>
         <source>Available:</source>
-        <translation>可使用的余额：</translation>
+        <translation>可用的：</translation>
     </message>
     <message>
         <source>Your current spendable balance</source>
-        <translation>您当前可使用的余额</translation>
+        <translation>你当前可使用的公开余额</translation>
     </message>
     <message>
         <source>Pending:</source>
-        <translation>等待中的余额：</translation>
+        <translation>等待中：</translation>
     </message>
     <message>
         <source>Total of transactions that have yet to be confirmed, and do not yet count toward the spendable balance</source>
-        <translation>尚未确认的交易总额，未计入当前余额</translation>
+        <translation>尚未确认的公开交易金额，未计入当前可用余额</translation>
     </message>
     <message>
         <source>Immature:</source>
@@ -1242,15 +2126,23 @@
     </message>
     <message>
         <source>Total:</source>
-        <translation>总额：</translation>
+        <translation>总金额：</translation>
+    </message>
+    <message>
+        <source>Your current spendable anonymized balance</source>
+        <translation>你当前可用的匿名余额</translation>
+    </message>
+    <message>
+        <source>Total of anonymize transactions that have yet to be confirmed, and do not yet count toward the spendable balance</source>
+        <translation>尚未确认的匿名交易金额，未计入当前可用余额</translation>
     </message>
     <message>
         <source>Your current total balance</source>
-        <translation>您当前的总余额</translation>
+        <translation>你当前的总余额</translation>
     </message>
     <message>
         <source>Your current balance in watch-only addresses</source>
-        <translation>您当前 观察地址(watch-only address)的余额 </translation>
+        <translation>你当前 观察地址(watch-only address)的余额 </translation>
     </message>
     <message>
         <source>Spendable:</source>
@@ -1272,6 +2164,10 @@
         <source>Current total balance in watch-only addresses</source>
         <translation>观察地址(watch-only address)中的当前总余额 </translation>
     </message>
+    <message>
+        <source>Anonymous communication with Tor</source>
+        <translation>使用 Tor 来匿名通信</translation>
+    </message>
 </context>
 <context>
     <name>PaymentServer</name>
@@ -1280,8 +2176,8 @@
         <translation>要求付款时发生错误</translation>
     </message>
     <message>
-        <source>Cannot start BitcoinZero: click-to-pay handler</source>
-        <translation>无法启动 BitcoinZero 协议的“
+        <source>Cannot start BZX: click-to-pay handler</source>
+        <translation>无法启动 BZX 协议的“
 一键支付”处理器</translation>
     </message>
     <message>
@@ -1297,8 +2193,8 @@
         <translation>无效的付款地址 %1</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid BitcoinZero address or malformed URI parameters.</source>
-        <translation>无法解析 URI 地址！可能是因为零币地址无效，或是 URI 参数格式错误。</translation>
+        <source>URI cannot be parsed! This can be caused by an invalid address or malformed URI parameters.</source>
+        <translation>无法解析 URI 地址！可能是因为 BZX 地址无效，或是 URI 参数格式错误。</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -1321,6 +2217,46 @@
         <translation>付款请求已过期。</translation>
     </message>
     <message>
+        <source>Payment request is not initialized.</source>
+        <translation>支付请求未成形。</translation>
+    </message>
+    <message>
+        <source>Unverified payment requests to custom payment scripts are unsupported.</source>
+        <translation>不支持到自定义付款脚本的未验证付款请求。</translation>
+    </message>
+    <message>
+        <source>Invalid payment request.</source>
+        <translation>无效的支付请求。</translation>
+    </message>
+    <message>
+        <source>Requested payment amount of %1 is too small (considered dust).</source>
+        <translation>请求支付的金额 %1 太小（就像尘埃）。</translation>
+    </message>
+    <message>
+        <source>Refund from %1</source>
+        <translation>退款来自 %1</translation>
+    </message>
+    <message>
+        <source>Payment request %1 is too large (%2 bytes, allowed %3 bytes).</source>
+        <translation>支付请求 %1 太大 (%2 字节。只允许 %3 字节)。</translation>
+    </message>
+    <message>
+        <source>Error communicating with %1: %2</source>
+        <translation>%1: %2 通讯出错</translation>
+    </message>
+    <message>
+        <source>Payment request cannot be parsed!</source>
+        <translation>无法解析 付款请求！</translation>
+    </message>
+    <message>
+        <source>Bad response from server %1</source>
+        <translation>来自 %1 服务器的错误响应</translation>
+    </message>
+    <message>
+        <source>Network request error</source>
+        <translation>网络请求出错</translation>
+    </message>
+    <message>
         <source>Payment acknowledged</source>
         <translation>付款已确认</translation>
     </message>
@@ -1336,8 +2272,12 @@
         <translation>节点/服务</translation>
     </message>
     <message>
-        <source>Ping Time</source>
-        <translation>Ping 时间</translation>
+        <source>NodeId</source>
+        <translation>节点ID</translation>
+    </message>
+    <message>
+        <source>Ping</source>
+        <translation> </translation>
     </message>
 </context>
 <context>
@@ -1347,8 +2287,12 @@
         <translation>金额</translation>
     </message>
     <message>
-        <source>Enter a BitcoinZero address (e.g. %1)</source>
-        <translation>请输入一个零币地址 (例如 %1)</translation>
+        <source>Enter a address (e.g. %1)</source>
+        <translation>请输入一个 BZX 地址（例如 %1）</translation>
+    </message>
+    <message>
+        <source> or a payment code</source>
+        <translation>或一个支付码</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1372,11 +2316,58 @@
     </message>
     <message>
         <source>N/A</source>
-        <translation>不可用</translation>
+        <translation>N/A</translation>
     </message>
     <message>
         <source>%1 ms</source>
         <translation>%1 毫秒</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n second(s)</source>
+        <translation><numerusform>%n 秒</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n minute(s)</source>
+        <translation><numerusform>%n 分钟</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n hour(s)</source>
+        <translation><numerusform>%n 小时</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n day(s)</source>
+        <translation><numerusform>%n 天</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n week(s)</source>
+        <translation><numerusform>%n 周</numerusform></translation>
+    </message>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 和 %2</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n year(s)</source>
+        <translation><numerusform>%n 年</numerusform></translation>
+    </message>
+    <message>
+        <source>%1 didn't yet exit safely...</source>
+        <translation>%1 尚未安全退出</translation>
+    </message>
+</context>
+<context>
+    <name>QObject::QObject</name>
+    <message>
+        <source>Error: Specified data directory "%1" does not exist.</source>
+        <translation>错误：指定的数据目录“%1”不存在。</translation>
+    </message>
+    <message>
+        <source>Error: Cannot parse configuration file: %1. Only use key=value syntax.</source>
+        <translation>错误：无法解析配置文件：%1。只接受 key=value语法。</translation>
+    </message>
+    <message>
+        <source>Error: %1</source>
+        <translation>错误：%1</translation>
     </message>
 </context>
 <context>
@@ -1402,7 +2393,7 @@
     <name>RPCConsole</name>
     <message>
         <source>N/A</source>
-        <translation>不可用</translation>
+        <translation>N/A</translation>
     </message>
     <message>
         <source>Client version</source>
@@ -1553,6 +2544,10 @@
         <translation>Ping等待</translation>
     </message>
     <message>
+        <source>Min Ping</source>
+        <translation>最小Ping值</translation>
+    </message>
+    <message>
         <source>Time Offset</source>
         <translation>时间偏移</translation>
     </message>
@@ -1597,14 +2592,6 @@
         <translation>清空控制台</translation>
     </message>
     <message>
-        <source>&amp;Disconnect Node</source>
-        <translation>(&amp;D)断开节点连接</translation>
-    </message>
-    <message>
-        <source>Ban Node for</source>
-        <translation>禁止节点连接时长：</translation>
-    </message>
-    <message>
         <source>1 &amp;hour</source>
         <translation>1 小时(&amp;H)</translation>
     </message>
@@ -1621,8 +2608,16 @@
         <translation>1 年(&amp;Y)</translation>
     </message>
     <message>
-        <source>&amp;Unban Node</source>
-        <translation>(&amp;U)允许节点连接</translation>
+        <source>&amp;Disconnect</source>
+        <translation>(&amp;D)断开</translation>
+    </message>
+    <message>
+        <source>Ban for</source>
+        <translation>禁止</translation>
+    </message>
+    <message>
+        <source>&amp;Unban</source>
+        <translation>重新允许</translation>
     </message>
     <message>
         <source>Welcome to the %1 RPC console.</source>
@@ -1635,6 +2630,14 @@
     <message>
         <source>Type &lt;b&gt;help&lt;/b&gt; for an overview of available commands.</source>
         <translation>使用 &lt;b&gt;help&lt;/b&gt; 命令显示帮助信息。</translation>
+    </message>
+    <message>
+        <source>WARNING: Scammers have been active, telling users to type commands here, stealing their wallet contents. Do not use this console without fully understanding the ramification of a command.</source>
+        <translation>警告：已有骗子通过要求用户在此输入指令以盗取钱包。不要在没有完全理解命令规范时使用控制台。</translation>
+    </message>
+    <message>
+        <source>Network activity disabled</source>
+        <translation>网络活动已禁用</translation>
     </message>
     <message>
         <source>%1 B</source>
@@ -1708,8 +2711,8 @@
         <translation>重用现有的接收地址（不推荐）</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BitcoinZero network.</source>
-        <translation>可在付款请求上备注一条信息，在打开付款请求时可以看到。注意：该消息不是通过零币网络传送。</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BZX network.</source>
+        <translation>可在付款请求上备注一条信息，在打开付款请求时可以看到。注意：该消息不是通过 BZX 网络传送。</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1756,6 +2759,10 @@
         <translation>移除</translation>
     </message>
     <message>
+        <source>Copy URI</source>
+        <translation>复制URI</translation>
+    </message>
+    <message>
         <source>Copy label</source>
         <translation>复制标签</translation>
     </message>
@@ -1787,6 +2794,14 @@
         <translation>保存图片(&amp;S)...</translation>
     </message>
     <message>
+        <source>Request payment to %1</source>
+        <translation>请求付款到 %1</translation>
+    </message>
+    <message>
+        <source>Payment information</source>
+        <translation>付款信息</translation>
+    </message>
+    <message>
         <source>URI</source>
         <translation>URI</translation>
     </message>
@@ -1805,6 +2820,10 @@
     <message>
         <source>Message</source>
         <translation>消息</translation>
+    </message>
+    <message>
+        <source>Resulting URI too long, try to reduce the text for label / message.</source>
+        <translation>URI 太长，请试着精简标签或消息文本。</translation>
     </message>
     <message>
         <source>Error encoding URI into QR Code.</source>
@@ -1833,16 +2852,24 @@
         <source>(no message)</source>
         <translation>(无消息)</translation>
     </message>
-    </context>
+    <message>
+        <source>(no amount requested)</source>
+        <translation>（无请求金额）</translation>
+    </message>
+    <message>
+        <source>Requested</source>
+        <translation>总额</translation>
+    </message>
+</context>
 <context>
     <name>SendCoinsDialog</name>
     <message>
         <source>Send Coins</source>
-        <translation>发送零币</translation>
+        <translation>发送 BZX</translation>
     </message>
     <message>
         <source>Coin Control Features</source>
-        <translation>交易源地址控制功能</translation>
+        <translation>手动选币功能</translation>
     </message>
     <message>
         <source>Inputs...</source>
@@ -1869,20 +2896,16 @@
         <translation>金额：</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>优先级：</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>费用：</translation>
     </message>
     <message>
         <source>After Fee:</source>
-        <translation>加上交易费用后:</translation>
+        <translation>加上交易费用后：</translation>
     </message>
     <message>
         <source>Change:</source>
-        <translation>变更 : </translation>
+        <translation>变更：</translation>
     </message>
     <message>
         <source>If this is activated, but the change address is empty or invalid, change will be sent to a newly generated address.</source>
@@ -1894,7 +2917,7 @@
     </message>
     <message>
         <source>Transaction Fee:</source>
-        <translation>交易费用:</translation>
+        <translation>交易费用：</translation>
     </message>
     <message>
         <source>Choose...</source>
@@ -1910,7 +2933,7 @@
     </message>
     <message>
         <source>If the custom fee is set to 1000 satoshis and the transaction is only 250 bytes, then "per kilobyte" only pays 250 satoshis in fee, while "total at least" pays 1000 satoshis. For transactions bigger than a kilobyte both pay by kilobyte.</source>
-        <translation>如果自定义交易费设置为 1000聪而交易大小只有250字节，则“每千字节" 模式只支付250聪交易费， 而"最少"模式则支付1000聪。 大于1000字节的交易按每千字节付费。</translation>
+        <translation>如果自定义交易费设置为 1000 聪而交易大小只有 250 字节，则“每千字节”模式只支付 250 聪交易费，而“最少”模式则支付 1000 聪。大于 1000 字节的交易按每千字节付费。</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -1918,11 +2941,11 @@
     </message>
     <message>
         <source>total at least</source>
-        <translation>最小额 </translation>
+        <translation>最小额</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BitcoinZero transactions than the network can process.</source>
-        <translation>交易量小时只支付最小交易费是可以的。但是请注意，当交易量大到超出网络可处理时您的交易可能永远无法确认。</translation>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BZX transactions than the network can process.</source>
+        <translation>交易量小时只支付最小交易费是可以的。但是请注意，当交易量大到超出网络可处理时你的交易可能永远无法确认。</translation>
     </message>
     <message>
         <source>(read the tooltip)</source>
@@ -1938,11 +2961,7 @@
     </message>
     <message>
         <source>(Smart fee not initialized yet. This usually takes a few blocks...)</source>
-        <translation>(智能交易费用 尚未初始化。 需要再下载一些数据块...)</translation>
-    </message>
-    <message>
-        <source>Confirmation time:</source>
-        <translation>确认时间：</translation>
+        <translation>(智能交易费用 尚未初始化。需要再下载一些数据块...)</translation>
     </message>
     <message>
         <source>normal</source>
@@ -2005,16 +3024,24 @@
         <translation>复制字节数</translation>
     </message>
     <message>
-        <source>Copy priority</source>
-        <translation>复制优先度</translation>
-    </message>
-    <message>
         <source>Copy dust</source>
         <translation>复制零散金额</translation>
     </message>
     <message>
         <source>Copy change</source>
         <translation>复制找零金额</translation>
+    </message>
+    <message>
+        <source>%1 to %2</source>
+        <translation>%1 到 %2</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to send?</source>
+        <translation>你确定要发出吗？</translation>
+    </message>
+    <message>
+        <source>added as transaction fee</source>
+        <translation>已添加交易费</translation>
     </message>
     <message>
         <source>Total Amount %1</source>
@@ -2025,23 +3052,107 @@
         <translation>或</translation>
     </message>
     <message>
+        <source>Confirm send coins</source>
+        <translation>确认发送货币</translation>
+    </message>
+    <message>
+        <source>The recipient address is not valid. Please recheck.</source>
+        <translation>接收人地址无效。请重新检查。</translation>
+    </message>
+    <message>
+        <source>The amount to pay must be larger than 0.</source>
+        <translation>支付金额必须大于 0。</translation>
+    </message>
+    <message>
+        <source>The amount exceeds your balance.</source>
+        <translation>金额超出你的账上余额。</translation>
+    </message>
+    <message>
+        <source>The total exceeds your balance when the %1 transaction fee is included.</source>
+        <translation>计入 %1 交易费后的金额超出你的账上余额。</translation>
+    </message>
+    <message>
+        <source>Duplicate address found: addresses should only be used once each.</source>
+        <translation>发现重复地址：每个地址应该只使用一次。</translation>
+    </message>
+    <message>
+        <source>Transaction creation failed!</source>
+        <translation>交易创建失败！</translation>
+    </message>
+    <message>
+        <source>The transaction was rejected with the following reason: %1</source>
+        <translation>交易因以下原因拒绝：%1</translation>
+    </message>
+    <message>
+        <source>A fee higher than %1 is considered an absurdly high fee.</source>
+        <translation>超过 %1 的交易费被认为是荒谬的高费率。</translation>
+    </message>
+    <message>
         <source>Payment request expired.</source>
         <translation>付款请求已过期。</translation>
     </message>
+    <message numerus="yes">
+        <source>%n block(s)</source>
+        <translation><numerusform>%n 个区块</numerusform></translation>
+    </message>
     <message>
-        <source>Warning: Invalid BitcoinZero address</source>
-        <translation>警告: 零币地址无效</translation>
+        <source>Pay only the required fee of %1</source>
+        <translation>只支付必要费用 %1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Estimated to begin confirmation within %n block(s).</source>
+        <translation><numerusform>预计 %n 个数据块后被确认。</numerusform></translation>
+    </message>
+    <message>
+        <source>Warning: Invalid address</source>
+        <translation>警告：BZX 地址无效</translation>
+    </message>
+    <message>
+        <source>Warning: Unknown change address</source>
+        <translation>警告：未知的更改地址</translation>
+    </message>
+    <message>
+        <source>The address you selected for change is not part of this wallet. Any or all funds in your wallet may be sent to this address. Are you sure?</source>
+        <translation>你选择的找零地址未被包含在本钱包中，你钱包中的部分或全部金额将被发送至该地址。你确定要这样做吗？</translation>
     </message>
     <message>
         <source>(no label)</source>
         <translation>(无标签)</translation>
+    </message>
+    <message>
+        <source>Use Transparent Balance</source>
+        <translation>使用公开的余额</translation>
+    </message>
+    <message>
+        <source>Transparent Balance</source>
+        <translation>公开的余额</translation>
+    </message>
+    <message>
+        <source>Use Private Balance</source>
+        <translation>使用匿名的余额 </translation>
+    </message>
+    <message>
+        <source>Private Balance</source>
+        <translation>匿名的余额</translation>
+    </message>
+    <message>
+        <source>Confirmation time target:</source>
+        <translation>目标确认时间：</translation>
+    </message>
+    <message>
+        <source>Warning: Fee estimation is currently not possible.</source>
+        <translation>警告：目前无法进行手续费估计。</translation>
+    </message>
+    <message>
+        <source>Using the fallbackfee can result in sending a transaction that will take several hours or days (or never) to confirm. Consider choosing your fee manually or wait until your have validated the complete chain.</source>
+        <translation>如果使用备用手续费设置，有可能会导致交易经过几个小时、几天（甚至永远）无法被确认。请考虑手动选择手续费，或等待整个链完成验证。</translation>
     </message>
 </context>
 <context>
     <name>SendCoinsEntry</name>
     <message>
         <source>A&amp;mount:</source>
-        <translation>金额(&amp;M)</translation>
+        <translation>金额(&amp;M)：</translation>
     </message>
     <message>
         <source>Pay &amp;To:</source>
@@ -2060,7 +3171,7 @@
         <translation>这是笔正常的支付。</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to send the payment to</source>
+        <source>The address to send the payment to</source>
         <translation>付款目的地址</translation>
     </message>
     <message>
@@ -2080,8 +3191,8 @@
         <translation>移除此项</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less bitcoinzeros than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>交易费将从发送总额中扣除。接收人将收到比您在金额框中输入的更少的零币。如果选中了多个收件人，交易费平分。</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less BZXs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>交易费将从发送总额中扣除。接收人将收到比你在金额框中输入的更少的 BZX。如果选中了多个收件人，交易费平分。</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -2104,18 +3215,22 @@
         <translation>请为此地址输入一个标签以将它加入用过的地址列表</translation>
     </message>
     <message>
-        <source>A message that was attached to the BitcoinZero: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BitcoinZero network.</source>
-        <translation>BitcoinZero: URI 附带的备注信息，将会和交易一起存储，备查。 注意：该消息不会通过零币网络传输。</translation>
+        <source>A message that was attached to the BZX: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BZX network.</source>
+        <translation>BZX:URI 附带的备注信息，将会和交易一起存储，备查。注意：该消息不会通过 BZX 网络传输。</translation>
     </message>
     <message>
         <source>Pay To:</source>
-        <translation>支付给:</translation>
+        <translation>支付给：</translation>
     </message>
     <message>
         <source>Memo:</source>
         <translation>便条：</translation>
     </message>
-    </context>
+    <message>
+        <source>Enter a label for this address to add it to your address book</source>
+        <translation>为这个地址输入一个标签，以便将它添加到你的地址簿</translation>
+    </message>
+</context>
 <context>
     <name>SendConfirmationDialog</name>
     <message>
@@ -2125,6 +3240,10 @@
 </context>
 <context>
     <name>ShutdownWindow</name>
+    <message>
+        <source>BZX Core</source>
+        <translation>BZX 核心</translation>
+    </message>
     <message>
         <source>%1 is shutting down...</source>
         <translation>正在关闭 %1 ...</translation>
@@ -2145,11 +3264,11 @@
         <translation>签名消息(&amp;S)</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive bitcoinzeros sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
-        <translation>您可以用你的地址对消息/协议进行签名，以证明您可以接收发送到该地址的零币。注意不要对任何模棱两可或者随机的消息进行签名，以免遭受钓鱼式攻击。请确保消息内容准确的表达了您的真实意愿。</translation>
+        <source>You can sign messages/agreements with your addresses to prove you can receive BZXs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <translation>你可以用你的地址对消息/协议进行签名，以证明你可以接收发送到该地址的 BZX。注意不要对任何模棱两可或者随机的消息进行签名，以免遭受钓鱼式攻击。请确保消息内容准确的表达了你的真实意愿。</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to sign the message with</source>
+        <source>The address to sign the message with</source>
         <translation>用来对消息签名的地址 </translation>
     </message>
     <message>
@@ -2170,7 +3289,7 @@
     </message>
     <message>
         <source>Enter the message you want to sign here</source>
-        <translation>请输入您要发送的签名消息</translation>
+        <translation>请输入你要发送的签名消息</translation>
     </message>
     <message>
         <source>Signature</source>
@@ -2181,8 +3300,8 @@
         <translation>复制当前签名至剪切板</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
-        <translation>签名消息，证明这个地址属于您。</translation>
+        <source>Sign the message to prove you own this address</source>
+        <translation>签名消息，证明这个地址属于你。</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -2205,12 +3324,12 @@
         <translation>请在下面输入接收者地址、消息（确保换行符、空格符、制表符等完全相同）和签名以验证消息。请仔细核对签名信息，以提防中间人攻击。请注意，这只是证明接收方签名的地址，它不能证明任何交易！</translation>
     </message>
     <message>
-        <source>The BitcoinZero address the message was signed with</source>
+        <source>The address the message was signed with</source>
         <translation>消息使用的签名地址</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
-        <translation>验证消息，确保消息是由指定的零币地址签名过的。</translation>
+        <source>Verify the message to ensure it was signed with the specified address</source>
+        <translation>验证消息，确保消息是由指定的 BZX 地址签名过的。</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -2220,7 +3339,59 @@
         <source>Reset all verify message fields</source>
         <translation>清空所有验证消息栏</translation>
     </message>
-    </context>
+    <message>
+        <source>Click "Sign Message" to generate signature</source>
+        <translation>单击“签名消息“产生签名。</translation>
+    </message>
+    <message>
+        <source>The entered address is invalid.</source>
+        <translation>输入的地址非法。</translation>
+    </message>
+    <message>
+        <source>Please check the address and try again.</source>
+        <translation>请检查地址后重试。</translation>
+    </message>
+    <message>
+        <source>The entered address does not refer to a key.</source>
+        <translation>输入的地址没有关联的公私钥对。</translation>
+    </message>
+    <message>
+        <source>Wallet unlock was cancelled.</source>
+        <translation>钱包解锁动作取消。</translation>
+    </message>
+    <message>
+        <source>Private key for the entered address is not available.</source>
+        <translation>找不到输入地址关联的私钥。</translation>
+    </message>
+    <message>
+        <source>Message signing failed.</source>
+        <translation>消息签名失败。</translation>
+    </message>
+    <message>
+        <source>Message signed.</source>
+        <translation>消息已签名。</translation>
+    </message>
+    <message>
+        <source>The signature could not be decoded.</source>
+        <translation>签名无法解码。</translation>
+    </message>
+    <message>
+        <source>Please check the signature and try again.</source>
+        <translation>请检查签名后重试。</translation>
+    </message>
+    <message>
+        <source>The signature did not match the message digest.</source>
+        <translation>签名与消息摘要不匹配。</translation>
+    </message>
+    <message>
+        <source>Message verification failed.</source>
+        <translation>消息验证失败。</translation>
+    </message>
+    <message>
+        <source>Message verified.</source>
+        <translation>消息验证成功。</translation>
+    </message>
+</context>
 <context>
     <name>SplashScreen</name>
     <message>
@@ -2237,17 +3408,157 @@
 </context>
 <context>
     <name>TransactionDesc</name>
+    <message numerus="yes">
+        <source>Open for %n more block(s)</source>
+        <translation><numerusform>再打开 %n 个数据块</numerusform></translation>
+    </message>
+    <message>
+        <source>Open until %1</source>
+        <translation>至 %1 个数据块时开启</translation>
+    </message>
+    <message>
+        <source>conflicted with a transaction with %1 confirmations</source>
+        <translation>与一个有 %1 个确认的交易冲突</translation>
+    </message>
+    <message>
+        <source>%1/offline</source>
+        <translation>%1 / 离线</translation>
+    </message>
+    <message>
+        <source>0/unconfirmed, %1</source>
+        <translation>0/未确认，%1</translation>
+    </message>
+    <message>
+        <source>in memory pool</source>
+        <translation>在内存池中</translation>
+    </message>
+    <message>
+        <source>not in memory pool</source>
+        <translation>不在内存池中</translation>
+    </message>
+    <message>
+        <source>abandoned</source>
+        <translation>已抛弃</translation>
+    </message>
+    <message>
+        <source>%1/unconfirmed</source>
+        <translation>%1/未确认</translation>
+    </message>
+    <message>
+        <source>%1 confirmations</source>
+        <translation>%1 已确认</translation>
+    </message>
+    <message>
+        <source>verified via LLMQ based InstantSend</source>
+        <translation>已验证，通过基于 LLMQ 的即时发送</translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation>状态</translation>
+    </message>
+    <message>
+        <source>, has not been successfully broadcast yet</source>
+        <translation>，未被成功广播</translation>
+    </message>
+    <message numerus="yes">
+        <source>, broadcast through %n node(s)</source>
+        <translation><numerusform>, 通过 %n 个节点广播 </numerusform></translation>
+    </message>
     <message>
         <source>Date</source>
         <translation>日期</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>源</translation>
+    </message>
+    <message>
+        <source>Generated</source>
+        <translation>生成</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>来自</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>到</translation>
+    </message>
+    <message>
+        <source>own address</source>
+        <translation>自己的地址</translation>
+    </message>
+    <message>
+        <source>watch-only</source>
+        <translation>观察地址(watch-only) </translation>
+    </message>
+    <message>
+        <source>label</source>
+        <translation>标签</translation>
+    </message>
+    <message>
+        <source>Credit</source>
+        <translation>收入</translation>
+    </message>
+    <message numerus="yes">
+        <source>matures in %n more block(s)</source>
+        <translation><numerusform>%n 个数据块后成熟(mature) </numerusform></translation>
+    </message>
+    <message>
+        <source>not accepted</source>
+        <translation>未被接受</translation>
+    </message>
+    <message>
+        <source>Debit</source>
+        <translation>支出</translation>
+    </message>
+    <message>
+        <source>Total debit</source>
+        <translation>总收入</translation>
+    </message>
+    <message>
+        <source>Total credit</source>
+        <translation>总支出</translation>
+    </message>
+    <message>
+        <source>Transaction fee</source>
+        <translation>交易费</translation>
+    </message>
+    <message>
+        <source>Net amount</source>
+        <translation>净额</translation>
     </message>
     <message>
         <source>Message</source>
         <translation>消息</translation>
     </message>
     <message>
+        <source>Comment</source>
+        <translation>备注</translation>
+    </message>
+    <message>
+        <source>Transaction ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <source>Transaction total size</source>
+        <translation>交易总大小</translation>
+    </message>
+    <message>
+        <source>Output index</source>
+        <translation>输出索引</translation>
+    </message>
+    <message>
         <source>Merchant</source>
         <translation>商家</translation>
+    </message>
+    <message>
+        <source>Generated coins must mature %1 blocks before they can be spent. When you generated this block, it was broadcast to the network to be added to the block chain. If it fails to get into the chain, its state will change to "not accepted" and it won't be spendable. This may occasionally happen if another node generates a block within a few seconds of yours.</source>
+        <translation>生成的 BZX 在可以使用前必须有 %1 个成熟的区块。当你生成了此区块后，它将被广播到网络中以加入区块链。如果它未成功进入区块链，其状态将变更为“不接受”并且不可使用。这可能偶尔会发生，如果另一个节点比你早几秒钟成功生成一个区块。</translation>
     </message>
     <message>
         <source>Debug information</source>
@@ -2280,7 +3591,11 @@
         <source>This pane shows a detailed description of the transaction</source>
         <translation>当前面板显示了交易的详细信息</translation>
     </message>
-    </context>
+    <message>
+        <source>Details for %1</source>
+        <translation>%1 详情</translation>
+    </message>
+</context>
 <context>
     <name>TransactionTableModel</name>
     <message>
@@ -2296,22 +3611,126 @@
         <translation>标签</translation>
     </message>
     <message>
+        <source>Address / Label</source>
+        <translation>地址 / 标签</translation>
+    </message>
+    <message>
+        <source>Open until %1</source>
+        <translation>至 %1 个数据块时开启</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>掉线</translation>
+    </message>
+    <message>
+        <source>Unconfirmed</source>
+        <translation>未确认的 </translation>
+    </message>
+    <message>
+        <source>Confirming (%1 of %2 recommended confirmations)</source>
+        <translation>确认中 (推荐 %2 个确认，已经有 %1 个确认)</translation>
+    </message>
+    <message>
+        <source>Confirmed (%1 confirmations)</source>
+        <translation>已确认 (%1 条确认信息)</translation>
+    </message>
+    <message>
+        <source>Conflicted</source>
+        <translation>冲突的</translation>
+    </message>
+    <message>
+        <source>Immature (%1 confirmations, will be available after %2)</source>
+        <translation>未成熟 (%1 个确认，将在 %2 个后可用)</translation>
+    </message>
+    <message>
+        <source>This block was not received by any other nodes and will probably not be accepted!</source>
+        <translation>此数据块未被任何其他节点接收，可能不被接受！</translation>
+    </message>
+    <message>
+        <source>Generated but not accepted</source>
+        <translation>已生成但未被接受</translation>
+    </message>
+    <message>
         <source>Received with</source>
-        <translation>收款</translation>
+        <translation>收款至</translation>
+    </message>
+    <message>
+        <source>Received from</source>
+        <translation>收款来自</translation>
     </message>
     <message>
         <source>Sent to</source>
-        <translation>付款</translation>
+        <translation>公开付款给</translation>
+    </message>
+    <message>
+        <source>Spend to</source>
+        <translation>匿名付款给</translation>
+    </message>
+    <message>
+        <source>Spend to yourself</source>
+        <translation>匿名付款给自己</translation>
+    </message>
+    <message>
+        <source>Anonymized</source>
+        <translation>匿名化</translation>
+    </message>
+    <message>
+        <source>Anonymize</source>
+        <translation>匿名化</translation>
+    </message>
+    <message>
+        <source>Sent to RAP address</source>
+        <translation>付款给 RAP 地址</translation>
+    </message>
+    <message>
+        <source>Received with RAP address</source>
+        <translation>以 RAP 地址收款</translation>
+    </message>
+    <message>
+        <source>Payment to yourself</source>
+        <translation>公开付款给自己</translation>
     </message>
     <message>
         <source>Mined</source>
         <translation>挖矿所得</translation>
     </message>
     <message>
+        <source>watch-only</source>
+        <translation>观察地址(watch-only) </translation>
+    </message>
+    <message>
+        <source>(n/a)</source>
+        <translation>（n/a）</translation>
+    </message>
+    <message>
         <source>(no label)</source>
         <translation>(无标签)</translation>
     </message>
-    </context>
+    <message>
+        <source>Transaction status. Hover over this field to show number of confirmations.</source>
+        <translation>交易状态。鼠标移到此区域可显示确认项数量。</translation>
+    </message>
+    <message>
+        <source>Date and time that the transaction was received.</source>
+        <translation>接收到交易的时间</translation>
+    </message>
+    <message>
+        <source>Type of transaction.</source>
+        <translation>交易类别。</translation>
+    </message>
+    <message>
+        <source>Whether or not a watch-only address is involved in this transaction.</source>
+        <translation>该交易中是否涉及  观察地址(watch-only address)。</translation>
+    </message>
+    <message>
+        <source>User-defined intent/purpose of the transaction.</source>
+        <translation>用户定义的该交易的意图/目的。</translation>
+    </message>
+    <message>
+        <source>Amount removed from or added to balance.</source>
+        <translation>从余额添加或移除的金额。</translation>
+    </message>
+</context>
 <context>
     <name>TransactionView</name>
     <message>
@@ -2344,15 +3763,15 @@
     </message>
     <message>
         <source>Received with</source>
-        <translation>收款</translation>
+        <translation>收款至</translation>
     </message>
     <message>
         <source>Sent to</source>
-        <translation>付款</translation>
+        <translation>公开付款给</translation>
     </message>
     <message>
         <source>To yourself</source>
-        <translation>给自己</translation>
+        <translation>公开付款给自己</translation>
     </message>
     <message>
         <source>Mined</source>
@@ -2361,6 +3780,38 @@
     <message>
         <source>Other</source>
         <translation>其它</translation>
+    </message>
+    <message>
+        <source>Spend to</source>
+        <translation>匿名付款给</translation>
+    </message>
+    <message>
+        <source>Spend to yourself</source>
+        <translation>匿名付款给自己</translation>
+    </message>
+    <message>
+        <source>Anonymize</source>
+        <translation>匿名化</translation>
+    </message>
+    <message>
+        <source>Sent to RAP address</source>
+        <translation>付款给 RAP 地址</translation>
+    </message>
+    <message>
+        <source>Received with RAP address</source>
+        <translation>以 RAP 地址收款</translation>
+    </message>
+    <message>
+        <source>Enter address or label to search</source>
+        <translation>输入地址或标签进行搜索</translation>
+    </message>
+    <message>
+        <source>Min amount</source>
+        <translation>最小金额</translation>
+    </message>
+    <message>
+        <source>Abandon transaction</source>
+        <translation>放弃交易</translation>
     </message>
     <message>
         <source>Copy address</source>
@@ -2376,11 +3827,39 @@
     </message>
     <message>
         <source>Copy transaction ID</source>
-        <translation>复制交易识别码</translation>
+        <translation>复制交易 ID</translation>
+    </message>
+    <message>
+        <source>Copy raw transaction</source>
+        <translation>复制原始交易</translation>
+    </message>
+    <message>
+        <source>Copy full transaction details</source>
+        <translation>复制完整交易详情</translation>
+    </message>
+    <message>
+        <source>Edit label</source>
+        <translation>编辑标签</translation>
+    </message>
+    <message>
+        <source>Show transaction details</source>
+        <translation>显示交易详情</translation>
+    </message>
+    <message>
+        <source>Export Transaction History</source>
+        <translation>导出交易历史</translation>
     </message>
     <message>
         <source>Comma separated file (*.csv)</source>
         <translation>逗号分隔文件 (*.csv)</translation>
+    </message>
+    <message>
+        <source>Confirmed</source>
+        <translation>已确认</translation>
+    </message>
+    <message>
+        <source>Watch-only</source>
+        <translation>观察地址(Watch-only) </translation>
     </message>
     <message>
         <source>Date</source>
@@ -2399,12 +3878,56 @@
         <translation>地址</translation>
     </message>
     <message>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
         <source>Exporting Failed</source>
         <translation>导出失败</translation>
     </message>
     <message>
+        <source>There was an error trying to save the transaction history to %1.</source>
+        <translation>导出交易历史到 %1 时发生错误。</translation>
+    </message>
+    <message>
+        <source>Exporting Successful</source>
+        <translation>导出成功</translation>
+    </message>
+    <message>
+        <source>The transaction history was successfully saved to %1.</source>
+        <translation>交易历史已成功保存到 %1。</translation>
+    </message>
+    <message>
+        <source>Range:</source>
+        <translation>范围：</translation>
+    </message>
+    <message>
         <source>to</source>
         <translation>到</translation>
+    </message>
+    <message>
+        <source>Re-broadcast transaction</source>
+        <translation>重新广播交易</translation>
+    </message>
+    <message>
+        <source>Re-broadcast</source>
+        <translation>重新广播</translation>
+    </message>
+    <message>
+        <source>Broadcast succeeded</source>
+        <translation>广播成功</translation>
+    </message>
+    <message>
+        <source>There was an error trying to broadcast the message: %1</source>
+        <translation>尝试广播该消息时出错：%1</translation>
+    </message>
+    <message>
+        <source>Copy RAP address/label</source>
+        <translation>复制 RAP 地址/标签</translation>
+    </message>
+    <message>
+        <source>Reconsider BIP47 transaction</source>
+        <translation>重新考虑 BIP47 交易</translation>
     </message>
 </context>
 <context>
@@ -2416,27 +3939,71 @@
 </context>
 <context>
     <name>WalletFrame</name>
-    </context>
+    <message>
+        <source>No wallet has been loaded.</source>
+        <translation>没有载入钱包。</translation>
+    </message>
+</context>
 <context>
     <name>WalletModel</name>
-    </context>
+    <message>
+        <source>Send Coins</source>
+        <translation>发送 BZX</translation>
+    </message>
+    <message>
+        <source>You have received a payment to a RAP address, please unlock your wallet to receive.</source>
+        <translation>你收到一笔到 RAP 地址的付款，请解锁你的钱包以接收。</translation>
+    </message>
+    <message>
+        <source>RAP address payment</source>
+        <translation>RAP 地址付款</translation>
+    </message>
+    <message>
+        <source>RAP addresses require you to unlock your wallet every time a payment to it is received.</source>
+        <translation>RAP 地址要求你在每次收到付款时解锁你的钱包。</translation>
+    </message>
+    <message>
+        <source>If you do not enter your password now, you will need to rescan your wallet to receive your BZX.&lt;br/&gt;&lt;br/&gt;Re-enter your password?</source>
+        <translation>如果你现在不输入密码，你将需要重新扫描你的钱包来接收你的 BZX。&lt;br/&gt;&lt;br/&gt;重新输入密码？</translation>
+    </message>
+</context>
 <context>
     <name>WalletView</name>
     <message>
+        <source>&amp;Export</source>
+        <translation>导出(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Export the data in the current tab to a file</source>
+        <translation>导出当前分页里的数据到文件</translation>
+    </message>
+    <message>
         <source>Backup Wallet</source>
         <translation>备份钱包</translation>
+    </message>
+    <message>
+        <source>Wallet Data (*.dat)</source>
+        <translation>钱包文件(*.dat)</translation>
     </message>
     <message>
         <source>Backup Failed</source>
         <translation>备份失败</translation>
     </message>
     <message>
+        <source>There was an error trying to save the wallet data to %1.</source>
+        <translation>尝试保存钱包数据至 %1 时发生错误。</translation>
+    </message>
+    <message>
         <source>Backup Successful</source>
         <translation>备份成功</translation>
     </message>
-    </context>
+    <message>
+        <source>The wallet data was successfully saved to %1.</source>
+        <translation>钱包数据成功保存至 %1 。</translation>
+    </message>
+</context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>选项：
@@ -2453,7 +4020,7 @@
     </message>
     <message>
         <source>Specify your own public address</source>
-        <translation>指定您的公共地址</translation>
+        <translation>指定你的公共地址</translation>
     </message>
     <message>
         <source>Accept command line and JSON-RPC commands</source>
@@ -2471,10 +4038,6 @@
     <message>
         <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
         <translation>修剪：最后的钱包同步超过了修剪的数据。你需要通过 -reindex (重新下载整个区块链以防修剪节点)</translation>
-    </message>
-    <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>通过修剪(删除)旧数据块减少存储需求。此模式与 -txindex 和 -rescan不兼容。警告：还原此设置需要重新下载整个区块链。(默认: 0 = 禁用修剪数据块， &gt;%u = 数据块文件目标大小，单位 MiB)</translation>
     </message>
     <message>
         <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
@@ -2503,20 +4066,12 @@
         <translation>无法启动HTTP服务，查看日志获取更多信息</translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>接受来自外部的连接 (缺省: 如果不带 -proxy or -connect 参数设置为1)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
-        <translation>BitcoinZero Core</translation>
+        <source>BZX Core</source>
+        <translation>BZX 核心</translation>
     </message>
     <message>
         <source>The %s developers</source>
         <translation>%s 开发人员</translation>
-    </message>
-    <message>
-        <source>-fallbackfee is set very high! This is the transaction fee you may pay when fee estimates are not available.</source>
-        <translation>-fallbackfree 交易费设置得很高！这是在费用估计不可用时你可能会支付的交易费。</translation>
     </message>
     <message>
         <source>A fee rate (in %s/kB) that will be used when fee estimation has insufficient data (default: %s)</source>
@@ -2535,10 +4090,6 @@
         <translation>删除钱包的所有交易记录，且只有用 -rescan参数启动客户端才能重新取回交易记录 </translation>
     </message>
     <message>
-        <source>Distributed under the MIT software license, see the accompanying file COPYING or &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</source>
-        <translation>Distributed under the MIT software license, see the accompanying file COPYING or &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</translation>
-    </message>
-    <message>
         <source>Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)</source>
         <translation>当最佳区块变化时执行命令 (命令行中的 %s 会被替换成区块哈希值)</translation>
     </message>
@@ -2551,24 +4102,8 @@
         <translation>区块数据库包含未来的交易，这可能是由本机错误的日期时间引起。若确认本机日期时间正确，请重新建立区块数据库。</translation>
     </message>
     <message>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
-        <translation>这是测试用的预发布版本 - 请谨慎使用 - 不要用来挖矿，或者在正式商用环境下使用</translation>
-    </message>
-    <message>
         <source>Use UPnP to map the listening port (default: 1 when listening and no -proxy)</source>
         <translation>使用UPnP暴露本机监听端口（默认：1 当正在监听且不使用代理）</translation>
-    </message>
-    <message>
-        <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
-        <translation>警告：网络似乎并不完全同意！有些矿工似乎遇到了问题。</translation>
-    </message>
-    <message>
-        <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
-        <translation>警告：我们的同行似乎不完全同意！您可能需要升级，或者其他节点可能需要升级。</translation>
-    </message>
-    <message>
-        <source>Whitelist peers connecting from the given netmask or IP address. Can be specified multiple times.</source>
-        <translation>节点白名单,网络掩码或IP址。可多次指定。</translation>
     </message>
     <message>
         <source>-maxmempool must be at least %d MB</source>
@@ -2587,8 +4122,8 @@
         <translation>数据块创建选项：</translation>
     </message>
     <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>仅连接到指定节点</translation>
+        <source>Cannot resolve -%s address: '%s'</source>
+        <translation>无法解析 - %s 地址： '%s'</translation>
     </message>
     <message>
         <source>Connection options:</source>
@@ -2719,10 +4254,6 @@
         <translation>指定钱包文件（数据目录内）</translation>
     </message>
     <message>
-        <source>Starting network threads...</source>
-        <translation>正在启动网络线程...</translation>
-    </message>
-    <message>
         <source>The source code is available from %s.</source>
         <translation>源代码可以在 %s 获得。</translation>
     </message>
@@ -2743,6 +4274,10 @@
         <translation>使用UPnp映射监听端口 (默认: %u) </translation>
     </message>
     <message>
+        <source>Use the test chain</source>
+        <translation>使用测试链</translation>
+    </message>
+    <message>
         <source>User Agent comment (%s) contains unsafe characters.</source>
         <translation>用户代理评论(%s)包含不安全的字符。</translation>
     </message>
@@ -2759,20 +4294,24 @@
         <translation>钱包 %s 在外部的数据目录 %s</translation>
     </message>
     <message>
+        <source>Wallet debugging/testing options:</source>
+        <translation>钱包调试/测试选项：</translation>
+    </message>
+    <message>
         <source>Wallet options:</source>
         <translation>钱包选项:</translation>
     </message>
     <message>
         <source>Allow JSON-RPC connections from specified source. Valid for &lt;ip&gt; are a single IP (e.g. 1.2.3.4), a network/netmask (e.g. 1.2.3.4/255.255.255.0) or a network/CIDR (e.g. 1.2.3.4/24). This option can be specified multiple times</source>
-        <translation>允许来自指定地址的 JSON-RPC 连接。 &lt;ip&gt;为单一IP (如: 1.2.3.4), 网络/掩码 (如: 1.2.3.4/255.255.255.0), 网络/CIDR (如:  1.2.3.4/24)。该选项可多次指定。</translation>
+        <translation>允许来自指定地址的 JSON-RPC 连接。&lt;ip&gt;为单一IP (如: 1.2.3.4), 网络/掩码 (如: 1.2.3.4/255.255.255.0), 网络/CIDR (如:  1.2.3.4/24)。该选项可多次指定。</translation>
     </message>
     <message>
         <source>Bind to given address and whitelist peers connecting to it. Use [host]:port notation for IPv6</source>
-        <translation>绑定到指定地址和连接的白名单节点。 IPv6使用  [主机]:端口 格式 </translation>
+        <translation>绑定到指定地址和连接的白名单节点。IPv6使用  [主机]:端口 格式 </translation>
     </message>
     <message>
         <source>Bind to given address to listen for JSON-RPC connections. Use [host]:port notation for IPv6. This option can be specified multiple times (default: bind to all interfaces)</source>
-        <translation>绑定到指定地址监听 JSON-RPC连接。 IPv6使用[主机]:端口 格式。该选项可多次指定 (默认: 绑定到所有接口) </translation>
+        <translation>绑定到指定地址监听 JSON-RPC连接。IPv6使用[主机]:端口 格式。该选项可多次指定 (默认: 绑定到所有接口) </translation>
     </message>
     <message>
         <source>Create new files with system default permissions, instead of umask 077 (only effective with disabled wallet functionality)</source>
@@ -2807,10 +4346,6 @@
         <translation>Maximum size of data in data carrier transactions we relay and mine (default: %u)</translation>
     </message>
     <message>
-        <source>Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)</source>
-        <translation>通过DNS查询每个地址，如果短地址 (默认值: 1 除非 -连接)</translation>
-    </message>
-    <message>
         <source>Randomize credentials for every proxy connection. This enables Tor stream isolation (default: %u)</source>
         <translation>为每个代理连接随机化凭据。这将启用 Tor 流隔离 (默认: %u)</translation>
     </message>
@@ -2823,16 +4358,12 @@
         <translation>在交易费被扣除后发送的交易金额太小</translation>
     </message>
     <message>
-        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit &lt;https://www.openssl.org/&gt; and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
-        <translation>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit &lt;https://www.openssl.org/&gt; and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</translation>
-    </message>
-    <message>
         <source>Whitelisted peers cannot be DoS banned and their transactions are always relayed, even if they are already in the mempool, useful e.g. for a gateway</source>
         <translation>白名单节点不能被DoS banned ，且转发所有来自他们的交易(即便这些交易已经存在于mempool中)，常用于网关 </translation>
     </message>
     <message>
         <source>You need to rebuild the database using -reindex to go back to unpruned mode.  This will redownload the entire blockchain</source>
-        <translation>您需要使用 -reindex 重新构建数据库以返回未修剪的模式。这将重新下载整个区块链</translation>
+        <translation>你需要使用 -reindex 重新构建数据库以返回未修剪的模式。这将重新下载整个区块链</translation>
     </message>
     <message>
         <source>(default: %u)</source>
@@ -2935,10 +4466,6 @@
         <translation>交易量太小</translation>
     </message>
     <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>交易金额必须是积极的</translation>
-    </message>
-    <message>
         <source>Transaction too large for fee policy</source>
         <translation>费用策略的交易太大</translation>
     </message>
@@ -2964,7 +4491,7 @@
     </message>
     <message>
         <source>Warning: unknown new rules activated (versionbit %i)</source>
-        <translation>警告: 不明的交易规则被启用了(versionbit %i)</translation>
+        <translation>警告：不明的交易规则被启用了(versionbit %i)</translation>
     </message>
     <message>
         <source>Whether to operate in a blocks only mode (default: %u)</source>
@@ -3002,10 +4529,6 @@
     <message>
         <source>-maxtxfee is set very high! Fees this large could be paid on a single transaction.</source>
         <translation>参数 -maxtxfee 设定了很高的金额！这是你一次交易就有可能付出的最高手续费。</translation>
-    </message>
-    <message>
-        <source>-paytxfee is set very high! This is the transaction fee you will pay if you send a transaction.</source>
-        <translation>参数 -paytxfee 设定了很高的金额！这是你交易付款时所要付的手续费。</translation>
     </message>
     <message>
         <source>Do not keep transactions in the mempool longer than &lt;n&gt; hours (default: %u)</source>
@@ -3056,12 +4579,8 @@
         <translation>通过Tor隐藏服务连接节点时 使用不同的SOCKS5代理 (默认: %s)</translation>
     </message>
     <message>
-        <source>Username and hashed password for JSON-RPC connections. The field &lt;userpw&gt; comes in the format: &lt;USERNAME&gt;:&lt;SALT&gt;$&lt;HASH&gt;. A canonical python script is included in share/rpcuser. This option can be specified multiple times</source>
-        <translation>JSON-RPC 连接要使用的用户名和散列密码。&lt;userpw&gt; 的格式是：&lt;用户名&gt;:&lt;盐&gt;$&lt;散列值&gt;。在 share/rpcuser 目录下有一个示范的 python 脚本。这个选项可以被多次指定。</translation>
-    </message>
-    <message>
         <source>Warning: Unknown block versions being mined! It's possible unknown rules are in effect</source>
-        <translation>警告: 未知的区块版本被挖掘！未知规则可能已生效</translation>
+        <translation>警告：未知的区块版本被挖掘！未知规则可能已生效</translation>
     </message>
     <message>
         <source>(default: %s)</source>
@@ -3144,6 +4663,10 @@
         <translation>付款时允许使用未确认的零钱 (默认: %u) </translation>
     </message>
     <message>
+        <source>Starting network threads...</source>
+        <translation>正在启动网络线程...</translation>
+    </message>
+    <message>
         <source>Threshold for disconnecting misbehaving peers (default: %u)</source>
         <translation>断开 非礼节点的阀值 (默认: %u) </translation>
     </message>
@@ -3186,6 +4709,42 @@
     <message>
         <source>Error</source>
         <translation>错误</translation>
+    </message>
+    <message>
+        <source>Please check that your computer's date and time are correct! If your clock is wrong, %s will not work properly.</source>
+        <translation>请检查电脑日期和时间是否正确！ %s 没办法在时钟不准的情况下正常运作。</translation>
+    </message>
+    <message>
+        <source>The required amount exceeds spend limit</source>
+        <translation>金额超出最大支出限额</translation>
+    </message>
+    <message>
+        <source>Number of inputs is bigger then limit.</source>
+        <translation>输入的数量大于限制。</translation>
+    </message>
+    <message>
+        <source>Please contribute if you find %s useful. Visit %s for further information about the software.</source>
+        <translation>如果你觉得 %s 有用，请务必贡献一份力。访问 %s 以了解有关该软件的更多信息。</translation>
+    </message>
+    <message>
+        <source>Distributed under the MIT software license, see the accompanying file %s or %s</source>
+        <translation>在 MIT 协议下分发，参见附带的 %s 或 %s 文件</translation>
+    </message>
+    <message>
+        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit %s and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
+        <translation>本产品包含 OpenSSL Project 开发的用于 OpenSSL Toolkit %s 的软件，以及 Eric Young 编写的加密软件和 Thomas Bernard 编写的 UPnP 软件。</translation>
+    </message>
+    <message>
+        <source>This product includes Masternodes software developed by the Dash Core developers %s.</source>
+        <translation>本产品包含 Dash Core %s 开发人员开发的 Masternodes 软件。</translation>
+    </message>
+    <message>
+        <source>Cannot obtain a lock on data directory %s. %s is probably already running.</source>
+        <translation>无法锁定数据目录 %s。%s 可能已经在运行。</translation>
+    </message>
+    <message>
+        <source>Error reading %s! All keys read correctly, but transaction data or address book entries might be missing or incorrect.</source>
+        <translation>读取 %s 时发生错误！所有的密钥都可以正确读取，但是交易记录或地址簿数据可能已经丢失或出错。</translation>
     </message>
 </context>
 </TS>

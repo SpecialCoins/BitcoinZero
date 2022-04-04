@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -10,6 +10,8 @@
 
 #include <QWidget>
 #include <memory>
+
+#include "walletmodel.h"
 
 #include <QSettings>
 
@@ -42,15 +44,28 @@ public:
     void UpdatePropertyBalance(unsigned int propertyId, uint64_t available, uint64_t reserved);
 
 public Q_SLOTS:
-    void setBalance(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance,
-                    const CAmount& watchOnlyBalance, const CAmount& watchUnconfBalance, const CAmount& watchImmatureBalance);
-    //void updateExodus();
-    //void reinitExodus();
+    void on_anonymizeButton_clicked();
+
+    void setBalance(
+        const CAmount& balance,
+        const CAmount& unconfirmedBalance,
+        const CAmount& immatureBalance,
+        const CAmount& watchOnlyBalance,
+        const CAmount& watchUnconfBalance,
+        const CAmount& watchImmatureBalance,
+        const CAmount& privateBalance,
+        const CAmount& unconfirmedPrivateBalance,
+        const CAmount& anonymizableBalance);
+    //void updateElysium();
+    //void reinitElysium();
 
 Q_SIGNALS:
     void transactionClicked(const QModelIndex &index);
     void enabledTorChanged();
-    void exodusTransactionClicked(const uint256& txid);
+    void outOfSyncWarningClicked();
+#ifdef ENABLE_ELYSIUM
+    void elysiumTransactionClicked(const uint256& txid);
+#endif
 
 private:
     Ui::OverviewPage *ui;
@@ -62,6 +77,9 @@ private:
     CAmount currentWatchOnlyBalance;
     CAmount currentWatchUnconfBalance;
     CAmount currentWatchImmatureBalance;
+    CAmount currentPrivateBalance;
+    CAmount currentUnconfirmedPrivateBalance;
+    CAmount currentAnonymizableBalance;
 
     QSettings settings;
 
@@ -74,6 +92,7 @@ private Q_SLOTS:
     void handleEnabledTorChanged();
     void updateAlerts(const QString &warnings);
     void updateWatchOnlyLabels(bool showWatchOnly);
+    void handleOutOfSyncWarningClicks();
 };
 
 #endif // BITCOIN_QT_OVERVIEWPAGE_H

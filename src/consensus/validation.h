@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -22,8 +22,8 @@ static const unsigned char REJECT_FOUNDER_REWARD_MISSING = 0x45;
 static const unsigned char PUBCOIN_NOT_VALIDATE = 0x46;
 static const unsigned char NSEQUENCE_INCORRECT = 0x47;
 static const unsigned char PUBLIC_COIN_FOR_ACCUMULATOR_INVALID = 0x48;
-static const unsigned char NO_MINT_ZEROCOIN = 0x49;
-static const unsigned char REJECT_INVALID_BZNODE_PAYMENT = 0x50;
+static const unsigned char NO_MINT_PRIVCOIN = 0x49;
+static const unsigned char REJECT_INVALID_MASTERNODE_PAYMENT = 0x50;
 
 /** Capture information about block/transaction validation */
 class CValidationState {

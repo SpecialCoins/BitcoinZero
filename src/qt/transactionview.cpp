@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -16,6 +16,7 @@
 #include "transactionrecord.h"
 #include "transactiontablemodel.h"
 #include "walletmodel.h"
+#include "pcodemodel.h"
 
 #include "ui_interface.h"
 
@@ -34,6 +35,12 @@
 #include <QTableView>
 #include <QUrl>
 #include <QVBoxLayout>
+#include <QCalendarWidget>
+
+namespace {
+char const * CopyLabelText{"Copy label"};
+char const * CopyRapText{"Copy RAP address/label"};
+}
 
 TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *parent) :
     QWidget(parent), model(0), transactionProxyModel(0),
@@ -42,15 +49,15 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     // Build filter row
     setContentsMargins(0,0,0,0);
 
-    QHBoxLayout *hlayout = new QHBoxLayout();
-    hlayout->setContentsMargins(0,0,0,0);
+    headerLayout = new QHBoxLayout();
+    headerLayout->setContentsMargins(0,0,0,0);
 
     if (platformStyle->getUseExtraSpacing()) {
-        hlayout->setSpacing(5);
-        hlayout->addSpacing(26);
+        headerLayout->setSpacing(5);
+        headerLayout->addSpacing(26);
     } else {
-        hlayout->setSpacing(0);
-        hlayout->addSpacing(23);
+        headerLayout->setSpacing(0);
+        headerLayout->addSpacing(23);
     }
 
     watchOnlyWidget = new QComboBox(this);
@@ -58,7 +65,14 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     watchOnlyWidget->addItem("", TransactionFilterProxy::WatchOnlyFilter_All);
     watchOnlyWidget->addItem(platformStyle->SingleColorIcon(":/icons/eye_plus"), "", TransactionFilterProxy::WatchOnlyFilter_Yes);
     watchOnlyWidget->addItem(platformStyle->SingleColorIcon(":/icons/eye_minus"), "", TransactionFilterProxy::WatchOnlyFilter_No);
-    hlayout->addWidget(watchOnlyWidget);
+    headerLayout->addWidget(watchOnlyWidget);
+
+    instantsendWidget = new QComboBox(this);
+    instantsendWidget->setFixedWidth(24);
+    instantsendWidget->addItem(tr("All"), TransactionFilterProxy::InstantSendFilter_All);
+    instantsendWidget->addItem(tr("Locked by InstantSend"), TransactionFilterProxy::InstantSendFilter_Yes);
+    instantsendWidget->addItem(tr("Not locked by InstantSend"), TransactionFilterProxy::InstantSendFilter_No);
+    headerLayout->addWidget(instantsendWidget);
 
     dateWidget = new QComboBox(this);
     if (platformStyle->getUseExtraSpacing()) {
@@ -73,7 +87,7 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     dateWidget->addItem(tr("Last month"), LastMonth);
     dateWidget->addItem(tr("This year"), ThisYear);
     dateWidget->addItem(tr("Range..."), Range);
-    hlayout->addWidget(dateWidget);
+    headerLayout->addWidget(dateWidget);
 
     typeWidget = new QComboBox(this);
     if (platformStyle->getUseExtraSpacing()) {
@@ -92,15 +106,17 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     typeWidget->addItem(tr("Other"), TransactionFilterProxy::TYPE(TransactionRecord::Other));
     typeWidget->addItem(tr("Spend to"), TransactionFilterProxy::TYPE(TransactionRecord::SpendToAddress));
     typeWidget->addItem(tr("Spend to yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SpendToSelf));
-    typeWidget->addItem(tr("Mint"), TransactionFilterProxy::TYPE(TransactionRecord::Mint));
+    typeWidget->addItem(tr("Anonymize"), TransactionFilterProxy::TYPE(TransactionRecord::Anonymize));
+    typeWidget->addItem(tr("Sent to RAP address"), TransactionFilterProxy::TYPE(TransactionRecord::SendToPcode));
+    typeWidget->addItem(tr("Received with RAP address"), TransactionFilterProxy::TYPE(TransactionRecord::RecvWithPcode));
 
-    hlayout->addWidget(typeWidget);
+    headerLayout->addWidget(typeWidget);
 
     addressWidget = new QLineEdit(this);
 #if QT_VERSION >= 0x040700
     addressWidget->setPlaceholderText(tr("Enter address or label to search"));
 #endif
-    hlayout->addWidget(addressWidget);
+    headerLayout->addWidget(addressWidget);
 
     amountWidget = new QLineEdit(this);
 #if QT_VERSION >= 0x040700
@@ -112,28 +128,29 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
         amountWidget->setFixedWidth(100);
     }
     amountWidget->setValidator(new QDoubleValidator(0, 1e20, 8, this));
-    hlayout->addWidget(amountWidget);
+    headerLayout->addWidget(amountWidget);
 
     QVBoxLayout *vlayout = new QVBoxLayout(this);
     vlayout->setContentsMargins(0,0,0,0);
     vlayout->setSpacing(0);
 
     QTableView *view = new QTableView(this);
-    vlayout->addLayout(hlayout);
+    vlayout->addLayout(headerLayout);
     vlayout->addWidget(createDateRangeWidget());
     vlayout->addWidget(view);
     vlayout->setSpacing(0);
     int width = view->verticalScrollBar()->sizeHint().width();
     // Cover scroll bar width with spacing
     if (platformStyle->getUseExtraSpacing()) {
-        hlayout->addSpacing(width+2);
+        headerLayout->addSpacing(width+2);
     } else {
-        hlayout->addSpacing(width);
+        headerLayout->addSpacing(width);
     }
     // Always show scroll bar
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     view->setTabKeyNavigation(false);
     view->setContextMenuPolicy(Qt::CustomContextMenu);
+    view->setItemDelegateForColumn(TransactionTableModel::ToAddress, new GUIUtil::TextElideStyledItemDelegate(view));
 
     view->installEventFilter(this);
 
@@ -142,9 +159,10 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     // Actions
     abandonAction = new QAction(tr("Abandon transaction"), this);
     resendAction = new QAction(tr("Re-broadcast transaction"), this);
+    reconsiderBip47TxAction = new QAction(tr("Reconsider BIP47 transaction"), this);
 
     QAction *copyAddressAction = new QAction(tr("Copy address"), this);
-    QAction *copyLabelAction = new QAction(tr("Copy label"), this);
+    copyLabelAction = new QAction(tr(CopyLabelText), this);
     QAction *copyAmountAction = new QAction(tr("Copy amount"), this);
     QAction *copyTxIDAction = new QAction(tr("Copy transaction ID"), this);
     QAction *copyTxHexAction = new QAction(tr("Copy raw transaction"), this);
@@ -164,6 +182,7 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     contextMenu->addAction(abandonAction);
     contextMenu->addAction(editLabelAction);
     contextMenu->addAction(resendAction);
+    contextMenu->addAction(reconsiderBip47TxAction);
 
     mapperThirdPartyTxUrls = new QSignalMapper(this);
 
@@ -173,11 +192,13 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     connect(dateWidget, SIGNAL(activated(int)), this, SLOT(chooseDate(int)));
     connect(typeWidget, SIGNAL(activated(int)), this, SLOT(chooseType(int)));
     connect(watchOnlyWidget, SIGNAL(activated(int)), this, SLOT(chooseWatchonly(int)));
+    connect(instantsendWidget, SIGNAL(activated(int)), this, SLOT(chooseInstantSend(int)));
     connect(addressWidget, SIGNAL(textChanged(QString)), this, SLOT(changedPrefix(QString)));
     connect(amountWidget, SIGNAL(textChanged(QString)), this, SLOT(changedAmount(QString)));
 
     connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SIGNAL(doubleClicked(QModelIndex)));
     connect(view, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
+    connect(view->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), this, SLOT(updateHeaderSizes(int,int,int)));
 
     connect(abandonAction, SIGNAL(triggered()), this, SLOT(abandonTx()));
     connect(copyAddressAction, SIGNAL(triggered()), this, SLOT(copyAddress()));
@@ -189,15 +210,16 @@ TransactionView::TransactionView(const PlatformStyle *platformStyle, QWidget *pa
     connect(editLabelAction, SIGNAL(triggered()), this, SLOT(editLabel()));
     connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
     connect(resendAction, SIGNAL(triggered()), this, SLOT(rebroadcastTx()));
+    connect(reconsiderBip47TxAction, SIGNAL(triggered()), this, SLOT(reconsiderBip47Tx()));
 }
 
-void TransactionView::setModel(WalletModel *model)
+void TransactionView::setModel(WalletModel *_model)
 {
-    this->model = model;
-    if(model)
+    this->model = _model;
+    if(_model)
     {
         transactionProxyModel = new TransactionFilterProxy(this);
-        transactionProxyModel->setSourceModel(model->getTransactionTableModel());
+        transactionProxyModel->setSourceModel(_model->getTransactionTableModel());
         transactionProxyModel->setDynamicSortFilter(true);
         transactionProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
         transactionProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
@@ -215,16 +237,17 @@ void TransactionView::setModel(WalletModel *model)
 
         transactionView->setColumnWidth(TransactionTableModel::Status, STATUS_COLUMN_WIDTH);
         transactionView->setColumnWidth(TransactionTableModel::Watchonly, WATCHONLY_COLUMN_WIDTH);
+        transactionView->setColumnWidth(TransactionTableModel::InstantSend, INSTANTSEND_COLUMN_WIDTH);
         transactionView->setColumnWidth(TransactionTableModel::Date, DATE_COLUMN_WIDTH);
         transactionView->setColumnWidth(TransactionTableModel::Type, TYPE_COLUMN_WIDTH);
         transactionView->setColumnWidth(TransactionTableModel::Amount, AMOUNT_MINIMUM_COLUMN_WIDTH);
 
         columnResizingFixer = new GUIUtil::TableViewLastColumnResizingFixer(transactionView, AMOUNT_MINIMUM_COLUMN_WIDTH, MINIMUM_COLUMN_WIDTH, this);
 
-        if (model->getOptionsModel())
+        if (_model->getOptionsModel())
         {
             // Add third party transaction URLs to context menu
-            QStringList listUrls = model->getOptionsModel()->getThirdPartyTxUrls().split("|", QString::SkipEmptyParts);
+            QStringList listUrls = _model->getOptionsModel()->getThirdPartyTxUrls().split("|", QString::SkipEmptyParts);
             for (int i = 0; i < listUrls.size(); ++i)
             {
                 QString host = QUrl(listUrls[i].trimmed(), QUrl::StrictMode).host();
@@ -241,10 +264,10 @@ void TransactionView::setModel(WalletModel *model)
         }
 
         // show/hide column Watch-only
-        updateWatchOnlyColumn(model->haveWatchOnly());
+        updateWatchOnlyColumn(_model->haveWatchOnly());
 
         // Watch-only signal
-        connect(model, SIGNAL(notifyWatchonlyChanged(bool)), this, SLOT(updateWatchOnlyColumn(bool)));
+        connect(_model, SIGNAL(notifyWatchonlyChanged(bool)), this, SLOT(updateWatchOnlyColumn(bool)));
     }
 }
 
@@ -310,6 +333,14 @@ void TransactionView::chooseWatchonly(int idx)
         return;
     transactionProxyModel->setWatchOnlyFilter(
         (TransactionFilterProxy::WatchOnlyFilter)watchOnlyWidget->itemData(idx).toInt());
+}
+
+void TransactionView::chooseInstantSend(int idx)
+{
+    if(!transactionProxyModel)
+        return;
+    transactionProxyModel->setInstantSendFilter(
+        (TransactionFilterProxy::InstantSendFilter)instantsendWidget->itemData(idx).toInt());
 }
 
 void TransactionView::changedPrefix(const QString &prefix)
@@ -378,12 +409,38 @@ void TransactionView::contextualMenu(const QPoint &point)
     // check if transaction can be abandoned, disable context menu action in case it doesn't
     uint256 hash;
     hash.SetHex(selection.at(0).data(TransactionTableModel::TxHashRole).toString().toStdString());
+    if(selection.at(0).data(TransactionTableModel::PcodeRole).toString().size() > 0)
+        copyLabelAction->setText(tr(CopyRapText));
+    else
+        copyLabelAction->setText(tr(CopyLabelText));
     abandonAction->setEnabled(model->transactionCanBeAbandoned(hash));
     resendAction->setEnabled(model->transactionCanBeRebroadcast(hash));
+    reconsiderBip47TxAction->setVisible(model->getWallet()->IsCrypted() && model->getPcodeModel()->isBip47Transaction(hash));
 
     if(index.isValid())
     {
         contextMenu->exec(QCursor::pos());
+    }
+}
+
+void TransactionView::updateHeaderSizes(int logicalIndex, int oldSize, int newSize)
+{
+    static std::vector<std::pair<int, QWidget*>> const headerWidgets{
+        {TransactionTableModel::Watchonly, watchOnlyWidget},
+        {TransactionTableModel::InstantSend, instantsendWidget},
+        {TransactionTableModel::Date, dateWidget},
+        {TransactionTableModel::Type, typeWidget},
+        {TransactionTableModel::ToAddress, addressWidget},
+        {TransactionTableModel::Amount, amountWidget}
+    };
+
+    if(logicalIndex <= TransactionTableModel::ToAddress)
+        return;
+
+    for(std::pair<int, QWidget*> const & p : headerWidgets) {
+        int const w = transactionView->columnWidth(p.first) - headerLayout->spacing() / 2;
+        if(p.second->width() != w)
+            p.second->setFixedWidth(w);
     }
 }
 
@@ -416,14 +473,29 @@ void TransactionView::rebroadcastTx()
     QString hashQStr = selection.at(0).data(TransactionTableModel::TxHashRole).toString();
     hash.SetHex(hashQStr.toStdString());
 
-    if (model->rebroadcastTransaction(hash))
+    CValidationState state;
+    if (model->rebroadcastTransaction(hash, state))
         Q_EMIT message(tr("Re-broadcast"), tr("Broadcast succeeded"), CClientUIInterface::MSG_INFORMATION);
     else
-        Q_EMIT message(tr("Re-broadcast"), tr("There was an error trying to broadcast the message"),
+        Q_EMIT message(tr("Re-broadcast"), tr("There was an error trying to broadcast the message: %1").arg(QString::fromUtf8(state.GetDebugMessage().c_str())),
             CClientUIInterface::MSG_ERROR);
 
     // Update the table
     model->getTransactionTableModel()->updateTransaction(hashQStr, CT_UPDATED, true);
+}
+
+void TransactionView::reconsiderBip47Tx()
+{
+    if(!transactionView || !transactionView->selectionModel())
+        return;
+    QModelIndexList selection = transactionView->selectionModel()->selectedRows(0);
+
+    // get the hash from the TxHashRole (QVariant / QString)
+    uint256 hash;
+    QString hashQStr = selection.at(0).data(TransactionTableModel::TxHashRole).toString();
+    hash.SetHex(hashQStr.toStdString());
+
+    model->getPcodeModel()->reconsiderBip47Tx(hash);
 }
 
 void TransactionView::copyAddress()
@@ -463,15 +535,24 @@ void TransactionView::editLabel()
     QModelIndexList selection = transactionView->selectionModel()->selectedRows();
     if(!selection.isEmpty())
     {
-        AddressTableModel *addressBook = model->getAddressTableModel();
-        if(!addressBook)
-            return;
-        QString address = selection.at(0).data(TransactionTableModel::AddressRole).toString();
-        if(address.isEmpty())
+        AddressTableModel *addressBook;
+        EditAddressDialog::Mode mode;
+        QString address = selection.at(0).data(TransactionTableModel::PcodeRole).toString();
+
+        if(!address.isEmpty())
         {
-            // If this transaction has no associated address, exit
-            return;
+            addressBook = model->getPcodeAddressTableModel();
+            mode = EditAddressDialog::NewPcode;
         }
+        else
+        {
+            address = selection.at(0).data(TransactionTableModel::AddressRole).toString();
+            addressBook = model->getAddressTableModel();
+            mode = EditAddressDialog::NewSendingAddress;
+        }
+
+        if(!addressBook || address.isEmpty())
+            return;
         // Is address in address book? Address book can miss address when a transaction is
         // sent from outside the UI.
         int idx = addressBook->lookupAddress(address);
@@ -482,10 +563,16 @@ void TransactionView::editLabel()
             // Determine type of address, launch appropriate editor dialog type
             QString type = modelIdx.data(AddressTableModel::TypeRole).toString();
 
-            EditAddressDialog dlg(
-                type == AddressTableModel::Receive
-                ? EditAddressDialog::EditReceivingAddress
-                : EditAddressDialog::EditSendingAddress, this);
+            if(mode == EditAddressDialog::NewSendingAddress)
+            {
+                mode = type == AddressTableModel::Receive
+                    ? EditAddressDialog::EditReceivingAddress
+                    : EditAddressDialog::EditSendingAddress;
+            }
+            else
+                mode = EditAddressDialog::EditPcode;
+
+            EditAddressDialog dlg(mode, this);
             dlg.setModel(addressBook);
             dlg.loadRow(idx);
             dlg.exec();
@@ -493,8 +580,7 @@ void TransactionView::editLabel()
         else
         {
             // Add sending address
-            EditAddressDialog dlg(EditAddressDialog::NewSendingAddress,
-                this);
+            EditAddressDialog dlg(mode, this);
             dlg.setModel(addressBook);
             dlg.setAddress(address);
             dlg.exec();
@@ -557,6 +643,7 @@ QWidget *TransactionView::createDateRangeWidget()
     connect(dateFrom, SIGNAL(dateChanged(QDate)), this, SLOT(dateRangeChanged()));
     connect(dateTo, SIGNAL(dateChanged(QDate)), this, SLOT(dateRangeChanged()));
 
+    updateCalendarWidgets();
     return dateRangeWidget;
 }
 
@@ -567,6 +654,20 @@ void TransactionView::dateRangeChanged()
     transactionProxyModel->setDateRange(
             QDateTime(dateFrom->date()),
             QDateTime(dateTo->date()).addDays(1));
+}
+
+void TransactionView::updateCalendarWidgets()
+{
+    auto adjustWeekEndColors = [](QCalendarWidget* w) {
+        QTextCharFormat format = w->weekdayTextFormat(Qt::Saturday);
+        format.setForeground(QBrush(QColor(61,57,57), Qt::SolidPattern));
+
+        w->setWeekdayTextFormat(Qt::Saturday, format);
+        w->setWeekdayTextFormat(Qt::Sunday, format);
+    };
+
+    adjustWeekEndColors(dateFrom->calendarWidget());
+    adjustWeekEndColors(dateTo->calendarWidget());
 }
 
 void TransactionView::focusTransaction(const QModelIndex &idx)
@@ -584,7 +685,9 @@ void TransactionView::focusTransaction(const QModelIndex &idx)
 void TransactionView::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
+    disconnect(transactionView->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), this, SLOT(updateHeaderSizes(int,int,int)));
     columnResizingFixer->stretchColumnWidth(TransactionTableModel::ToAddress);
+    connect(transactionView->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), this, SLOT(updateHeaderSizes(int,int,int)));
 }
 
 // Need to override default Ctrl+C action for amount as default behaviour is just to copy DisplayRole text

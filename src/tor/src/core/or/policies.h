@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -91,6 +91,8 @@ int fascist_firewall_allows_dir_server(const dir_server_t *ds,
 
 void fascist_firewall_choose_address_rs(const routerstatus_t *rs,
                                         firewall_connection_t fw_connection,
+                                        int pref_only, tor_addr_port_t* ap);
+void fascist_firewall_choose_address_ls(const smartlist_t *lspecs,
                                         int pref_only, tor_addr_port_t* ap);
 void fascist_firewall_choose_address_node(const node_t *node,
                                           firewall_connection_t fw_connection,

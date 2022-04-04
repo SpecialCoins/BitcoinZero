@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 The Bitcoin Core developers
+// Copyright (c) 2014-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -17,14 +17,15 @@ static const struct {
 } network_styles[] = {
     {"main", QAPP_APP_NAME_DEFAULT, 0, 0, ""},
     {"test", QAPP_APP_NAME_TESTNET, 70, 30, QT_TRANSLATE_NOOP("SplashScreen", "[testnet]")},
+    {"dev", QAPP_APP_NAME_TESTNET, 70, 30, QT_TRANSLATE_NOOP("SplashScreen", "[devnet]")},
     {"regtest", QAPP_APP_NAME_TESTNET, 160, 30, "[regtest]"}
 };
 static const unsigned network_styles_count = sizeof(network_styles)/sizeof(*network_styles);
 
 // titleAddText needs to be const char* for tr()
-NetworkStyle::NetworkStyle(const QString &appName, const int iconColorHueShift, const int iconColorSaturationReduction, const char *titleAddText):
-    appName(appName),
-    titleAddText(qApp->translate("SplashScreen", titleAddText))
+NetworkStyle::NetworkStyle(const QString &_appName, const int iconColorHueShift, const int iconColorSaturationReduction, const char *_titleAddText):
+    appName(_appName),
+    titleAddText(qApp->translate("SplashScreen", _titleAddText))
 {
     // load pixmap
     QPixmap pixmap(":/icons/bitcoin");

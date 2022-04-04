@@ -1,9 +1,13 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_QT_WALLETFRAME_H
 #define BITCOIN_QT_WALLETFRAME_H
+
+#if defined(HAVE_CONFIG_H)
+#include "../config/bitcoin-config.h"
+#endif
 
 #include <QFrame>
 #include <QMap>
@@ -19,6 +23,13 @@ QT_BEGIN_NAMESPACE
 class QStackedWidget;
 QT_END_NAMESPACE
 
+/**
+ * A container for embedding all wallet-related
+ * controls into BitcoinGUI. The purpose of this class is to allow future
+ * refinements of the wallet controls with minimal need for further
+ * modifications to BitcoinGUI, thus greatly simplifying merges while
+ * reducing the risk of breaking top-level stuff.
+ */
 class WalletFrame : public QFrame
 {
     Q_OBJECT
@@ -38,6 +49,10 @@ public:
 
     void showOutOfSyncWarning(bool fShow);
 
+Q_SIGNALS:
+    /** Notify that the user has requested more information about the out-of-sync warning */
+    void requestedSyncWarningInfo();
+
 private:
     QStackedWidget *walletStack;
     BitcoinGUI *gui;
@@ -53,24 +68,27 @@ private:
 public Q_SLOTS:
     /** Switch to overview (home) page */
     void gotoOverviewPage();
-    /** Switch to ExoAssets page */
-    void gotoExoAssetsPage();
-    /** Switch to history (transactions) page */
-    void gotoHistoryPage();
-    /** Switch directory to Exodus tx history tab */
-    void gotoExodusHistoryTab();
-    /** Switch directory to bitcoin tx history tab */
-    void gotoBitcoinHistoryTab();
+#ifdef ENABLE_ELYSIUM
+    /** Switch to ElyAssets page */
+    void gotoElyAssetsPage();
     /** Switch to utility page */
     void gotoToolboxPage();
-    /** Switch to bznode page */
-    void gotoBznodePage();
+    /** Switch directory to Elysium tx history tab */
+    void gotoElysiumHistoryTab();
+#endif
+    /** Switch to history (transactions) page */
+    void gotoHistoryPage();
+    /** Switch directory to bitcoin tx history tab */
+    void gotoBitcoinHistoryTab();
+    /** Switch to masternode page */
+    void gotoMasternodePage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
+    void gotoCreatePcodePage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
-    /** Switch to sigma page */
-    void gotoSigmaPage();
+    /** Switch to lelantus page */
+    void gotoLelantusPage();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
@@ -90,6 +108,8 @@ public Q_SLOTS:
     void usedSendingAddresses();
     /** Show used receiving addresses */
     void usedReceivingAddresses();
+    /** Pass on signal over requested out-of-sync-warning information */
+    void outOfSyncWarningClicked();
 };
 
 #endif // BITCOIN_QT_WALLETFRAME_H

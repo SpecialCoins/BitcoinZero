@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -13,11 +13,9 @@
 
 #include <boost/foreach.hpp>
 
-using namespace std;
+typedef std::vector<unsigned char> valtype;
 
-typedef vector<unsigned char> valtype;
-
-unsigned int HaveKeys(const vector<valtype>& pubkeys, const CKeyStore& keystore)
+unsigned int HaveKeys(const std::vector<valtype>& pubkeys, const CKeyStore& keystore)
 {
     unsigned int nResult = 0;
     BOOST_FOREACH(const valtype& pubkey, pubkeys)
@@ -49,7 +47,7 @@ isminetype IsMine(const CKeyStore &keystore, const CTxDestination& dest, bool& i
 
 isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey, bool& isInvalid, SigVersion sigversion)
 {
-    vector<valtype> vSolutions;
+    std::vector<valtype> vSolutions;
     txnouttype whichType;
     if (!Solver(scriptPubKey, whichType, vSolutions)) {
         if (keystore.HaveWatchOnly(scriptPubKey))
@@ -63,8 +61,10 @@ isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey, bool& 
     case TX_NONSTANDARD:
     case TX_NULL_DATA:
         break;
-    case TX_ZEROCOINMINT:
-    case TX_ZEROCOINMINTV3:
+    case TX_PRIVCOINMINT:
+    case TX_PRIVCOINMINTV3:
+    case TX_LELANTUSMINT:
+    case TX_LELANTUSJMINT:
     case TX_PUBKEY:
         keyID = CPubKey(vSolutions[0]).GetID();
         if (sigversion != SIGVERSION_BASE && vSolutions[0].size() != 33) {
@@ -134,7 +134,7 @@ isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey, bool& 
         // partially owned (somebody else has a key that can spend
         // them) enable spend-out-from-under-you attacks, especially
         // in shared-wallet situations.
-        vector<valtype> keys(vSolutions.begin()+1, vSolutions.begin()+vSolutions.size()-1);
+        std::vector<valtype> keys(vSolutions.begin()+1, vSolutions.begin()+vSolutions.size()-1);
         if (sigversion != SIGVERSION_BASE) {
             for (size_t i = 0; i < keys.size(); i++) {
                 if (keys[i].size() != 33) {

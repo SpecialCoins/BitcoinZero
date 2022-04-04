@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2016 The Bitcoin developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -7,7 +7,7 @@
 
 #include "policy/policy.h"
 
-#include "main.h"
+#include "validation.h"
 #include "tinyformat.h"
 #include "util.h"
 #include "utilstrencodings.h"
@@ -17,7 +17,7 @@
     /**
      * Check transaction inputs to mitigate two
      * potential denial-of-service attacks:
-     * 
+     *
      * 1. scriptSigs with extra data stuffed into them,
      *    not consumed by scriptPubKey (or P2SH script)
      * 2. P2SH scripts with a crazy number of expensive
@@ -34,10 +34,8 @@
 bool IsStandard(const CScript& scriptPubKey, txnouttype& whichType, const bool witnessEnabled)
 {
     std::vector<std::vector<unsigned char> > vSolutions;
-    if (!Solver(scriptPubKey, whichType, vSolutions)) {
-        LogPrintf("Solver(scriptPubKey, whichType, vSolutions), whichType=%s\n", whichType);
+    if (!Solver(scriptPubKey, whichType, vSolutions))
         return false;
-    }
 
     if (whichType == TX_MULTISIG)
     {
@@ -70,7 +68,8 @@ bool IsStandardTx(const CTransaction& tx, std::string& reason, const bool witnes
     // computing signature hashes is O(ninputs*txsize). Limiting transactions
     // to MAX_STANDARD_TX_SIZE mitigates CPU exhaustion attacks.
     unsigned int sz = GetTransactionWeight(tx);
-    if (sz >= MAX_STANDARD_TX_WEIGHT) {
+    unsigned int szLimit = MAX_STANDARD_TX_SIZE * 2;
+    if (sz >= szLimit) {
         reason = "tx-size";
         return false;
     }
@@ -84,16 +83,16 @@ bool IsStandardTx(const CTransaction& tx, std::string& reason, const bool witnes
         // future-proofing. That's also enough to spend a 20-of-20
         // CHECKMULTISIG scriptPubKey, though such a scriptPubKey is not
         // considered standard.
-        if (txin.scriptSig.size() > 1650 && !txin.scriptSig.IsZerocoinSpend() && !txin.scriptSig.IsSigmaSpend()) {
+        if (txin.scriptSig.size() > 1650 && !txin.scriptSig.IsPrivcoinSpend() && !txin.scriptSig.IsSigmaSpend() && !txin.scriptSig.IsLelantusJoinSplit() && !txin.IsPrivcoinRemint()) {
             reason = "scriptsig-size";
             return false;
         }
-        if (txin.scriptSig.IsZerocoinSpend() && txin.scriptSig.size() > 50000) {
+        if (txin.scriptSig.IsPrivcoinSpend() && txin.scriptSig.size() > 50000) {
             reason = "scriptsig-size";
             return false;
         }
 
-        if (!txin.scriptSig.IsZerocoinSpend() && !txin.scriptSig.IsSigmaSpend()) {
+        if (!txin.scriptSig.IsPrivcoinSpend() && !txin.scriptSig.IsSigmaSpend() && !txin.scriptSig.IsLelantusJoinSplit() && !txin.IsPrivcoinRemint()) {
             if (!txin.scriptSig.IsPushOnly()) {
                 reason = "scriptsig-not-pushonly";
                 return false;
@@ -109,7 +108,6 @@ bool IsStandardTx(const CTransaction& tx, std::string& reason, const bool witnes
     txnouttype whichType;
     BOOST_FOREACH(const CTxOut& txout, tx.vout) {
         if (!::IsStandard(txout.scriptPubKey, whichType, witnessEnabled)) {
-            LogPrintf("txout = %s\n", txout.ToString());
             reason = "scriptpubkey";
             return false;
         }
@@ -119,7 +117,7 @@ bool IsStandardTx(const CTransaction& tx, std::string& reason, const bool witnes
         else if ((whichType == TX_MULTISIG) && (!fIsBareMultisigStd)) {
             reason = "bare-multisig";
             return false;
-        } else if (txout.IsDust(::minRelayTxFee)) {
+        } else if (txout.IsDust(dustRelayFee)) {
             reason = "dust";
             return false;
         }
@@ -136,11 +134,12 @@ bool IsStandardTx(const CTransaction& tx, std::string& reason, const bool witnes
 
 bool AreInputsStandard(const CTransaction& tx, const CCoinsViewCache& mapInputs)
 {
-    if (tx.IsCoinBase() || tx.IsZerocoinSpend() || tx.IsSigmaSpend())
+    if (tx.IsCoinBase() || tx.IsPrivcoinSpend() || tx.IsSigmaSpend() || tx.IsPrivcoinRemint() || tx.IsLelantusJoinSplit())
         return true; // Coinbases don't use vin normally
+
     for (unsigned int i = 0; i < tx.vin.size(); i++)
     {
-        const CTxOut& prev = mapInputs.GetOutputFor(tx.vin[i]);
+        const CTxOut& prev = mapInputs.AccessCoin(tx.vin[i].prevout).out;
 
         std::vector<std::vector<unsigned char> > vSolutions;
         txnouttype whichType;
@@ -169,17 +168,17 @@ bool AreInputsStandard(const CTransaction& tx, const CCoinsViewCache& mapInputs)
 
 bool IsWitnessStandard(const CTransaction& tx, const CCoinsViewCache& mapInputs)
 {
-    if (tx.IsCoinBase() || tx.IsZerocoinSpend() || tx.IsSigmaSpend())
+    if (tx.IsCoinBase() || tx.IsPrivcoinSpend() || tx.IsSigmaSpend() || tx.IsPrivcoinRemint() || tx.IsLelantusJoinSplit())
         return true; // Coinbases are skipped
 
     for (unsigned int i = 0; i < tx.vin.size(); i++)
     {
         // We don't care if witness for this input is empty, since it must not be bloated.
         // If the script is invalid without witness, it would be caught sooner or later during validation.
-        if (tx.wit.vtxinwit[i].IsNull())
+        if (tx.vin[i].scriptWitness.IsNull())
             continue;
 
-        const CTxOut &prev = mapInputs.GetOutputFor(tx.vin[i]);
+        const CTxOut &prev = mapInputs.AccessCoin(tx.vin[i].prevout).out;
 
         // get the scriptPubKey corresponding to this input:
         CScript prevScript = prev.scriptPubKey;
@@ -205,13 +204,13 @@ bool IsWitnessStandard(const CTransaction& tx, const CCoinsViewCache& mapInputs)
 
         // Check P2WSH standard limits
         if (witnessversion == 0 && witnessprogram.size() == 32) {
-            if (tx.wit.vtxinwit[i].scriptWitness.stack.back().size() > MAX_STANDARD_P2WSH_SCRIPT_SIZE)
+            if (tx.vin[i].scriptWitness.stack.back().size() > MAX_STANDARD_P2WSH_SCRIPT_SIZE)
                 return false;
-            size_t sizeWitnessStack = tx.wit.vtxinwit[i].scriptWitness.stack.size() - 1;
+            size_t sizeWitnessStack = tx.vin[i].scriptWitness.stack.size() - 1;
             if (sizeWitnessStack > MAX_STANDARD_P2WSH_STACK_ITEMS)
                 return false;
             for (unsigned int j = 0; j < sizeWitnessStack; j++) {
-                if (tx.wit.vtxinwit[i].scriptWitness.stack[j].size() > MAX_STANDARD_P2WSH_STACK_ITEM_SIZE)
+                if (tx.vin[i].scriptWitness.stack[j].size() > MAX_STANDARD_P2WSH_STACK_ITEM_SIZE)
                     return false;
             }
         }
@@ -219,6 +218,8 @@ bool IsWitnessStandard(const CTransaction& tx, const CCoinsViewCache& mapInputs)
     return true;
 }
 
+CFeeRate incrementalRelayFee = CFeeRate(DEFAULT_INCREMENTAL_RELAY_FEE);
+CFeeRate dustRelayFee = CFeeRate(DUST_RELAY_TX_FEE);
 unsigned int nBytesPerSigOp = DEFAULT_BYTES_PER_SIGOP;
 
 int64_t GetVirtualTransactionSize(int64_t nWeight, int64_t nSigOpCost)

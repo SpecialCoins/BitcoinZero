@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -45,8 +45,11 @@ public:
         ThreadsScriptVerif,     // int
         DatabaseCache,          // int
         SpendZeroConfChange,    // bool
+        ReindexLelantus,        // bool
         Listen,                 // bool
         TorSetup,               // bool
+        AutoAnonymize,          // bool
+        LelantusPage,           // bool
         OptionIDRowCount,
     };
 
@@ -68,6 +71,8 @@ public:
     bool getProxySettings(QNetworkProxy& proxy) const;
     bool getCoinControlFeatures() { return fCoinControlFeatures; }
     const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
+    bool getAutoAnonymize() { return fAutoAnonymize; }
+    bool getLelantusPage() {return fLelantusPage; }
 
     /* Restart flag helper */
     void setRestartRequired(bool fRequired);
@@ -82,17 +87,20 @@ private:
     int nDisplayUnit;
     QString strThirdPartyTxUrls;
     bool fCoinControlFeatures;
-    /* settings that were overriden by command-line */
+    bool fAutoAnonymize;
+    bool fLelantusPage;
+
+    /* settings that were overridden by command-line */
     QString strOverriddenByCommandLine;
 
     // Add option to list of GUI options overridden through command line/config file
     void addOverriddenOption(const std::string &option);
 
-    // Check settings version and upgrade default values if required
-    void checkAndMigrate();
 Q_SIGNALS:
     void displayUnitChanged(int unit);
     void coinControlFeaturesChanged(bool);
+    void autoAnonymizeChanged(bool);
+    void lelantusPageChanged(bool);
     void hideTrayIconChanged(bool);
 };
 

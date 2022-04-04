@@ -40,7 +40,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>&amp;Send</source>
         <translation>&amp;ناردن</translation>
@@ -77,10 +77,6 @@
         <translation>کۆ:</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>لەپێشی:</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>تێچوون:</translation>
     </message>
@@ -91,18 +87,6 @@
     <message>
         <source>Date</source>
         <translation>رێکەت</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <translation>لەپێشی</translation>
-    </message>
-    <message>
-        <source>high</source>
-        <translation>بەرز</translation>
-    </message>
-    <message>
-        <source>low</source>
-        <translation>نزم</translation>
     </message>
     <message>
         <source>yes</source>
@@ -142,6 +126,9 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     </context>
 <context>
@@ -170,6 +157,9 @@
         <source>Amount</source>
         <translation>سەرجەم</translation>
     </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -282,19 +272,23 @@
         <source>Address</source>
         <translation>ناوونیشان</translation>
     </message>
+    <message>
+        <source>Amount</source>
+        <translation>سەرجەم</translation>
+    </message>
     </context>
 <context>
     <name>RecentRequestsTableModel</name>
+    <message>
+        <source>Date</source>
+        <translation>رێکەت</translation>
+    </message>
     </context>
 <context>
     <name>SendCoinsDialog</name>
     <message>
         <source>Amount:</source>
         <translation>کۆ:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>لەپێشی:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -314,7 +308,11 @@
     </context>
 <context>
     <name>SendConfirmationDialog</name>
-    </context>
+    <message>
+        <source>Yes</source>
+        <translation>بەڵێ</translation>
+    </message>
+</context>
 <context>
     <name>ShutdownWindow</name>
     </context>
@@ -329,15 +327,31 @@
     </context>
 <context>
     <name>TransactionDesc</name>
+    <message>
+        <source>Date</source>
+        <translation>رێکەت</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>سەرجەم</translation>
+    </message>
     </context>
 <context>
     <name>TransactionDescDialog</name>
     </context>
 <context>
     <name>TransactionTableModel</name>
+    <message>
+        <source>Date</source>
+        <translation>رێکەت</translation>
+    </message>
     </context>
 <context>
     <name>TransactionView</name>
+    <message>
+        <source>Date</source>
+        <translation>رێکەت</translation>
+    </message>
     <message>
         <source>Address</source>
         <translation>ناوونیشان</translation>
@@ -354,9 +368,13 @@
     </context>
 <context>
     <name>WalletView</name>
+    <message>
+        <source>&amp;Export</source>
+        <translation>&amp;هەناردن</translation>
+    </message>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>هەڵبژاردنەکان:</translation>

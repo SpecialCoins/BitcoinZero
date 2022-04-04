@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -51,12 +51,12 @@ bool CCrypter::SetKeyFromPassphrase(const SecureString& strKeyData, const std::v
 
     int i = 0;
     if (nDerivationMethod == 0)
-        i = BytesToKeySHA512AES(chSalt, strKeyData, nRounds, chKey, chIV);
+        i = BytesToKeySHA512AES(chSalt, strKeyData, nRounds, vchKey.data(), vchIV.data());
 
     if (i != (int)WALLET_CRYPTO_KEY_SIZE)
     {
-        memory_cleanse(chKey, sizeof(chKey));
-        memory_cleanse(chIV, sizeof(chIV));
+        memory_cleanse(vchKey.data(), vchKey.size());
+        memory_cleanse(vchIV.data(), vchIV.size());
         return false;
     }
 
@@ -69,8 +69,8 @@ bool CCrypter::SetKey(const CKeyingMaterial& chNewKey, const std::vector<unsigne
     if (chNewKey.size() != WALLET_CRYPTO_KEY_SIZE || chNewIV.size() != WALLET_CRYPTO_IV_SIZE)
         return false;
 
-    memcpy(&chKey[0], &chNewKey[0], sizeof chKey);
-    memcpy(&chIV[0], &chNewIV[0], sizeof chIV);
+    memcpy(vchKey.data(), chNewKey.data(), chNewKey.size());
+    memcpy(vchIV.data(), chNewIV.data(), chNewIV.size());
 
     fKeySet = true;
     return true;
@@ -85,7 +85,7 @@ bool CCrypter::Encrypt(const CKeyingMaterial& vchPlaintext, std::vector<unsigned
     // n + AES_BLOCKSIZE bytes
     vchCiphertext.resize(vchPlaintext.size() + AES_BLOCKSIZE);
 
-    AES256CBCEncrypt enc(chKey, chIV, true);
+    AES256CBCEncrypt enc(vchKey.data(), vchIV.data(), true);
     size_t nLen = enc.Encrypt(&vchPlaintext[0], vchPlaintext.size(), &vchCiphertext[0]);
     if(nLen < vchPlaintext.size())
         return false;
@@ -104,7 +104,7 @@ bool CCrypter::Decrypt(const std::vector<unsigned char>& vchCiphertext, CKeyingM
 
     vchPlaintext.resize(nLen);
 
-    AES256CBCDecrypt dec(chKey, chIV, true);
+    AES256CBCDecrypt dec(vchKey.data(), vchIV.data(), true);
     nLen = dec.Decrypt(&vchCiphertext[0], vchCiphertext.size(), &vchPlaintext[0]);
     if(nLen == 0)
         return false;
@@ -144,6 +144,26 @@ static bool DecryptKey(const CKeyingMaterial& vMasterKey, const std::vector<unsi
 
     key.Set(vchSecret.begin(), vchSecret.end(), vchPubKey.IsCompressed());
     return key.VerifyPubKey(vchPubKey);
+}
+
+bool CCryptoKeyStore::EncryptMnemonicSecret(const CKeyingMaterial& vMasterKey,const CKeyingMaterial &vchPlaintext, const uint256& nIV, std::vector<unsigned char> &vchCiphertext)
+{
+    CCrypter cKeyCrypter;
+    std::vector<unsigned char> chIV(WALLET_CRYPTO_IV_SIZE);
+    memcpy(&chIV[0], &nIV, WALLET_CRYPTO_IV_SIZE);
+    if(!cKeyCrypter.SetKey(vMasterKey, chIV))
+        return false;
+    return cKeyCrypter.Encrypt(*((const CKeyingMaterial*)&vchPlaintext), vchCiphertext);
+}
+
+bool CCryptoKeyStore::DecryptMnemonicSecret(const std::vector<unsigned char>& vchCiphertext, const uint256& nIV, CKeyingMaterial& vchPlaintext)
+{
+    CCrypter cKeyCrypter;
+    std::vector<unsigned char> chIV(WALLET_CRYPTO_IV_SIZE);
+    memcpy(&chIV[0], &nIV, WALLET_CRYPTO_IV_SIZE);
+    if(!cKeyCrypter.SetKey(vMasterKey, chIV))
+        return false;
+    return cKeyCrypter.Decrypt(vchCiphertext, *((CKeyingMaterial*)&vchPlaintext));
 }
 
 bool CCryptoKeyStore::SetCrypted()
@@ -204,12 +224,12 @@ bool CCryptoKeyStore::Unlock(const CKeyingMaterial& vMasterKeyIn, const bool& fF
             return false;
         vMasterKey = vMasterKeyIn;
         fDecryptionThoroughlyChecked = true;
-        if(!fFirstUnlock && zwalletMain){
+        if(!fFirstUnlock && pwalletMain->zwallet){
             auto &hdChain = pwalletMain->GetHDChain();
             uint160 hashSeedMaster = hdChain.masterKeyID;
-            zwalletMain->SetupWallet(hashSeedMaster, false);
-            zwalletMain->SyncWithChain();
             pwalletMain->SetHDChain(hdChain, false); // Used to upgrade normal keys to BIP44
+            pwalletMain->zwallet->SetupWallet(hashSeedMaster, false);
+            pwalletMain->zwallet->SyncWithChain();
         }
     }
     NotifyStatusChanged(this);

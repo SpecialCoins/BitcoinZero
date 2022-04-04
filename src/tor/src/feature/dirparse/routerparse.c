@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -50,7 +50,7 @@
  * </ul>
  **/
 
-#define EXPOSE_ROUTERDESC_TOKEN_TABLE
+#define ROUTERDESC_TOKEN_TABLE_PRIVATE
 
 #include "core/or/or.h"
 #include "app/config/config.h"
@@ -556,6 +556,9 @@ router_parse_entry_from_string(const char *s, const char *end,
   if ((tok = find_opt_by_keyword(tokens, A_PURPOSE))) {
     tor_assert(tok->n_args);
     router->purpose = router_purpose_from_string(tok->args[0]);
+    if (router->purpose == ROUTER_PURPOSE_UNKNOWN) {
+      goto err;
+    }
   } else {
     router->purpose = ROUTER_PURPOSE_GENERAL;
   }

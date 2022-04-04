@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -42,6 +42,6 @@ STATIC routerstatus_t *routerstatus_parse_entry_from_string(
                                      vote_routerstatus_t *vote_rs,
                                      int consensus_method,
                                      consensus_flavor_t flav);
-#endif
+#endif /* defined(NS_PARSE_PRIVATE) */
 
-#endif
+#endif /* !defined(TOR_NS_PARSE_H) */

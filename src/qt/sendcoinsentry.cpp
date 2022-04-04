@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -15,11 +15,12 @@
 #include <QApplication>
 #include <QClipboard>
 
-SendCoinsEntry::SendCoinsEntry(const PlatformStyle *platformStyle, QWidget *parent) :
+SendCoinsEntry::SendCoinsEntry(const PlatformStyle *_platformStyle, QWidget *parent) :
     QStackedWidget(parent),
     ui(new Ui::SendCoinsEntry),
     model(0),
-    platformStyle(platformStyle)
+    platformStyle(_platformStyle),
+    isPcodeEntry(false)
 {
     ui->setupUi(this);
 
@@ -37,9 +38,9 @@ SendCoinsEntry::SendCoinsEntry(const PlatformStyle *platformStyle, QWidget *pare
     ui->addAsLabel->setPlaceholderText(tr("Enter a label for this address to add it to your address book"));
 #endif
 
-    // normal BitcoinZero address field
+    // normal address field
     GUIUtil::setupAddressWidget(ui->payTo, this);
-    // just a label for displaying BitcoinZero address(es)
+    // just a label for displaying address(es)
     ui->payTo_is->setFont(GUIUtil::fixedPitchFont());
 
     // Connect signals
@@ -79,12 +80,12 @@ void SendCoinsEntry::on_payTo_textChanged(const QString &address)
     updateLabel(address);
 }
 
-void SendCoinsEntry::setModel(WalletModel *model)
+void SendCoinsEntry::setModel(WalletModel *_model)
 {
-    this->model = model;
+    this->model = _model;
 
-    if (model && model->getOptionsModel())
-        connect(model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
+    if (_model && _model->getOptionsModel())
+        connect(_model->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
 
     clear();
 }
@@ -129,7 +130,8 @@ bool SendCoinsEntry::validate()
     if (recipient.paymentRequest.IsInitialized())
         return retval;
 
-    if (!model->validateAddress(ui->payTo->text()))
+    isPcodeEntry = bip47::CPaymentCode::validate(ui->payTo->text().toStdString());
+    if (!(model->validateAddress(ui->payTo->text()) || isPcodeEntry))
     {
         ui->payTo->setValid(false);
         retval = false;
@@ -238,6 +240,11 @@ bool SendCoinsEntry::isClear()
     return ui->payTo->text().isEmpty() && ui->payTo_is->text().isEmpty() && ui->payTo_s->text().isEmpty();
 }
 
+bool SendCoinsEntry::isPayToPcode() const
+{
+    return isPcodeEntry;
+}
+
 void SendCoinsEntry::setFocus()
 {
     ui->payTo->setFocus();
@@ -260,12 +267,16 @@ bool SendCoinsEntry::updateLabel(const QString &address)
         return false;
 
     // Fill in label from address book, if address has an associated label
-    QString associatedLabel = model->getAddressTableModel()->labelForAddress(address);
-    if(!associatedLabel.isEmpty())
+    QString associatedLabel;
+    if(bip47::CPaymentCode::validate(address.toStdString()))
     {
-        ui->addAsLabel->setText(associatedLabel);
-        return true;
+        associatedLabel = QString::fromStdString(model->getWallet()->GetSendingPcodeLabel(address.toStdString()));
+    }
+    else
+    {
+        associatedLabel = model->getAddressTableModel()->labelForAddress(address);
     }
 
-    return false;
+    ui->addAsLabel->setText(associatedLabel);
+    return true;
 }

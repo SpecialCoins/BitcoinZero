@@ -1,4 +1,4 @@
-/* Copyright (c) 2009-2019, The Tor Project, Inc. */
+/* Copyright (c) 2009-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -130,7 +130,7 @@ rescan_mainloop_cb(evutil_socket_t fd, short events, void *arg)
 
 /** Initialize the Libevent library and set up the event base. */
 void
-tor_libevent_initialize(tor_libevent_cfg *torcfg)
+tor_libevent_initialize(tor_libevent_cfg_t *torcfg)
 {
   tor_assert(the_event_base == NULL);
   /* some paths below don't use torcfg, so avoid unused variable warnings */
@@ -179,6 +179,16 @@ tor_libevent_initialize(tor_libevent_cfg *torcfg)
   log_info(LD_GENERAL,
       "Initialized libevent version %s using method %s. Good.",
       event_get_version(), tor_libevent_get_method());
+}
+
+/**
+ * Return true iff the libevent module has been successfully initialized,
+ * and not subsequently shut down.
+ **/
+bool
+tor_libevent_is_initialized(void)
+{
+  return the_event_base != NULL;
 }
 
 /** Return the current Libevent event base that we're set up to use. */
@@ -422,7 +432,7 @@ mainloop_event_activate(mainloop_event_t *event)
  *
  * If the event is scheduled for a different time, cancel it and run
  * after this delay instead.  If the event is currently pending to run
- * <em>now</b>, has no effect.
+ * <b>now</b>, has no effect.
  *
  * Do not call this function with <b>tv</b> == NULL -- use
  * mainloop_event_activate() instead.

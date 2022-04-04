@@ -1,5 +1,5 @@
-#ifndef BITCOINZERO_WALLET_TXBUILDER_H
-#define BITCOINZERO_WALLET_TXBUILDER_H
+#ifndef BZX_WALLET_TXBUILDER_H
+#define BZX_WALLET_TXBUILDER_H
 
 #include "wallet.h"
 
@@ -37,11 +37,11 @@ public:
     explicit TxBuilder(CWallet& wallet) noexcept;
     virtual ~TxBuilder();
 
-    CWalletTx Build(const std::vector<CRecipient>& recipients, CAmount& fee,  bool& fChangeAddedToFee);
+    CWalletTx Build(const std::vector<CRecipient>& recipients, CAmount& fee,  bool& fChangeAddedToFee, CWalletDB& walletdb);
 
 protected:
     virtual CAmount GetInputs(std::vector<std::unique_ptr<InputSigner>>& signers, CAmount required) = 0;
-    virtual CAmount GetChanges(std::vector<CTxOut>& outputs, CAmount amount) = 0;
+    virtual CAmount GetChanges(std::vector<CTxOut>& outputs, CAmount amount, CWalletDB& walletdb) = 0;
     virtual CAmount AdjustFee(CAmount needed, unsigned txSize);
 };
 

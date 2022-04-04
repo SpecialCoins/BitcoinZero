@@ -17,10 +17,9 @@ class CBlockIndex;
 class uint256;
 
 unsigned int GetNextWorkRequired(const CBlockIndex *pindexLast, const CBlockHeader *pblock);
-int64_t Nexxt(const CBlockIndex* pindexPrev, const CBlockHeader* pblock);
+int64_t Nexxt(const CBlockIndex* pindexPrev, const CBlockHeader* pblock, const Consensus::Params &);
 unsigned int NexxtD(const CBlockIndex* pindexPrev, const CBlockHeader* pblock);
-unsigned int NexxtDG(const CBlockIndex* pindexLast, const CBlockHeader *pblock);
-unsigned int CalculateNextWorkRequired(const CBlockIndex *pindexLast, int64_t nFirstBlockTime);
+unsigned int NexxtDG(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params &);
 
 /** Check whether a block hash satisfies the proof-of-work requirement specified by nBits */
 bool CheckProofOfWork(uint256 hash, unsigned int nBits, const Consensus::Params &);

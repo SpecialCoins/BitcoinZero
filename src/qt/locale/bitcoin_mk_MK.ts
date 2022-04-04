@@ -64,7 +64,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>Потпиши &amp;порака...</translation>
@@ -138,7 +138,7 @@
         <translation>Повторно индексирање на блокови од дискот...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
+        <source>Send coins to a address</source>
         <translation>Испрати биткоини на Биткоин адреса</translation>
     </message>
     <message>
@@ -146,7 +146,7 @@
         <translation>&amp;Потврди порака...</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
+        <source>BZX</source>
         <translation>Биткоин</translation>
     </message>
     <message>
@@ -180,26 +180,6 @@
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
         <translation><numerusform>Обработен %n блок од историјата на трансакции.</numerusform><numerusform>Обработени %n блокови од историјата на трансакции.</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n час</numerusform><numerusform>%n часови</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n ден</numerusform><numerusform>%n денови</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n недела</numerusform><numerusform>%n недели</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 и %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n година</numerusform><numerusform>%n години</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -259,10 +239,6 @@
         <translation>Сума:</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>Приоритет:</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>Провизија:</translation>
     </message>
@@ -285,10 +261,6 @@
     <message>
         <source>Date</source>
         <translation>Дата</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <translation>Приоритет</translation>
     </message>
     </context>
 <context>
@@ -330,6 +302,9 @@
         <source>Error</source>
         <translation>Грешка</translation>
     </message>
+    </context>
+<context>
+    <name>ModalOverlay</name>
     </context>
 <context>
     <name>OpenURIDialog</name>
@@ -416,7 +391,14 @@
         <source>%1 ms</source>
         <translation>%1 мс</translation>
     </message>
-</context>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 и %2</translation>
+    </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
+    </context>
 <context>
     <name>QRImageWidget</name>
     </context>
@@ -519,10 +501,6 @@
         <translation>Сума:</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>Приоритет:</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>Провизија:</translation>
     </message>
@@ -594,13 +572,13 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Опции:</translation>
     </message>
     <message>
-        <source>BitcoinZero Core</source>
+        <source>BZX Core</source>
         <translation>Биткоин Core</translation>
     </message>
     <message>

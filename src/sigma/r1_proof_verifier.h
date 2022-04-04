@@ -1,5 +1,5 @@
-#ifndef BITCOINZERO_SIGMA_R1_PROOF_VERIFIER_H
-#define BITCOINZERO_SIGMA_R1_PROOF_VERIFIER_H
+#ifndef BZX_SIGMA_R1_PROOF_VERIFIER_H
+#define BZX_SIGMA_R1_PROOF_VERIFIER_H
 
 namespace sigma {
 
@@ -35,4 +35,4 @@ private:
 
 #include "r1_proof_verifier.hpp"
 
-#endif // BITCOINZERO_SIGMA_R1_PROOF_VERIFIER_H
+#endif // BZX_SIGMA_R1_PROOF_VERIFIER_H

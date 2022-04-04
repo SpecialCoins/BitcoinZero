@@ -76,7 +76,7 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>Semnează &amp;mesaj...</translation>
@@ -154,8 +154,8 @@
         <translation>Se reindexează blocurile pe disc...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>Trimite monede către o adresă BitcoinZero</translation>
+        <source>Send coins to a address</source>
+        <translation>Trimite monede către o adresă BZX</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -178,8 +178,8 @@
         <translation>&amp;Verifică mesaj...</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -206,12 +206,12 @@
         <translation>Criptează cheile private ale portofelului dvs.</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
-        <translation>Semnaţi mesaje cu adresa dvs. BitcoinZero pentru a dovedi că vă aparţin</translation>
+        <source>Sign messages with your addresses to prove you own them</source>
+        <translation>Semnaţi mesaje cu adresa dvs. BZX pentru a dovedi că vă aparţin</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
-        <translation>Verificaţi mesaje pentru a vă asigura că au fost semnate cu adresa BitcoinZero specificată</translation>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
+        <translation>Verificaţi mesaje pentru a vă asigura că au fost semnate cu adresa BZX specificată</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -230,8 +230,8 @@
         <translation>Bara de unelte</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>Cereţi plăţi (generează coduri QR şi BitcoinZero: URIs)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>Cereţi plăţi (generează coduri QR şi BZX-uri: URls)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -242,44 +242,20 @@
         <translation>Arată lista de adrese pentru primire şi etichetele</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>Deschidere BitcoinZero: o adresa URI sau o cerere de plată</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>Deschidere BZX: o adresa URI sau o cerere de plată</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>Opţiuni linie de &amp;comandă</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to BitcoinZero network</source>
-        <translation><numerusform>%n conexiune activă către reţeaua BitcoinZero</numerusform><numerusform>%n conexiuni active către reţeaua BitcoinZero</numerusform><numerusform>%n de conexiuni active către reţeaua BitcoinZero</numerusform></translation>
-    </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>Nici o sursă de bloc disponibilă...</translation>
+        <source>%n active connection(s) to BZX network</source>
+        <translation><numerusform>%n conexiune activă către reţeaua BZX</numerusform><numerusform>%n conexiuni active către reţeaua BZX</numerusform><numerusform>%n de conexiuni active către reţeaua BZX</numerusform></translation>
     </message>
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
         <translation><numerusform>S-a procesat %n bloc din istoricul tranzacţiilor.</numerusform><numerusform>S-au procesat %n blocuri din istoricul tranzacţiilor.</numerusform><numerusform>S-au procesat %n de blocuri din istoricul tranzacţiilor.</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n oră</numerusform><numerusform>%n ore</numerusform><numerusform>%n ore</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n zi</numerusform><numerusform>%n zile</numerusform><numerusform>%n de zile</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n săptămână</numerusform><numerusform>%n săptămâni</numerusform><numerusform>%n de săptămâni</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 şi %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n an</numerusform><numerusform>%n ani</numerusform><numerusform>%n de ani</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -359,7 +335,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>Portofelul este &lt;b&gt;criptat&lt;/b&gt; iar în momentul de faţă este &lt;b&gt;blocat&lt;/b&gt;</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -377,10 +353,6 @@
     <message>
         <source>Amount:</source>
         <translation>Sumă:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Prioritate:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -433,10 +405,6 @@
     <message>
         <source>Confirmed</source>
         <translation>Confirmat</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <translation>Prioritate</translation>
     </message>
     </context>
 <context>
@@ -568,6 +536,21 @@
     </message>
 </context>
 <context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>Data ultimului bloc</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Ascunde</translation>
+    </message>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     <message>
         <source>Open URI</source>
@@ -673,16 +656,16 @@
         <translation>Cheltuire rest neconfirmat</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Deschide automat în router portul aferent clientului BitcoinZero. Funcţionează doar dacă routerul duportă UPnP şi e activat.</translation>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Deschide automat în router portul aferent clientului BZX. Funcţionează doar dacă routerul duportă UPnP şi e activat.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Mapare port folosind &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a SOCKS5 proxy.</source>
-        <translation>Conectare la reţeaua BitcoinZero printr-un proxy SOCKS.</translation>
+        <source>Connect to the BZX network through a SOCKS5 proxy.</source>
+        <translation>Conectare la reţeaua BZX printr-un proxy SOCKS.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -741,8 +724,8 @@
         <translation>&amp;Unitatea de măsură pentru afişarea sumelor:</translation>
     </message>
     <message>
-        <source>Choose the default subdivision unit to show in the interface and when sending bitcoinzeros.</source>
-        <translation>Alegeţi subdiviziunea folosită la afişarea interfeţei şi la trimiterea de BitcoinZero.</translation>
+        <source>Choose the default subdivision unit to show in the interface and when sending coins.</source>
+        <translation>Alegeţi subdiviziunea folosită la afişarea interfeţei şi la trimiterea de BZX.</translation>
     </message>
     <message>
         <source>Whether to show coin control features or not.</source>
@@ -782,7 +765,7 @@
     </message>
     <message>
         <source>The supplied proxy address is invalid.</source>
-        <translation>Adresa BitcoinZero pe care aţi specificat-o nu este validă.</translation>
+        <translation>Adresa BZX pe care aţi specificat-o nu este validă.</translation>
     </message>
 </context>
 <context>
@@ -792,8 +775,8 @@
         <translation>Form</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
-        <translation>Informaţiile afişate pot fi neactualizate. Portofelul dvs. se sincronizează automat cu reţeaua BitcoinZero după ce o conexiune este stabilită, dar acest proces nu a fost finalizat încă.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
+        <translation>Informaţiile afişate pot fi neactualizate. Portofelul dvs. se sincronizează automat cu reţeaua BZX după ce o conexiune este stabilită, dar acest proces nu a fost finalizat încă.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -873,11 +856,7 @@
         <source>Node/Service</source>
         <translation>Nod/Serviciu</translation>
     </message>
-    <message>
-        <source>Ping Time</source>
-        <translation>Timp ping</translation>
-    </message>
-</context>
+    </context>
 <context>
     <name>QObject</name>
     <message>
@@ -885,8 +864,8 @@
         <translation>Cantitate</translation>
     </message>
     <message>
-        <source>Enter a BitcoinZero address (e.g. %1)</source>
-        <translation>Introduceţi o adresă BitcoinZero (de exemplu %1)</translation>
+        <source>Enter a address (e.g. %1)</source>
+        <translation>Introduceţi o adresă BZX (de exemplu %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -916,9 +895,20 @@
         <source>%1 ms</source>
         <translation>%1 ms</translation>
     </message>
-</context>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 şi %2</translation>
+    </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
+    </context>
 <context>
     <name>QRImageWidget</name>
+    <message>
+        <source>&amp;Save Image...</source>
+        <translation>&amp;Salvează imaginea...</translation>
+    </message>
     </context>
 <context>
     <name>RPCConsole</name>
@@ -1083,10 +1073,6 @@
         <translation>Curăţă consola</translation>
     </message>
     <message>
-        <source>&amp;Disconnect Node</source>
-        <translation>&amp;Deconectare nod</translation>
-    </message>
-    <message>
         <source>1 &amp;hour</source>
         <translation>1 &amp;oră</translation>
     </message>
@@ -1178,8 +1164,8 @@
         <translation>R&amp;efoloseşte o adresă de primire (nu este recomandat)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BitcoinZero network.</source>
-        <translation>Un mesaj opţional de ataşat la cererea de plată, care va fi afişat cînd cererea este deschisă. Notă: Acest mesaj nu va fi trimis cu plata către reţeaua BitcoinZero.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BZX network.</source>
+        <translation>Un mesaj opţional de ataşat la cererea de plată, care va fi afişat cînd cererea este deschisă. Notă: Acest mesaj nu va fi trimis cu plata către reţeaua BZX.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1244,6 +1230,10 @@
         <source>&amp;Save Image...</source>
         <translation>&amp;Salvează imaginea...</translation>
     </message>
+    <message>
+        <source>Amount</source>
+        <translation>Cantitate</translation>
+    </message>
     </context>
 <context>
     <name>RecentRequestsTableModel</name>
@@ -1281,10 +1271,6 @@
     <message>
         <source>Amount:</source>
         <translation>Sumă:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Prioritate:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -1333,10 +1319,6 @@
     <message>
         <source>Custom:</source>
         <translation>Personalizat:</translation>
-    </message>
-    <message>
-        <source>Confirmation time:</source>
-        <translation>Timp confirmare:</translation>
     </message>
     <message>
         <source>normal</source>
@@ -1402,8 +1384,8 @@
         <translation>Aceasta este o tranzacţie normală.</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to send the payment to</source>
-        <translation>Adresa BitcoinZero către care se face plata</translation>
+        <source>The address to send the payment to</source>
+        <translation>Adresa BZX către care se face plata</translation>
     </message>
     <message>
         <source>Alt+A</source>
@@ -1430,8 +1412,8 @@
         <translation>Introduceţi eticheta pentru ca această adresa să fie introdusă în lista de adrese folosite</translation>
     </message>
     <message>
-        <source>A message that was attached to the BitcoinZero: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BitcoinZero network.</source>
-        <translation>un mesaj a fost ataşat la BitcoinZero: URI care va fi stocat cu tranzacţia pentru referinţa dvs. Notă: Acest mesaj nu va fi trimis către reţeaua BitcoinZero.</translation>
+        <source>A message that was attached to the BZX: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BZX network.</source>
+        <translation>un mesaj a fost ataşat la BZX: URI care va fi stocat cu tranzacţia pentru referinţa dvs. Notă: Acest mesaj nu va fi trimis către reţeaua BZX.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -1467,7 +1449,7 @@
         <translation>&amp;Semnează mesaj</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to sign the message with</source>
+        <source>The address to sign the message with</source>
         <translation>Adresa cu care semnaţi mesajul</translation>
     </message>
     <message>
@@ -1499,8 +1481,8 @@
         <translation>Copiază semnatura curentă în clipboard-ul sistemului</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
-        <translation>Semnează mesajul pentru a dovedi ca deţineţi acestă adresă BitcoinZero</translation>
+        <source>Sign the message to prove you own this address</source>
+        <translation>Semnează mesajul pentru a dovedi ca deţineţi acestă adresă BZX</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -1519,12 +1501,12 @@
         <translation>&amp;Verifică mesaj</translation>
     </message>
     <message>
-        <source>The BitcoinZero address the message was signed with</source>
-        <translation>Introduceţi o adresă BitcoinZero</translation>
+        <source>The address the message was signed with</source>
+        <translation>Introduceţi o adresă BZX</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
-        <translation>Verificaţi mesajul pentru a vă asigura că a fost semnat cu adresa BitcoinZero specificată</translation>
+        <source>Verify the message to ensure it was signed with the specified address</source>
+        <translation>Verificaţi mesajul pentru a vă asigura că a fost semnat cu adresa BZX specificată</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1551,6 +1533,10 @@
 </context>
 <context>
     <name>TransactionDesc</name>
+    <message>
+        <source>Amount</source>
+        <translation>Cantitate</translation>
+    </message>
     </context>
 <context>
     <name>TransactionDescDialog</name>
@@ -1582,7 +1568,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Opţiuni:</translation>
@@ -1608,20 +1594,12 @@
         <translation>Rulează în fundal ca un demon şi acceptă comenzi</translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>Acceptă conexiuni din afară (implicit: 1 dacă nu se foloseşte -proxy sau -connect)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
-        <translation>Nucleul BitcoinZero</translation>
+        <source>BZX Core</source>
+        <translation>Nucleul BZX</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>
         <translation>Ataşaţi adresei date şi ascultaţi totdeauna pe ea. Folosiţi notaţia [host]:port pentru IPv6</translation>
-    </message>
-    <message>
-        <source>Distributed under the MIT software license, see the accompanying file COPYING or &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</source>
-        <translation>Distribuit sub licenţa de programe MIT/X11, vezi fişierul însoţitor COPYING sau &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</translation>
     </message>
     <message>
         <source>Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)</source>
@@ -1632,28 +1610,12 @@
         <translation>Setează numărul de thread-uri de verificare a script-urilor (%u la %d, 0 = auto, &lt;0 = lasă atîtea nuclee libere, implicit: %d)</translation>
     </message>
     <message>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
-        <translation>Aceasta este o versiune de test preliminară - vă asumaţi riscul folosind-o - nu folosiţi pentru minerit sau aplicaţiile comercianţilor</translation>
-    </message>
-    <message>
-        <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
-        <translation>Atenţie: Reţeaua nu pare să fie de acord în totalitate! Aparent nişte mineri au probleme.</translation>
-    </message>
-    <message>
-        <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
-        <translation>Atenţie: Aparent, nu sîntem de acord cu toţi partenerii noştri! Va trebui să faceţi o actualizare, sau alte noduri necesită actualizare.</translation>
-    </message>
-    <message>
         <source>&lt;category&gt; can be:</source>
         <translation>&lt;category&gt; poate fi:</translation>
     </message>
     <message>
         <source>Block creation options:</source>
         <translation>Opţiuni creare bloc:</translation>
-    </message>
-    <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>Conectare doar la nod(urile) specificate</translation>
     </message>
     <message>
         <source>Connection options:</source>
@@ -1764,10 +1726,6 @@
         <translation>Setează mărimea pentru tranzacţiile prioritare/taxe mici în octeţi (implicit: %d)</translation>
     </message>
     <message>
-        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit &lt;https://www.openssl.org/&gt; and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
-        <translation>Acest produs include programe dezvoltate de către Proiectul OpenSSL pentru a fi folosite în OpenSSL Toolkit &lt;https://www.openssl.org/&gt; şi programe criptografice scrise de către Eric Young şi programe UPnP scrise de către Thomas Bernard.</translation>
-    </message>
-    <message>
         <source>(default: %u)</source>
         <translation>(implicit: %u)</translation>
     </message>
@@ -1834,10 +1792,6 @@
     <message>
         <source>Transaction amount too small</source>
         <translation>Suma tranzacţionată este prea mică</translation>
-    </message>
-    <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>Sumele tranzacţionate trebuie să fie pozitive</translation>
     </message>
     <message>
         <source>Transaction too large for fee policy</source>

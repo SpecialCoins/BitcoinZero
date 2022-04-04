@@ -1,5 +1,5 @@
-#ifndef BITCOINZERO_WALLET_SIGMASPENDBUILDER_H
-#define BITCOINZERO_WALLET_SIGMASPENDBUILDER_H
+#ifndef BZX_WALLET_SIGMASPENDBUILDER_H
+#define BZX_WALLET_SIGMASPENDBUILDER_H
 
 #include "txbuilder.h"
 
@@ -21,7 +21,7 @@ public:
 protected:
     CAmount GetInputs(std::vector<std::unique_ptr<InputSigner>>& signers, CAmount required) override;
     // remint change
-    CAmount GetChanges(std::vector<CTxOut>& outputs, CAmount amount) override;
+    CAmount GetChanges(std::vector<CTxOut>& outputs, CAmount amount, CWalletDB& walletdb) override;
 
 private:
     CHDMintWallet& mintWallet;

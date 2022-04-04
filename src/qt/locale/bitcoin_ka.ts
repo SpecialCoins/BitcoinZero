@@ -64,7 +64,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>ხელ&amp;მოწერა</translation>
@@ -142,8 +142,8 @@
         <translation>დისკზე ბლოკების რეინდექსაცია...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>მონეტების გაგზავნა BitcoinZero-მისამართზე</translation>
+        <source>Send coins to a address</source>
+        <translation>მონეტების გაგზავნა BZX-მისამართზე</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -166,8 +166,8 @@
         <translation>&amp;ვერიფიკაცია</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -194,12 +194,12 @@
         <translation>თქვენი საფულის პირადი გასაღებების დაშიფრვა</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
-        <translation>მესიჯებზე ხელმოწერა თქვენი BitcoinZero-მისამართებით იმის დასტურად, რომ ის თქვენია</translation>
+        <source>Sign messages with your addresses to prove you own them</source>
+        <translation>მესიჯებზე ხელმოწერა თქვენი BZX-მისამართებით იმის დასტურად, რომ ის თქვენია</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
-        <translation>შეამოწმეთ, რომ მესიჯები ხელმოწერილია მითითებული BitcoinZero-მისამართით</translation>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
+        <translation>შეამოწმეთ, რომ მესიჯები ხელმოწერილია მითითებული BZX-მისამართით</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -218,8 +218,8 @@
         <translation>ბარათების პანელი</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>გადახდის მოთხოვნა (შეიქმნება QR-კოდები და BitcoinZero: ბმულები)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>გადახდის მოთხოვნა (შეიქმნება QR-კოდები და BZX: ბმულები)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -230,20 +230,12 @@
         <translation>გამოყენებული მიღების მისამართებისა და ნიშნულების სიის ჩვენება</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>BitcoinZero: URI-ის ან გადახდის მოთხოვნის გახსნა</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>BZX: URI-ის ან გადახდის მოთხოვნის გახსნა</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>საკომანდო სტრიქონის ოპ&amp;ციები</translation>
-    </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>ბლოკების წყარო მიუწვდომელია...</translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 და %2</translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -293,7 +285,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>საფულე &lt;b&gt;დაშიფრულია&lt;/b&gt; და ამჟამად &lt;b&gt;დაბლოკილია&lt;/b&gt;</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -307,10 +299,6 @@
     <message>
         <source>Amount:</source>
         <translation>თანხა:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>პრიორიტეტი:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -351,10 +339,6 @@
     <message>
         <source>Confirmed</source>
         <translation>დადასტურებულია</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <translation>პრიორიტეტი</translation>
     </message>
     </context>
 <context>
@@ -442,6 +426,17 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>ფორმა</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>ბოლო ბლოკის დრო</translation>
+    </message>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     <message>
         <source>Open URI</source>
@@ -511,8 +506,8 @@
         <translation>დაუდასტურებელი ხურდის გამოყენების აკრძალვის შემდეგ მათი გამოყენება შეუძლებელი იქნება, სანამ ტრანსაქციას არ ექნება ერთი დასტური მაინც. ეს აისახება თქვენი ნაშთის დათვლაზეც.</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>როუტერში BitcoinZero-კლიენტის პორტის ავტომატური გახსნა. მუშაობს, თუ თქვენს როუტერს ჩართული აქვს UPnP.</translation>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>როუტერში BZX-კლიენტის პორტის ავტომატური გახსნა. მუშაობს, თუ თქვენს როუტერს ჩართული აქვს UPnP.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -606,8 +601,8 @@
         <translation>ფორმა</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
-        <translation>ნაჩვენები ინფორმაცია შეიძლება მოძველებული იყოს. თქვენი საფულე ავტომატურად სინქრონიზდება BitcoinZero-ის ქსელთან კავშირის დამყარების შემდეგ, ეს პროცესი ჯერ არ არის დასრულებული.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
+        <translation>ნაჩვენები ინფორმაცია შეიძლება მოძველებული იყოს. თქვენი საფულე ავტომატურად სინქრონიზდება BZX-ის ქსელთან კავშირის დამყარების შემდეგ, ეს პროცესი ჯერ არ არის დასრულებული.</translation>
     </message>
     <message>
         <source>Available:</source>
@@ -666,6 +661,13 @@
         <source>N/A</source>
         <translation>მიუწვდ.</translation>
     </message>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 და %2</translation>
+    </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -804,7 +806,7 @@
         <translation>ად&amp;რე გამოყენებული მიღების მისამართის გამოყენება (არ არის რეკომენდებული)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BitcoinZero network.</source>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BZX network.</source>
         <translation>არააუცილებელი მესიჯი, რომელიც ერთვის გადახდის მოთხოვნას და ნაჩვენები იქნება მოთხოვნის გახსნისას. შენიშვნა: მესიჯი არ გაყვება გადახდას ბითქოინის ქსელში.</translation>
     </message>
     <message>
@@ -909,10 +911,6 @@
         <translation>თანხა:</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>პრიორიტეტი:</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>საკომისიო:</translation>
     </message>
@@ -1012,7 +1010,7 @@
         <translation>შეიყვანეთ ამ მისამართის ნიშნული გამოყენებული მისამართების სიაში დასამატებლად</translation>
     </message>
     <message>
-        <source>A message that was attached to the BitcoinZero: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BitcoinZero network.</source>
+        <source>A message that was attached to the BZX: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BZX network.</source>
         <translation>მესიჯი, რომელიც თან ერთვის მონეტებს:  URI, რომელიც შეინახება ტრანსაქციასთან ერთად თქვენთვის. შენიშვნა: მესიჯი არ გაყვება გადახდას ბითქოინის ქსელში.</translation>
     </message>
     <message>
@@ -1073,7 +1071,7 @@
         <translation>მიმდინარე ხელმოწერის კოპირება კლიპბორდში</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
+        <source>Sign the message to prove you own this address</source>
         <translation>მოაწერეთ ხელი იმის დასადასტურებლად, რომ ეს მისამართი თქვენია</translation>
     </message>
     <message>
@@ -1093,8 +1091,8 @@
         <translation>მესიჯის &amp;ვერიფიკაცია</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
-        <translation>შეამოწმეთ, რომ მესიჯი ხელმოწერილია მითითებული BitcoinZero-მისამართით</translation>
+        <source>Verify the message to ensure it was signed with the specified address</source>
+        <translation>შეამოწმეთ, რომ მესიჯი ხელმოწერილია მითითებული BZX-მისამართით</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1148,7 +1146,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>ოპციები:</translation>
@@ -1174,12 +1172,8 @@
         <translation>რეზიდენტულად გაშვება და კომანდების მიღება</translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>გარედან შეერთებების დაშვება (ნაგულისხმევი: 1 თუ არ გამოიყენება -proxy ან -connect)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
-        <translation>BitcoinZero Core</translation>
+        <source>BZX Core</source>
+        <translation>BZX Core</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>
@@ -1190,28 +1184,12 @@
         <translation>კომანდის შესრულება საფულის ტრანსაქციის ცვლილებისას (%s კომანდაში ჩანაცვლდება TxID-ით)</translation>
     </message>
     <message>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
-        <translation>ეს არის წინასწარი სატესტო ვერსია - გამოიყენეთ საკუთარი რისკით - არ გამოიყენოთ მოპოვებისა ან კომერციული მიზნებისათვის</translation>
-    </message>
-    <message>
-        <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
-        <translation>ყურადღება: ქსელში შეუთანხმებლობაა. შესაძლოა ცალკეულ მომპოვებლებს პრობლემები ექმნებათ!</translation>
-    </message>
-    <message>
-        <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
-        <translation>ყურადღება: ჩვენ არ ვეთანხმებით ყველა პირს. შესაძლოა თქვენ ან სხვა კვანძებს განახლება გჭირდებათ.</translation>
-    </message>
-    <message>
         <source>&lt;category&gt; can be:</source>
         <translation>&lt;category&gt; შეიძლება იყოს:</translation>
     </message>
     <message>
         <source>Block creation options:</source>
         <translation>ბლოკის შექმნის ოპციები:</translation>
-    </message>
-    <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>შეერთება მხოლოდ მითითებულ კვანძ(ებ)თან</translation>
     </message>
     <message>
         <source>Corrupted block database detected</source>
@@ -1312,10 +1290,6 @@
     <message>
         <source>Transaction amount too small</source>
         <translation>ტრანსაქციების რაოდენობა ძალიან ცოტაა</translation>
-    </message>
-    <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>ტრანსაქციების რაოდენობა დადებითი რიცხვი უნდა იყოს</translation>
     </message>
     <message>
         <source>Transaction too large</source>

@@ -1,6 +1,6 @@
 /* Copyright (c) 2003-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -59,7 +59,7 @@
 #include "core/or/connection_edge.h"
 #include "core/or/policies.h"
 #include "core/or/relay.h"
-#include "feature/control/control.h"
+#include "feature/control/control_events.h"
 #include "feature/relay/dns.h"
 #include "feature/relay/router.h"
 #include "feature/relay/routermode.h"
@@ -546,9 +546,9 @@ send_resolved_cell,(edge_connection_t *conn, uint8_t answer_type,
         break;
       } else {
         answer_type = RESOLVED_TYPE_ERROR;
-        /* fall through. */
+        /* We let this fall through and treat it as an error. */
       }
-      /* Falls through. */
+      FALLTHROUGH;
     case RESOLVED_TYPE_ERROR_TRANSIENT:
     case RESOLVED_TYPE_ERROR:
       {
@@ -1394,7 +1394,7 @@ configured_nameserver_address(const size_t idx)
 
  return NULL;
 }
-#endif
+#endif /* defined(HAVE_EVDNS_BASE_GET_NAMESERVER_ADDR) */
 
 /** Configure eventdns nameservers if force is true, or if the configuration
  * has changed since the last time we called this function, or if we failed on
@@ -2187,7 +2187,8 @@ dns_cache_handle_oom(time_t now, size_t min_remove_bytes)
     current_size -= bytes_removed;
     total_bytes_removed += bytes_removed;
 
-    time_inc += 3600; /* Increase time_inc by 1 hour. */
+    /* Increase time_inc by a reasonable fraction. */
+    time_inc += (MAX_DNS_TTL_AT_EXIT / 4);
   } while (total_bytes_removed < min_remove_bytes);
 
   return total_bytes_removed;

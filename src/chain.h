@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,11 +11,12 @@
 #include "pow.h"
 #include "tinyformat.h"
 #include "uint256.h"
-#include "libzerocoin/bitcoin_bignum/bignum.h"
+#include "bitcoin_bignum/bignum.h"
 #include <secp256k1/include/Scalar.h>
 #include <secp256k1/include/GroupElement.h>
 #include "sigma/coin.h"
-#include "sigma_params.h"
+#include "evo/spork.h"
+#include "priv_params.h"
 #include "util.h"
 #include "chainparams.h"
 #include "coin_containers.h"
@@ -23,8 +24,6 @@
 
 #include <vector>
 #include <unordered_set>
-
-
 
 class CBlockFileInfo
 {
@@ -40,7 +39,7 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(VARINT(nBlocks));
         READWRITE(VARINT(nSize));
         READWRITE(VARINT(nUndoSize));
@@ -88,7 +87,7 @@ struct CDiskBlockPos
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(VARINT(nFile));
         READWRITE(VARINT(nPos));
     }
@@ -146,15 +145,16 @@ enum BlockStatus: uint32_t {
     BLOCK_VALID_SCRIPTS      =    5,
 
     //! All validity bits.
-    BLOCK_VALID_MASK         =   7,
+    BLOCK_VALID_MASK         =   BLOCK_VALID_HEADER | BLOCK_VALID_TREE | BLOCK_VALID_TRANSACTIONS |
+                                 BLOCK_VALID_CHAIN | BLOCK_VALID_SCRIPTS,
 
     BLOCK_HAVE_DATA          =    8, //!< full block available in blk*.dat
     BLOCK_HAVE_UNDO          =   16, //!< undo data available in rev*.dat
-    BLOCK_HAVE_MASK          =   24,
+    BLOCK_HAVE_MASK          =   BLOCK_HAVE_DATA | BLOCK_HAVE_UNDO,
 
     BLOCK_FAILED_VALID       =   32, //!< stage after last reached validness failed
     BLOCK_FAILED_CHILD       =   64, //!< descends from failed block
-    BLOCK_FAILED_MASK        =   96,
+    BLOCK_FAILED_MASK        =   BLOCK_FAILED_VALID | BLOCK_FAILED_CHILD,
 
     BLOCK_OPT_WITNESS       =   128, //!< block data in blk*.data was received with a witness-enforcing client
 };
@@ -211,30 +211,35 @@ public:
     unsigned int nNonce;
 
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
-    uint32_t nSequenceId;
+    int32_t nSequenceId;
+
+    //! (memory only) Maximum nTime in the chain upto and including this block.
+    unsigned int nTimeMax;
 
     //! Public coin values of mints in this block, ordered by serialized value of public coin
     //! Maps <denomination,id> to vector of public coins
-    map<pair<int,int>, vector<CBigNum>> mintedPubCoins;
-
-    //! Accumulator updates. Contains only changes made by mints in this block
-    //! Maps <denomination, id> to <accumulator value (CBigNum), number of such mints in this block>
-    map<pair<int,int>, pair<CBigNum,int>> accumulatorChanges;
-
-	//! Same as accumulatorChanges but for alternative modulus
-	map<pair<int,int>, pair<CBigNum,int>> alternativeAccumulatorChanges;
+    std::map<std::pair<int,int>, std::vector<CBigNum>> mintedPubCoins;
 
     //! Values of coin serials spent in this block
-	set<CBigNum> spentSerials;
+	std::set<CBigNum> spentSerials;
 
 /////////////////////// Sigma index entries. ////////////////////////////////////////////
 
     //! Public coin values of mints in this block, ordered by serialized value of public coin
     //! Maps <denomination,id> to vector of public coins
-    std::map<pair<sigma::CoinDenomination, int>, vector<sigma::PublicCoin>> sigmaMintedPubCoins;
+    std::map<std::pair<sigma::CoinDenomination, int>, std::vector<sigma::PublicCoin>> sigmaMintedPubCoins;
+    //! Map id to <public coin, tag>
+    std::map<int, std::vector<std::pair<lelantus::PublicCoin, uint256>>>  lelantusMintedPubCoins;
+    //! Map id to <hash of the set>
+    std::map<int, std::vector<unsigned char>> anonymitySetHash;
 
     //! Values of coin serials spent in this block
     sigma::spend_info_container sigmaSpentSerials;
+    std::unordered_map<Scalar, int> lelantusSpentSerials;
+
+    //! list of disabling sporks active at this block height
+    //! std::map {feature name} -> {block number when feature is re-enabled again, parameter}
+    ActiveSporkMap activeDisablingSporks;
 
     void SetNull()
     {
@@ -250,6 +255,7 @@ public:
         nChainTx = 0;
         nStatus = 0;
         nSequenceId = 0;
+        nTimeMax = 0;
 
         nVersion       = 0;
         hashMerkleRoot = uint256();
@@ -257,11 +263,12 @@ public:
         nBits          = 0;
         nNonce         = 0;
 
-        mintedPubCoins.clear();
         sigmaMintedPubCoins.clear();
-        accumulatorChanges.clear();
-        spentSerials.clear();
+        lelantusMintedPubCoins.clear();
+        anonymitySetHash.clear();
         sigmaSpentSerials.clear();
+        lelantusSpentSerials.clear();
+        activeDisablingSporks.clear();
     }
 
     CBlockIndex()
@@ -320,6 +327,11 @@ public:
     int64_t GetBlockTime() const
     {
         return (int64_t)nTime;
+    }
+
+    int64_t GetBlockTimeMax() const
+    {
+        return (int64_t)nTimeMax;
     }
 
     enum { nMedianTimeSpan=11 };
@@ -402,8 +414,9 @@ public:
     ADD_SERIALIZE_METHODS;
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
-        if (!(nType & SER_GETHASH))
+    inline void SerializationOp(Stream& s, Operation ser_action) {
+        int nVersion = s.GetVersion();
+        if (!(s.GetType() & SER_GETHASH))
             READWRITE(VARINT(nVersion));
 
         READWRITE(VARINT(nHeight));
@@ -424,16 +437,35 @@ public:
         READWRITE(nBits);
         READWRITE(nNonce);
 
-        if (!(nType & SER_GETHASH) && nVersion >= 130000) {
-            READWRITE(mintedPubCoins);
-		    READWRITE(accumulatorChanges);
-            READWRITE(spentSerials);
-	    }
+        const auto &params = Params().GetConsensus();
 
-        if (!(nType & SER_GETHASH) && nHeight >= Params().GetConsensus().nSigmaStartBlock) {
+        if (!(s.GetType() & SER_GETHASH)) {
+            READWRITE(mintedPubCoins);
+            READWRITE(spentSerials);
             READWRITE(sigmaMintedPubCoins);
             READWRITE(sigmaSpentSerials);
         }
+
+        if (!(s.GetType() & SER_GETHASH)
+                && nHeight >= params.nLelantusStartBlock
+                && nVersion >= LELANTUS_PROTOCOL_ENABLEMENT_VERSION) {
+            if(nVersion == LELANTUS_PROTOCOL_ENABLEMENT_VERSION) {
+                std::map<int, std::vector<lelantus::PublicCoin>>  lelantusPubCoins;
+                READWRITE(lelantusPubCoins);
+                for(auto& itr : lelantusPubCoins) {
+                    if(!itr.second.empty()) {
+                        for(auto& coin : itr.second)
+                        lelantusMintedPubCoins[itr.first].push_back(std::make_pair(coin, uint256()));
+                    }
+                }
+            } else
+                READWRITE(lelantusMintedPubCoins);
+                READWRITE(lelantusSpentSerials);
+                READWRITE(anonymitySetHash);
+        }
+
+        if (!(s.GetType() & SER_GETHASH) && nHeight >= params.nEvoSporkStartBlock && nHeight < params.nEvoSporkStopBlock)
+            READWRITE(activeDisablingSporks);
 
         nDiskBlockVersion = nVersion;
     }
@@ -517,6 +549,9 @@ public:
 
     /** Find the last common block between this chain and a block index entry. */
     const CBlockIndex *FindFork(const CBlockIndex *pindex) const;
+
+    /** Find the earliest block with timestamp equal or greater than the given. */
+    CBlockIndex* FindEarliestAtLeast(int64_t nTime) const;
 };
 
 #endif // BITCOIN_CHAIN_H

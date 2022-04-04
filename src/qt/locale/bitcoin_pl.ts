@@ -42,6 +42,18 @@
         <translation>&amp;Usuń</translation>
     </message>
     <message>
+        <source>Choose the address to send coins to</source>
+        <translation>Wybierz adres, na który chcesz wysłać monety</translation>
+    </message>
+    <message>
+        <source>Choose the address to receive coins with</source>
+        <translation>Wybierz adres, na który chcesz otrzymać monety</translation>
+    </message>
+    <message>
+        <source>C&amp;hoose</source>
+        <translation>W&amp;ybierz</translation>
+    </message>
+    <message>
         <source>Sending addresses</source>
         <translation>Adresy wysyłania</translation>
     </message>
@@ -50,12 +62,12 @@
         <translation>Adresy odbioru</translation>
     </message>
     <message>
-        <source>These are your BitcoinZero addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>Tutaj znajdują się adresy BitcoinZero na które wysyłasz płatności. Zawsze sprawdzaj ilość i adres odbiorcy przed wysyłką monet.</translation>
+        <source>These are your addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>Tutaj znajdują się adresy BZX na które wysyłasz płatności. Zawsze sprawdzaj ilość i adres odbiorcy przed wysyłką monet.</translation>
     </message>
     <message>
-        <source>These are your BitcoinZero addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
-        <translation>To są twoje adresy BitcoinZero do odbierania płatności. Zaleca się używanie nowych adresów odbiorczych dla każdej transakcji.</translation>
+        <source>These are your addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <translation>To są twoje adresy BZX do odbierania płatności. Zaleca się używanie nowych adresów odbiorczych dla każdej transakcji.</translation>
     </message>
     <message>
         <source>&amp;Copy Address</source>
@@ -81,7 +93,11 @@
         <source>Exporting Failed</source>
         <translation>Eksportowanie nie powiodło się</translation>
     </message>
-    </context>
+    <message>
+        <source>There was an error trying to save the address list to %1. Please try again.</source>
+        <translation>Wystąpił błąd podczas próby zapisu listy adresów do %1. Proszę spróbować ponownie.</translation>
+    </message>
+</context>
 <context>
     <name>AddressTableModel</name>
     <message>
@@ -92,7 +108,11 @@
         <source>Address</source>
         <translation>Adres</translation>
     </message>
-    </context>
+    <message>
+        <source>(no label)</source>
+        <translation>(brak etykiety)</translation>
+    </message>
+</context>
 <context>
     <name>AskPassphraseDialog</name>
     <message>
@@ -112,12 +132,24 @@
         <translation>Powtórz nowe hasło</translation>
     </message>
     <message>
+        <source>Enter the new passphrase to the wallet.&lt;br/&gt;Please use a passphrase of &lt;b&gt;ten or more random characters&lt;/b&gt;, or &lt;b&gt;eight or more words&lt;/b&gt;.</source>
+        <translation>Wprowadź nowe hasło do portfela.&lt;br/&gt;Proszę używać hasła złożonego z &lt;b&gt;10 lub więcej losowych znaków&lt;/b&gt; albo &lt;b&gt;8 lub więcej słów.&lt;/b&gt;</translation>
+    </message>
+    <message>
         <source>Encrypt wallet</source>
         <translation>Zaszyfruj portfel</translation>
     </message>
     <message>
+        <source>This operation needs your wallet passphrase to unlock the wallet.</source>
+        <translation>Ta operacja wymaga hasła do portfela aby odblokować portfel.</translation>
+    </message>
+    <message>
         <source>Unlock wallet</source>
         <translation>Odblokuj portfel</translation>
+    </message>
+    <message>
+        <source>This operation needs your wallet passphrase to decrypt the wallet.</source>
+        <translation>Ta operacja wymaga hasła portfela, aby go odszyfrować.</translation>
     </message>
     <message>
         <source>Decrypt wallet</source>
@@ -136,12 +168,36 @@
         <translation>Potwierdź szyfrowanie portfela</translation>
     </message>
     <message>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR BZXS&lt;/b&gt;!</source>
+        <translation>Uwaga: jeśli zaszyfrujesz swój portfel i zgubisz hasło &lt;b&gt;STRACISZ WSZYSTKIE SWOJE BZXY&lt;/b&gt;!</translation>
+    </message>
+    <message>
+        <source>Are you sure you wish to encrypt your wallet?</source>
+        <translation>Jesteś pewien, że chcesz zaszyfrować swój portfel?</translation>
+    </message>
+    <message>
         <source>Wallet encrypted</source>
         <translation>Portfel zaszyfrowany</translation>
     </message>
     <message>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your BZXs from being stolen by malware infecting your computer.</source>
+        <translation>%1 zamknie się aby dokończyć proces szyfrowania. Pamiętaj, że szyfrowanie portfela nie zabezpiecza w pełni Twoich BZXów przed kradzieżą przez wirusy lub trojany mogące zainfekować Twój komputer.</translation>
+    </message>
+    <message>
+        <source>IMPORTANT: Any previous backups you have made of your wallet file should be replaced with the newly generated, encrypted wallet file. For security reasons, previous backups of the unencrypted wallet file will become useless as soon as you start using the new, encrypted wallet.</source>
+        <translation>WAŻNE: Wszystkie wykonane wcześniej kopie pliku portfela powinny być zamienione na nowe, szyfrowane pliki. Z powodów bezpieczeństwa, poprzednie kopie nieszyfrowanych plików portfela staną się bezużyteczne jak tylko zaczniesz korzystać z nowego, szyfrowanego portfela.</translation>
+    </message>
+    <message>
         <source>Wallet encryption failed</source>
         <translation>Szyfrowanie portfela nie powiodło się</translation>
+    </message>
+    <message>
+        <source>Wallet encryption failed due to an internal error. Your wallet was not encrypted.</source>
+        <translation>Szyfrowanie portfela nie powiodło się z powodu wewnętrznego błędu. Twój portfel nie został zaszyfrowany.</translation>
+    </message>
+    <message>
+        <source>The supplied passphrases do not match.</source>
+        <translation>Podane hasła nie są takie same.</translation>
     </message>
     <message>
         <source>Wallet unlock failed</source>
@@ -155,7 +211,15 @@
         <source>Wallet decryption failed</source>
         <translation>Odszyfrowanie portfela nie powiodło się</translation>
     </message>
-    </context>
+    <message>
+        <source>Wallet passphrase was successfully changed.</source>
+        <translation>Hasło do portfela zostało pomyślnie zmienione.</translation>
+    </message>
+    <message>
+        <source>Warning: The Caps Lock key is on!</source>
+        <translation>Ostrzeżenie: Caps Lock jest włączony!</translation>
+    </message>
+</context>
 <context>
     <name>BanTableModel</name>
     <message>
@@ -168,7 +232,7 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>Podpisz wiado&amp;mość...</translation>
@@ -258,8 +322,8 @@
         <translation>Ponowne indeksowanie bloków na dysku...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>Wyślij monety na adres BitcoinZeroowy</translation>
+        <source>Send coins to a address</source>
+        <translation>Wyślij monety na adres BZXowy</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -282,8 +346,8 @@
         <translation>&amp;Zweryfikuj wiadomość...</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -310,12 +374,12 @@
         <translation>Szyfruj klucze prywatne, które są w twoim portfelu</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
+        <source>Sign messages with your addresses to prove you own them</source>
         <translation>Podpisz wiadomości swoim adresem aby udowodnić jego posiadanie</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
-        <translation>Zweryfikuj wiadomość,  aby upewnić się, że została podpisana podanym adresem BitcoinZeroowym.</translation>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
+        <translation>Zweryfikuj wiadomość,  aby upewnić się, że została podpisana podanym adresem BZXowym.</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -334,8 +398,8 @@
         <translation>Pasek zakładek</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>Żądaj płatności (generuje kod QR oraz BitcoinZero: URI)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>Żądaj płatności (generuje kod QR oraz BZXowe URI)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -346,16 +410,16 @@
         <translation>Pokaż listę adresów i etykiet użytych do odbierania</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>Otwórz URI BitcoinZero: lub żądanie zapłaty</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>Otwórz URI BZX: lub żądanie zapłaty</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;Opcje linii komend</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to BitcoinZero network</source>
-        <translation><numerusform>%n aktywnych połączeń do sieci BitcoinZero</numerusform><numerusform>%n aktywnych połączeń do sieci BitcoinZero</numerusform><numerusform>%n aktywnych połączeń do sieci BitcoinZero</numerusform></translation>
+        <source>%n active connection(s) to BZX network</source>
+        <translation><numerusform>%n aktywnych połączeń do sieci BZX</numerusform><numerusform>%n aktywnych połączeń do sieci BZX</numerusform><numerusform>%n aktywnych połączeń do sieci BZX</numerusform><numerusform>%n aktywnych połączeń do sieci BZX</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -365,33 +429,9 @@
         <source>Processing blocks on disk...</source>
         <translation>Przetwarzanie blocks on disk...</translation>
     </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>Brak dostępnych źródeł bloków...</translation>
-    </message>
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
-        <translation><numerusform>Przetworzono %n bloków historii transakcji.</numerusform><numerusform>Przetworzono %n bloków historii transakcji.</numerusform><numerusform>Przetworzono %n bloków historii transakcji.</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n godzin</numerusform><numerusform>%n godzin</numerusform><numerusform>%n godzin</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>dzień</numerusform><numerusform>%n dni</numerusform><numerusform>%n dni</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n tygodni</numerusform><numerusform>%n tygodni</numerusform><numerusform>%n tygodni</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 i %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n lat</numerusform><numerusform>%n lat</numerusform><numerusform>%n lat</numerusform></translation>
+        <translation><numerusform>Przetworzono %n bloków historii transakcji.</numerusform><numerusform>Przetworzono %n bloków historii transakcji.</numerusform><numerusform>Przetworzono %n bloków historii transakcji.</numerusform><numerusform>Przetworzono %n bloków historii transakcji.</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -422,7 +462,7 @@
         <translation>Aktualny</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible BitcoinZero command-line options</source>
+        <source>Show the %1 help message to get a list with possible BZX command-line options</source>
         <translation>Pokaż pomoc %1 aby zobaczyć listę wszystkich opcji lnii poleceń.</translation>
     </message>
     <message>
@@ -479,7 +519,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>Portfel jest &lt;b&gt;zaszyfrowany&lt;/b&gt; i obecnie &lt;b&gt;zablokowany&lt;/b&gt;</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -497,10 +537,6 @@
     <message>
         <source>Amount:</source>
         <translation>Kwota:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Priorytet:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -555,10 +591,6 @@
         <translation>Potwierdzony</translation>
     </message>
     <message>
-        <source>Priority</source>
-        <translation>Priorytet</translation>
-    </message>
-    <message>
         <source>Copy address</source>
         <translation>Kopiuj adres</translation>
     </message>
@@ -595,40 +627,20 @@
         <translation>Skopiuj ilość po opłacie</translation>
     </message>
     <message>
-        <source>highest</source>
-        <translation>najwyższy</translation>
+        <source>Copy bytes</source>
+        <translation>Skopiuj ilość bajtów</translation>
     </message>
     <message>
-        <source>higher</source>
-        <translation>wyższy</translation>
+        <source>Copy dust</source>
+        <translation>Kopiuj pył</translation>
     </message>
     <message>
-        <source>high</source>
-        <translation>wysoki</translation>
+        <source>Copy change</source>
+        <translation>Skopiuj resztę</translation>
     </message>
     <message>
-        <source>medium-high</source>
-        <translation>średnio wysoki</translation>
-    </message>
-    <message>
-        <source>medium</source>
-        <translation>średni</translation>
-    </message>
-    <message>
-        <source>low-medium</source>
-        <translation>średnio niski</translation>
-    </message>
-    <message>
-        <source>low</source>
-        <translation>niski</translation>
-    </message>
-    <message>
-        <source>lower</source>
-        <translation>niższy</translation>
-    </message>
-    <message>
-        <source>lowest</source>
-        <translation>najniższy</translation>
+        <source>(%1 locked)</source>
+        <translation>(%1 zablokowane)</translation>
     </message>
     <message>
         <source>yes</source>
@@ -638,7 +650,27 @@
         <source>no</source>
         <translation>nie</translation>
     </message>
-    </context>
+    <message>
+        <source>This label turns red if any recipient receives an amount smaller than the current dust threshold.</source>
+        <translation>Ta etykieta staje się czerwona jeżeli którykolwiek odbiorca otrzymuje kwotę mniejszą niż obecny próg pyłu.</translation>
+    </message>
+    <message>
+        <source>Can vary +/- %1 satoshi(s) per input.</source>
+        <translation>Waha się +/- %1 satoshi na wejście.</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(brak etykiety)</translation>
+    </message>
+    <message>
+        <source>change from %1 (%2)</source>
+        <translation>reszta z %1 (%2)</translation>
+    </message>
+    <message>
+        <source>(change)</source>
+        <translation>(reszta)</translation>
+    </message>
+</context>
 <context>
     <name>EditAddressDialog</name>
     <message>
@@ -661,7 +693,31 @@
         <source>&amp;Address</source>
         <translation>&amp;Adres</translation>
     </message>
-    </context>
+    <message>
+        <source>New receiving address</source>
+        <translation>Nowy adres odbiorczy</translation>
+    </message>
+    <message>
+        <source>New sending address</source>
+        <translation>Nowy adres wysyłania</translation>
+    </message>
+    <message>
+        <source>Edit receiving address</source>
+        <translation>Zmień adres odbioru</translation>
+    </message>
+    <message>
+        <source>Edit sending address</source>
+        <translation>Zmień adres wysyłania</translation>
+    </message>
+    <message>
+        <source>Could not unlock wallet.</source>
+        <translation>Nie można było odblokować portfela.</translation>
+    </message>
+    <message>
+        <source>New key generation failed.</source>
+        <translation>Generowanie nowego klucza nie powiodło się.</translation>
+    </message>
+</context>
 <context>
     <name>FreespaceChecker</name>
     <message>
@@ -755,8 +811,8 @@
         <translation>Ponieważ jest to pierwsze uruchomienie programu, możesz wybrać gdzie %1 będzie przechowywał swoje dane.</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the BitcoinZero block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
-        <translation>%1 pobierze i będzie przechowywał kopię łańcucha bloków BitcoinZero. W wybranym katalogu zostanie zapisanych %2GB danych, a z czasem ta ilość będzie rosła. Portfel będzie przechowywany w tym samym katalogu.</translation>
+        <source>%1 will download and store a copy of the BZX block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <translation>%1 pobierze i będzie przechowywał kopię łańcucha bloków BZX. W wybranym katalogu zostanie zapisanych %2GB danych, a z czasem ta ilość będzie rosła. Portfel będzie przechowywany w tym samym katalogu.</translation>
     </message>
     <message>
         <source>Use the default data directory</source>
@@ -776,11 +832,54 @@
     </message>
     <message numerus="yes">
         <source>%n GB of free space available</source>
-        <translation><numerusform>%n GB dostępnego wolnego miejsca</numerusform><numerusform>%n GB dostępnego wolnego miejsca</numerusform><numerusform>%n GB dostępnego wolnego miejsca</numerusform></translation>
+        <translation><numerusform>%n GB dostępnego wolnego miejsca</numerusform><numerusform>%n GB dostępnego wolnego miejsca</numerusform><numerusform>%n GB dostępnego wolnego miejsca</numerusform><numerusform>%n GB dostępnego wolnego miejsca</numerusform></translation>
     </message>
     <message numerus="yes">
         <source>(of %n GB needed)</source>
-        <translation><numerusform>(z %n GB potrzebnych)</numerusform><numerusform>(z %n GB potrzebnych)</numerusform><numerusform>(z %n GB potrzebnych)</numerusform></translation>
+        <translation><numerusform>(z %n GB potrzebnych)</numerusform><numerusform>(z %n GB potrzebnych)</numerusform><numerusform>(z %n GB potrzebnych)</numerusform><numerusform>(z %n GB potrzebnych)</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>Formularz</translation>
+    </message>
+    <message>
+        <source>Number of blocks left</source>
+        <translation>Pozostało bloków</translation>
+    </message>
+    <message>
+        <source>Unknown...</source>
+        <translation>Nienznane...</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>Czas ostatniego bloku</translation>
+    </message>
+    <message>
+        <source>Progress</source>
+        <translation>Postęp</translation>
+    </message>
+    <message>
+        <source>Progress increase per hour</source>
+        <translation>Przyrost postępu na godzinę</translation>
+    </message>
+    <message>
+        <source>calculating...</source>
+        <translation>obliczanie...</translation>
+    </message>
+    <message>
+        <source>Estimated time left until synced</source>
+        <translation>Przewidywany czas zakończenia synchronizacji</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Ukryj</translation>
+    </message>
+    <message>
+        <source>Unknown. Syncing Headers (%1)...</source>
+        <translation>Nieznane. Synchronizowanie nagłówków (%1)...</translation>
     </message>
 </context>
 <context>
@@ -801,7 +900,11 @@
         <source>Select payment request file</source>
         <translation>Otwórz żądanie zapłaty z pliku</translation>
     </message>
-    </context>
+    <message>
+        <source>Select payment request file to open</source>
+        <translation>Wybierz plik żądania zapłaty do otwarcia</translation>
+    </message>
+</context>
 <context>
     <name>OptionsDialog</name>
     <message>
@@ -897,16 +1000,16 @@
         <translation>Wydaj niepotwierdzoną re&amp;sztę</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Automatycznie otwiera port klienta BitcoinZero na routerze. Ta opcja dzieła tylko jeśli twój router wspiera UPnP i jest ono włączone.</translation>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Automatycznie otwiera port klienta BZX na routerze. Ta opcja dzieła tylko jeśli twój router wspiera UPnP i jest ono włączone.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>Mapuj port używając &amp;UPnP</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a SOCKS5 proxy.</source>
-        <translation>Połącz się z siecią BitcoinZero poprzez proxy SOCKS5.</translation>
+        <source>Connect to the BZX network through a SOCKS5 proxy.</source>
+        <translation>Połącz się z siecią BZX poprzez proxy SOCKS5.</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -945,8 +1048,8 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>Połącz się z siecią BitcoinZero przy pomocy oddzielnego SOCKS5 proxy dla sieci TOR</translation>
+        <source>Connect to the BZX network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>Połącz się z siecią BZX przy pomocy oddzielnego SOCKS5 proxy dla sieci TOR</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</source>
@@ -1044,8 +1147,8 @@
         <translation>Formularz</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
-        <translation>Wyświetlana informacja może być nieaktualna. Twój portfel synchronizuje się automatycznie z siecią BitcoinZero, zaraz po tym jak uzyskano połączenie, ale proces ten nie został jeszcze ukończony.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
+        <translation>Wyświetlana informacja może być nieaktualna. Twój portfel synchronizuje się automatycznie z siecią BZX, zaraz po tym jak uzyskano połączenie, ale proces ten nie został jeszcze ukończony.</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -1114,7 +1217,55 @@
 </context>
 <context>
     <name>PaymentServer</name>
-    </context>
+    <message>
+        <source>Payment request error</source>
+        <translation>Błąd żądania płatności</translation>
+    </message>
+    <message>
+        <source>Cannot start BZX: click-to-pay handler</source>
+        <translation>Nie można uruchomić protokołu BZX: kliknij-by-zapłacić</translation>
+    </message>
+    <message>
+        <source>URI handling</source>
+        <translation>Obsługa URI</translation>
+    </message>
+    <message>
+        <source>Payment request expired.</source>
+        <translation>Żądanie płatności upłynęło.</translation>
+    </message>
+    <message>
+        <source>Payment request is not initialized.</source>
+        <translation>Żądanie płatności nie jest zainicjowane.</translation>
+    </message>
+    <message>
+        <source>Unverified payment requests to custom payment scripts are unsupported.</source>
+        <translation>Niezweryfikowane żądania płatności do własnych skryptów płatności są niewspierane.</translation>
+    </message>
+    <message>
+        <source>Invalid payment request.</source>
+        <translation>Nieprawidłowe żądanie płatności</translation>
+    </message>
+    <message>
+        <source>Refund from %1</source>
+        <translation>Zwrot z %1</translation>
+    </message>
+    <message>
+        <source>Payment request cannot be parsed!</source>
+        <translation>Żądanie płatności nie może zostać przetworzone.</translation>
+    </message>
+    <message>
+        <source>Bad response from server %1</source>
+        <translation>Błędna odpowiedź z serwera %1</translation>
+    </message>
+    <message>
+        <source>Network request error</source>
+        <translation>Błąd żądania sieci</translation>
+    </message>
+    <message>
+        <source>Payment acknowledged</source>
+        <translation>Płatność potwierdzona</translation>
+    </message>
+</context>
 <context>
     <name>PeerTableModel</name>
     <message>
@@ -1126,8 +1277,12 @@
         <translation>Węzeł/Usługi</translation>
     </message>
     <message>
-        <source>Ping Time</source>
-        <translation>Czas odpowiedzi</translation>
+        <source>NodeId</source>
+        <translation>Identyfikator węzła</translation>
+    </message>
+    <message>
+        <source>Ping</source>
+        <translation>Ping</translation>
     </message>
 </context>
 <context>
@@ -1137,8 +1292,8 @@
         <translation>Kwota</translation>
     </message>
     <message>
-        <source>Enter a BitcoinZero address (e.g. %1)</source>
-        <translation>Wprowadź adres BitcoinZeroowy (np. %1)</translation>
+        <source>Enter a address (e.g. %1)</source>
+        <translation>Wprowadź adres BZXowy (np. %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1168,10 +1323,45 @@
         <source>%1 ms</source>
         <translation>%1 ms</translation>
     </message>
+    <message numerus="yes">
+        <source>%n second(s)</source>
+        <translation><numerusform>%n sekunda</numerusform><numerusform>%n sekund</numerusform><numerusform>%n sekund</numerusform><numerusform>%n sekund</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n minute(s)</source>
+        <translation><numerusform>%n minuta</numerusform><numerusform>%n minut</numerusform><numerusform>%n minut</numerusform><numerusform>%n minut</numerusform></translation>
+    </message>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 i %2</translation>
+    </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
+    <message>
+        <source>Error: %1</source>
+        <translation>Błąd: %1</translation>
+    </message>
 </context>
 <context>
     <name>QRImageWidget</name>
-    </context>
+    <message>
+        <source>&amp;Save Image...</source>
+        <translation>&amp;Zapisz obraz...</translation>
+    </message>
+    <message>
+        <source>&amp;Copy Image</source>
+        <translation>&amp;Kopiuj obraz</translation>
+    </message>
+    <message>
+        <source>Save QR Code</source>
+        <translation>Zapisz Kod QR</translation>
+    </message>
+    <message>
+        <source>PNG Image (*.png)</source>
+        <translation>Obraz PNG (*.png)</translation>
+    </message>
+</context>
 <context>
     <name>RPCConsole</name>
     <message>
@@ -1331,6 +1521,10 @@
         <translation>Czas odpowiedzi</translation>
     </message>
     <message>
+        <source>Min Ping</source>
+        <translation>Minimalny czas odpowiedzi</translation>
+    </message>
+    <message>
         <source>Time Offset</source>
         <translation>Przesunięcie czasu</translation>
     </message>
@@ -1375,14 +1569,6 @@
         <translation>Wyczyść konsolę</translation>
     </message>
     <message>
-        <source>&amp;Disconnect Node</source>
-        <translation>Odłącz Nod</translation>
-    </message>
-    <message>
-        <source>Ban Node for</source>
-        <translation>Blokuj węzeł na okres</translation>
-    </message>
-    <message>
         <source>1 &amp;hour</source>
         <translation>1 &amp;godzina</translation>
     </message>
@@ -1399,8 +1585,16 @@
         <translation>1 &amp;rok</translation>
     </message>
     <message>
-        <source>&amp;Unban Node</source>
-        <translation>Odblokuj węzeł</translation>
+        <source>&amp;Disconnect</source>
+        <translation>&amp;Rozłącz</translation>
+    </message>
+    <message>
+        <source>Ban for</source>
+        <translation>Zbanuj na</translation>
+    </message>
+    <message>
+        <source>&amp;Unban</source>
+        <translation>&amp;Odblokuj</translation>
     </message>
     <message>
         <source>Welcome to the %1 RPC console.</source>
@@ -1486,8 +1680,8 @@
         <translation>U&amp;żyj ponownie istniejącego adresu odbiorczego (niepolecane)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BitcoinZero network.</source>
-        <translation>Opcjonalna wiadomość do dołączenia do żądania płatności, która będzie wyświetlana, gdy żądanie zostanie otwarte. Uwaga: wiadomość ta nie zostanie wysłana wraz z płatnością w sieci BitcoinZero.</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BZX network.</source>
+        <translation>Opcjonalna wiadomość do dołączenia do żądania płatności, która będzie wyświetlana, gdy żądanie zostanie otwarte. Uwaga: wiadomość ta nie zostanie wysłana wraz z płatnością w sieci BZX.</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1534,8 +1728,16 @@
         <translation>Usuń</translation>
     </message>
     <message>
+        <source>Copy URI</source>
+        <translation>Kopiuj URI:</translation>
+    </message>
+    <message>
         <source>Copy label</source>
         <translation>Kopiuj etykietę</translation>
+    </message>
+    <message>
+        <source>Copy message</source>
+        <translation>Kopiuj wiadomość</translation>
     </message>
     <message>
         <source>Copy amount</source>
@@ -1561,21 +1763,61 @@
         <translation>&amp;Zapisz obraz...</translation>
     </message>
     <message>
+        <source>Request payment to %1</source>
+        <translation>Zażądaj płatności do %1</translation>
+    </message>
+    <message>
+        <source>Payment information</source>
+        <translation>Informacje o płatności</translation>
+    </message>
+    <message>
+        <source>URI</source>
+        <translation>URI</translation>
+    </message>
+    <message>
         <source>Address</source>
         <translation>Adres</translation>
     </message>
     <message>
+        <source>Amount</source>
+        <translation>Kwota</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Etykieta</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Wiadomość</translation>
     </message>
     </context>
 <context>
     <name>RecentRequestsTableModel</name>
     <message>
+        <source>Date</source>
+        <translation>Data</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Etykieta</translation>
     </message>
-    </context>
+    <message>
+        <source>Message</source>
+        <translation>Wiadomość</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(brak etykiety)</translation>
+    </message>
+    <message>
+        <source>(no message)</source>
+        <translation>(brak wiadomości)</translation>
+    </message>
+    <message>
+        <source>Requested</source>
+        <translation>Zażądano</translation>
+    </message>
+</context>
 <context>
     <name>SendCoinsDialog</name>
     <message>
@@ -1609,10 +1851,6 @@
     <message>
         <source>Amount:</source>
         <translation>Kwota:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Priorytet:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -1663,8 +1901,8 @@
         <translation>razem przynajmniej</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BitcoinZero transactions than the network can process.</source>
-        <translation>Zapłacenie tylko minimalnej opłaty jest nadal wystarczające, dopóki jest mniejszy wolumen transakcji niż miejsca w blokach. Należy jednak mieć świadomość, że może skończyć się to niezatwierdzeniem nigdy transakcji, gdy jest większe zapotrzebowanie na transakcje BitcoinZeroa niż sieć może przetworzyć.</translation>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BZX transactions than the network can process.</source>
+        <translation>Zapłacenie tylko minimalnej opłaty jest nadal wystarczające, dopóki jest mniejszy wolumen transakcji niż miejsca w blokach. Należy jednak mieć świadomość, że może skończyć się to niezatwierdzeniem nigdy transakcji, gdy jest większe zapotrzebowanie na transakcje BZXa niż sieć może przetworzyć.</translation>
     </message>
     <message>
         <source>(read the tooltip)</source>
@@ -1681,10 +1919,6 @@
     <message>
         <source>(Smart fee not initialized yet. This usually takes a few blocks...)</source>
         <translation>(Sprytne opłaty nie są jeszcze zainicjowane. Trwa to zwykle kilka bloków...)</translation>
-    </message>
-    <message>
-        <source>Confirmation time:</source>
-        <translation>Czas potwierdzenia:</translation>
     </message>
     <message>
         <source>normal</source>
@@ -1709,6 +1943,10 @@
     <message>
         <source>Dust:</source>
         <translation>Pył:</translation>
+    </message>
+    <message>
+        <source>Confirmation time target:</source>
+        <translation>Docelowy czas potwierdzenia:</translation>
     </message>
     <message>
         <source>Clear &amp;All</source>
@@ -1742,7 +1980,55 @@
         <source>Copy after fee</source>
         <translation>Skopiuj ilość po opłacie</translation>
     </message>
-    </context>
+    <message>
+        <source>Copy bytes</source>
+        <translation>Skopiuj ilość bajtów</translation>
+    </message>
+    <message>
+        <source>Copy dust</source>
+        <translation>Kopiuj pył</translation>
+    </message>
+    <message>
+        <source>Copy change</source>
+        <translation>Skopiuj resztę</translation>
+    </message>
+    <message>
+        <source>%1 to %2</source>
+        <translation>%1 do %2</translation>
+    </message>
+    <message>
+        <source>or</source>
+        <translation>lub</translation>
+    </message>
+    <message>
+        <source>The amount to pay must be larger than 0.</source>
+        <translation>Kwota do zapłacenia musi być większa od 0.</translation>
+    </message>
+    <message>
+        <source>Transaction creation failed!</source>
+        <translation>Utworzenie transakcji nie powiodło się!</translation>
+    </message>
+    <message>
+        <source>Payment request expired.</source>
+        <translation>Żądanie płatności upłynęło.</translation>
+    </message>
+    <message>
+        <source>Pay only the required fee of %1</source>
+        <translation>Zapłać tylko wymaganą opłatę w wysokości %1</translation>
+    </message>
+    <message>
+        <source>Warning: Invalid address</source>
+        <translation>Ostrzeżenie: nieprawidłowy adres BZX</translation>
+    </message>
+    <message>
+        <source>Warning: Unknown change address</source>
+        <translation>Ostrzeżenie: Nieznany adres reszty</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(brak etykiety)</translation>
+    </message>
+</context>
 <context>
     <name>SendCoinsEntry</name>
     <message>
@@ -1766,8 +2052,8 @@
         <translation>To jest standardowa płatność</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to send the payment to</source>
-        <translation>Adres BitcoinZero gdzie wysłać płatność</translation>
+        <source>The address to send the payment to</source>
+        <translation>Adres BZX gdzie wysłać płatność</translation>
     </message>
     <message>
         <source>Alt+A</source>
@@ -1786,8 +2072,8 @@
         <translation>Usuń ten wpis</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less bitcoinzeros than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
-        <translation>Opłata zostanie odjęta od kwoty wysyłane.Odbiorca otrzyma mniej niż bitcoinzeros wpisz w polu kwoty. Jeśli wybrano kilku odbiorców, opłata jest podzielona równo.</translation>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less BZXs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <translation>Opłata zostanie odjęta od kwoty wysyłane.Odbiorca otrzyma mniej niż BZXs wpisz w polu kwoty. Jeśli wybrano kilku odbiorców, opłata jest podzielona równo.</translation>
     </message>
     <message>
         <source>S&amp;ubtract fee from amount</source>
@@ -1810,8 +2096,8 @@
         <translation>Wprowadź etykietę dla tego adresu by dodać go do listy użytych adresów</translation>
     </message>
     <message>
-        <source>A message that was attached to the BitcoinZero: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BitcoinZero network.</source>
-        <translation>Wiadomość, która została dołączona do URI BitcoinZero:, która będzie przechowywana wraz z transakcją w celach informacyjnych. Uwaga: Ta wiadomość nie będzie rozsyłana w sieci BitcoinZero.</translation>
+        <source>A message that was attached to the BZX: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BZX network.</source>
+        <translation>Wiadomość, która została dołączona do URI BZX:, która będzie przechowywana wraz z transakcją w celach informacyjnych. Uwaga: Ta wiadomość nie będzie rozsyłana w sieci BZX.</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -1824,7 +2110,11 @@
     </context>
 <context>
     <name>SendConfirmationDialog</name>
-    </context>
+    <message>
+        <source>Yes</source>
+        <translation>Tak</translation>
+    </message>
+</context>
 <context>
     <name>ShutdownWindow</name>
     <message>
@@ -1847,12 +2137,12 @@
         <translation>Podpi&amp;sz Wiadomość</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive bitcoinzeros sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive BZXs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>Możesz podpisywać wiadomości swoimi adresami aby udowodnić, że jesteś ich właścicielem. Uważaj, aby nie podpisywać niczego co wzbudza Twoje podejrzenia, ponieważ ktoś może stosować phishing próbując nakłonić Cię do ich podpisania. Akceptuj i podpisuj tylko w pełni zrozumiałe komunikaty i wiadomości.</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to sign the message with</source>
-        <translation>Adres BitcoinZero, za pomocą którego podpisać wiadomość</translation>
+        <source>The address to sign the message with</source>
+        <translation>Adres BZX, za pomocą którego podpisać wiadomość</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -1883,7 +2173,7 @@
         <translation>Kopiuje aktualny podpis do schowka systemowego</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
+        <source>Sign the message to prove you own this address</source>
         <translation>Podpisz wiadomość aby dowieść, że ten adres jest twój</translation>
     </message>
     <message>
@@ -1908,12 +2198,12 @@
 Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadawca posiada klucz do adresu, natomiast nie potwierdza to, że poprawne wysłanie jakiejkolwiek transakcji! </translation>
     </message>
     <message>
-        <source>The BitcoinZero address the message was signed with</source>
-        <translation>Adres BitcoinZero, którym została podpisana wiadomość</translation>
+        <source>The address the message was signed with</source>
+        <translation>Adres BZX, którym została podpisana wiadomość</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
-        <translation>Zweryfikuj wiadomość,  aby upewnić się, że została podpisana odpowiednim adresem BitcoinZero.</translation>
+        <source>Verify the message to ensure it was signed with the specified address</source>
+        <translation>Zweryfikuj wiadomość,  aby upewnić się, że została podpisana odpowiednim adresem BZX.</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1922,6 +2212,22 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
     <message>
         <source>Reset all verify message fields</source>
         <translation>Resetuje wszystkie pola weryfikacji wiadomości</translation>
+    </message>
+    <message>
+        <source>Wallet unlock was cancelled.</source>
+        <translation>Odblokowanie portfela zostało anulowane.</translation>
+    </message>
+    <message>
+        <source>Private key for the entered address is not available.</source>
+        <translation>Klucz prywatny dla podanego adresu nie jest dostępny.</translation>
+    </message>
+    <message>
+        <source>Message signing failed.</source>
+        <translation>Podpisanie wiadomości nie powiodło się.</translation>
+    </message>
+    <message>
+        <source>Message signed.</source>
+        <translation>Wiadomość podpisana.</translation>
     </message>
     </context>
 <context>
@@ -1940,6 +2246,50 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
 </context>
 <context>
     <name>TransactionDesc</name>
+    <message>
+        <source>Date</source>
+        <translation>Data</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>Źródło</translation>
+    </message>
+    <message>
+        <source>Generated</source>
+        <translation>Wygenerowano</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>Od</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>nieznane</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>Do</translation>
+    </message>
+    <message>
+        <source>own address</source>
+        <translation>własny adres</translation>
+    </message>
+    <message>
+        <source>watch-only</source>
+        <translation>tylko-obserwowany</translation>
+    </message>
+    <message>
+        <source>label</source>
+        <translation>etykieta</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Wiadomość</translation>
+    </message>
+    <message>
+        <source>Amount</source>
+        <translation>Kwota</translation>
+    </message>
     </context>
 <context>
     <name>TransactionDescDialog</name>
@@ -1951,12 +2301,80 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
 <context>
     <name>TransactionTableModel</name>
     <message>
+        <source>Date</source>
+        <translation>Data</translation>
+    </message>
+    <message>
         <source>Label</source>
         <translation>Etykieta</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>Offline</translation>
+    </message>
+    <message>
+        <source>Unconfirmed</source>
+        <translation>Niepotwierdzone</translation>
+    </message>
+    <message>
+        <source>Abandoned</source>
+        <translation>Porzucone</translation>
+    </message>
+    <message>
+        <source>Conflicted</source>
+        <translation>Skonfliktowane</translation>
+    </message>
+    <message>
+        <source>Generated but not accepted</source>
+        <translation>Wygenerowane ale nie zaakceptowane</translation>
+    </message>
+    <message>
+        <source>Sent to</source>
+        <translation>Wysłane do</translation>
+    </message>
+    <message>
+        <source>watch-only</source>
+        <translation>tylko-obserwowany</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(brak etykiety)</translation>
     </message>
     </context>
 <context>
     <name>TransactionView</name>
+    <message>
+        <source>All</source>
+        <translation>Wszystko</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>Dzisiaj</translation>
+    </message>
+    <message>
+        <source>This week</source>
+        <translation>W tym tygodniu</translation>
+    </message>
+    <message>
+        <source>This month</source>
+        <translation>W tym miesiącu</translation>
+    </message>
+    <message>
+        <source>Last month</source>
+        <translation>W zeszłym miesiącu</translation>
+    </message>
+    <message>
+        <source>This year</source>
+        <translation>W tym roku</translation>
+    </message>
+    <message>
+        <source>Range...</source>
+        <translation>Zakres...</translation>
+    </message>
+    <message>
+        <source>Sent to</source>
+        <translation>Wysłane do</translation>
+    </message>
     <message>
         <source>Copy address</source>
         <translation>Kopiuj adres</translation>
@@ -1976,6 +2394,10 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
     <message>
         <source>Comma separated file (*.csv)</source>
         <translation>Plik *.CSV (dane rozdzielane przecinkami)</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>Data</translation>
     </message>
     <message>
         <source>Label</source>
@@ -2007,7 +2429,7 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Opcje:</translation>
@@ -2041,10 +2463,6 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Prune: ostatnia synchronizacja portfela jest za danymi. Muszisz -reindexować (pobrać cały ciąg bloków ponownie w przypadku przyciętego węzła)</translation>
     </message>
     <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>Zredukuj wymaganą ilość miejsca na dysku poprzez usuwanie starych bloków. Ten tryb jest niekompatybilny z -txindex oraz -rescan. Ostrzeżenie: Wycofanie tego ustawienia wymaga ponownego pobrania całego łańcucha bloków. (domyślnie: 0 = wyłącz usuwanie bloków, &gt;%u = docelowy rozmiar w MiB jaki wykorzystać na pliki z blokami)</translation>
-    </message>
-    <message>
         <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
         <translation>Ponowne skanowanie nie jest możliwe w trybie przycinania. Będzie trzeba użyć -reindex, co pobierze ponownie cały łańcuch bloków.</translation>
     </message>
@@ -2069,20 +2487,12 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Uruchomienie serwera HTTP nie powiodło się. Zobacz dziennik debugowania, aby uzyskać więcej szczegółów.</translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>Akceptuj połączenia z zewnątrz (domyślnie: 1 jeśli nie ustawiono -proxy lub -connect)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
-        <translation>Rdzeń BitcoinZeroa</translation>
+        <source>BZX Core</source>
+        <translation>Rdzeń BZXa</translation>
     </message>
     <message>
         <source>The %s developers</source>
         <translation>Deweloperzy %s</translation>
-    </message>
-    <message>
-        <source>-fallbackfee is set very high! This is the transaction fee you may pay when fee estimates are not available.</source>
-        <translation>-fallbackfee ma ustawioną bardzo dużą wartość!  Jest to prowizja za transakcje, którą możesz zapłacić gdy oszacowanie opłaty jest niemożliwe.</translation>
     </message>
     <message>
         <source>A fee rate (in %s/kB) that will be used when fee estimation has insufficient data (default: %s)</source>
@@ -2105,10 +2515,6 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Usuwa wszystkie transakcje w portfelu i tylko odtwarza te części z łańcucha bloków poprzez -rescan przy starcie</translation>
     </message>
     <message>
-        <source>Distributed under the MIT software license, see the accompanying file COPYING or &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</source>
-        <translation>Rozprowadzane na licencji MIT, zobacz dołączony plik COPYING lub &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</translation>
-    </message>
-    <message>
         <source>Error reading %s! All keys read correctly, but transaction data or address book entries might be missing or incorrect.</source>
         <translation>Błąd odczytu %s! Wszystkie klucze zostały odczytane poprawnie, ale może brakować  danych transakcji lub wpisów w książce adresowej, lub mogą one być nieprawidłowe.</translation>
     </message>
@@ -2125,24 +2531,8 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Ustaw liczbę wątków skryptu weryfikacyjnego (%u do %d, 0 = auto, &lt;0 = zostaw tyle rdzeni wolnych, domyślnie: %d)</translation>
     </message>
     <message>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
-        <translation>To jest testowa wersja - używaj na własne ryzyko - nie używaj do wykopywania oraz przy aplikacjach kupieckich</translation>
-    </message>
-    <message>
         <source>Use UPnP to map the listening port (default: 1 when listening and no -proxy)</source>
         <translation>Użyj UPnP do mapowania portu nasłuchu (domyślnie: 1 gdy nasłuchuje i brak -proxy)</translation>
-    </message>
-    <message>
-        <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
-        <translation>Ostrzeżenie: Sieć nie wydaje się w pełni zgodna! Niektórzy górnicy wydają się doświadczać problemów.</translation>
-    </message>
-    <message>
-        <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
-        <translation>Uwaga: Wygląda na to, że nie ma pełnej zgodności z naszymi peerami! Możliwe, że potrzebujesz aktualizacji bądź inne węzły jej potrzebują</translation>
-    </message>
-    <message>
-        <source>Whitelist peers connecting from the given netmask or IP address. Can be specified multiple times.</source>
-        <translation>Dodawaj do białej listy węzły łączące się z podanej maski sieciowej lub adresu IP. Może być określona kilka razy.</translation>
     </message>
     <message>
         <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
@@ -2175,10 +2565,6 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
     <message>
         <source>Cannot resolve -%s address: '%s'</source>
         <translation>Nie można rozpoznać -%s adresu: '%s'</translation>
-    </message>
-    <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>Łącz się tylko do wskazanego węzła/węzłów</translation>
     </message>
     <message>
         <source>Connection options:</source>
@@ -2405,6 +2791,10 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Uruchom polecenie przy otrzymaniu odpowiedniego powiadomienia lub gdy zobaczymy naprawdę długie rozgałęzienie (%s w poleceniu jest podstawiane za komunikat)</translation>
     </message>
     <message>
+        <source>Fees (in %s/kB) smaller than this are considered zero fee for relaying, mining and transaction creation (default: %s)</source>
+        <translation>Opłaty (w %s/Kb) mniejsze niż ta, będą traktowane jako zerowe przy tworzeniu, przesyłaniu i zatwierdzaniu transakcji (domyślnie: %s)</translation>
+    </message>
+    <message>
         <source>If paytxfee is not set, include enough fee so transactions begin confirmation on average within n blocks (default: %u)</source>
         <translation>Jeżeli nie ustawiono paytxfee, dołącz wystarczająca opłatę, aby transakcja mogła zostać zatwierdzona w ciągu średniej ilości n bloków (domyślnie: %u)</translation>
     </message>
@@ -2417,10 +2807,6 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Maksymalny rozmiar danych w transakcji przekazującej dane które przekazujemy i wydobywamy (domyślnie: %u)</translation>
     </message>
     <message>
-        <source>Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)</source>
-        <translation>Wyszukaj adresy węzłów wykorzystując zapytanie DNS, jeżeli masz mało adresów (domyślnie: 1 jeśli nie użyto -connect)</translation>
-    </message>
-    <message>
         <source>Set maximum size of high-priority/low-fee transactions in bytes (default: %d)</source>
         <translation>Ustaw maksymalny rozmiar transakcji o wysokim priorytecie/niskiej prowizji w bajtach (domyślnie: %d)</translation>
     </message>
@@ -2429,8 +2815,8 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Zbyt niska kwota transakcji do wysłania po odjęciu opłaty</translation>
     </message>
     <message>
-        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit &lt;https://www.openssl.org/&gt; and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
-        <translation>Program ten zawiera oprogramowanie stworzone przez OpenSSL Project do użycia w OpensSSL Toolkit &lt;https://www.openssl.org/&gt;, oprogramowanie kryptograficzne napisane przez Eric Young oraz oprogramowanie UPnP napisane przez Thomas Bernard.</translation>
+        <source>Use hierarchical deterministic key generation (HD) after BIP32. Only has effect during wallet creation/first start</source>
+        <translation>Użyj hierarchicznej deterministycznej metody generowania kluczy (HD) zgodnie z BIP32. Ma znaczenie tylko podczas tworzenia portfela/pierwszego startu.</translation>
     </message>
     <message>
         <source>Whitelisted peers cannot be DoS banned and their transactions are always relayed, even if they are already in the mempool, useful e.g. for a gateway</source>
@@ -2537,10 +2923,6 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>Zbyt niska kwota transakcji </translation>
     </message>
     <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>Kwota transakcji musi być dodatnia</translation>
-    </message>
-    <message>
         <source>Transaction too large for fee policy</source>
         <translation>Transakcja jest zbyt duża dla tej opłaty</translation>
     </message>
@@ -2597,10 +2979,6 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
         <translation>-maxtxfee ma ustawioną badzo dużą wartość! Tak wysokie opłaty mogą być zapłacone w jednej transakcji.</translation>
     </message>
     <message>
-        <source>-paytxfee is set very high! This is the transaction fee you will pay if you send a transaction.</source>
-        <translation>-paytxfee ma ustawioną bardzo dużą wartość! Jest to prowizja za transakcje, którą płacisz, gdy wysyłasz monety.</translation>
-    </message>
-    <message>
         <source>Do not keep transactions in the mempool longer than &lt;n&gt; hours (default: %u)</source>
         <translation>Nie trzymaj w pamięci transakcji starszych niż &lt;n&gt; godz. (domyślnie: %u)</translation>
     </message>
@@ -2651,6 +3029,10 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
     <message>
         <source>Warning: Wallet file corrupt, data salvaged! Original %s saved as %s in %s; if your balance or transactions are incorrect you should restore from a backup.</source>
         <translation>Ostrzeżenie: Odtworzono dane z uszkodzonego pliku portfela! Oryginalny %s został zapisany jako %s w %s; jeśli twoje saldo lub transakcje są niepoprawne powinieneś odtworzyć kopię zapasową.</translation>
+    </message>
+    <message>
+        <source>%s is set very high!</source>
+        <translation>%s jest ustawione bardzo wysoko!</translation>
     </message>
     <message>
         <source>(default: %s)</source>
@@ -2735,6 +3117,14 @@ Zwróć uwagę, że poprawnie zweryfikowana wiadomość potwierdza to, że nadaw
     <message>
         <source>Threshold for disconnecting misbehaving peers (default: %u)</source>
         <translation>Próg, po którym nastąpi rozłączenie węzłów nietrzymających się zasad (domyślnie: %u)</translation>
+    </message>
+    <message>
+        <source>Transaction amounts must not be negative</source>
+        <translation>Kwota transakcji musi być dodatnia</translation>
+    </message>
+    <message>
+        <source>Transaction must have at least one recipient</source>
+        <translation>Transakcja wymaga co najmniej jednego odbiorcy</translation>
     </message>
     <message>
         <source>Unknown network specified in -onlynet: '%s'</source>

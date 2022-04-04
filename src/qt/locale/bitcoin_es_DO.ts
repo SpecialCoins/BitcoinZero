@@ -64,7 +64,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>Firmar &amp;mensaje...</translation>
@@ -142,8 +142,8 @@
         <translation>Reindexando bloques en disco...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>Enviar monedas a una dirección BitcoinZero</translation>
+        <source>Send coins to a address</source>
+        <translation>Enviar monedas a una dirección BZX</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -166,8 +166,8 @@
         <translation>&amp;Verificar mensaje...</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -194,12 +194,12 @@
         <translation>Cifrar las claves privadas de su monedero</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
-        <translation>Firmar mensajes con sus direcciones BitcoinZero para demostrar la propiedad</translation>
+        <source>Sign messages with your addresses to prove you own them</source>
+        <translation>Firmar mensajes con sus direcciones BZX para demostrar la propiedad</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
-        <translation>Verificar mensajes comprobando que están firmados con direcciones BitcoinZero concretas</translation>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
+        <translation>Verificar mensajes comprobando que están firmados con direcciones BZX concretas</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -218,8 +218,8 @@
         <translation>Barra de pestañas</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>Solicitar pagos (genera codigo QR y URL's de BitcoinZero)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>Solicitar pagos (genera codigo QR y URL's de BZX)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -230,16 +230,12 @@
         <translation>Muestra la lista de direcciones de recepción y etiquetas</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>Abrir un BitcoinZero: URI o petición de pago</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>Abrir un BZX: URI o petición de pago</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;Opciones de linea de comando</translation>
-    </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>Ninguna fuente de bloques disponible ...</translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -289,7 +285,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>El monedero está &lt;b&gt;cifrado&lt;/b&gt; y actualmente &lt;b&gt;bloqueado&lt;/b&gt;</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -303,10 +299,6 @@
     <message>
         <source>Amount:</source>
         <translation>Cuantía:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Prioridad:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -347,10 +339,6 @@
     <message>
         <source>Confirmed</source>
         <translation>Confirmado</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <translation>Prioridad</translation>
     </message>
     </context>
 <context>
@@ -438,6 +426,17 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>Desde</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>Hora del último bloque</translation>
+    </message>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     <message>
         <source>Open URI</source>
@@ -495,8 +494,8 @@
         <translation>Experto</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Abrir automáticamente el puerto del cliente BitcoinZero en el router. Esta opción solo funciona si el router admite UPnP y está activado.</translation>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Abrir automáticamente el puerto del cliente BZX en el router. Esta opción solo funciona si el router admite UPnP y está activado.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -590,8 +589,8 @@
         <translation>Desde</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
-        <translation>La información mostrada puede estar desactualizada. Su monedero se sincroniza automáticamente con la red BitcoinZero después de que se haya establecido una conexión, pero este proceso aún no se ha completado.</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
+        <translation>La información mostrada puede estar desactualizada. Su monedero se sincroniza automáticamente con la red BZX después de que se haya establecido una conexión, pero este proceso aún no se ha completado.</translation>
     </message>
     <message>
         <source>Your current spendable balance</source>
@@ -642,6 +641,9 @@
         <source>N/A</source>
         <translation>N/D</translation>
     </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -865,10 +867,6 @@
         <translation>Cuantía:</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>Prioridad:</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>Tasa:</translation>
     </message>
@@ -1021,8 +1019,8 @@
         <translation>Copiar la firma actual al portapapeles del sistema</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
-        <translation>Firmar el mensaje para demostrar que se posee esta dirección BitcoinZero</translation>
+        <source>Sign the message to prove you own this address</source>
+        <translation>Firmar el mensaje para demostrar que se posee esta dirección BZX</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -1041,8 +1039,8 @@
         <translation>&amp;Verificar mensaje</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
-        <translation>Verificar el mensaje para comprobar que fue firmado con la dirección BitcoinZero indicada</translation>
+        <source>Verify the message to ensure it was signed with the specified address</source>
+        <translation>Verificar el mensaje para comprobar que fue firmado con la dirección BZX indicada</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -1096,7 +1094,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Opciones:
@@ -1125,12 +1123,8 @@
 </translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>Aceptar conexiones desde el exterior (predeterminado: 1 si no -proxy o -connect)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
-        <translation>Núcleo de BitcoinZero</translation>
+        <source>BZX Core</source>
+        <translation>Núcleo de BZX</translation>
     </message>
     <message>
         <source>Bind to given address and always listen on it. Use [host]:port notation for IPv6</source>
@@ -1141,28 +1135,12 @@
         <translation>Ejecutar comando cuando una transacción del monedero cambia (%s en cmd se remplazará por TxID)</translation>
     </message>
     <message>
-        <source>This is a pre-release test build - use at your own risk - do not use for mining or merchant applications</source>
-        <translation>Esta es una versión de pre-prueba - utilícela bajo su propio riesgo. No la utilice para usos comerciales o de minería.</translation>
-    </message>
-    <message>
-        <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
-        <translation>Atención: ¡Parece que la red no está totalmente de acuerdo! Algunos mineros están presentando inconvenientes.</translation>
-    </message>
-    <message>
-        <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
-        <translation>Atención: ¡Parece que no estamos completamente de acuerdo con nuestros pares! Podría necesitar una actualización, u otros nodos podrían necesitarla.</translation>
-    </message>
-    <message>
         <source>&lt;category&gt; can be:</source>
         <translation>&lt;category&gt; puede ser:</translation>
     </message>
     <message>
         <source>Block creation options:</source>
         <translation>Opciones de creación de bloques:</translation>
-    </message>
-    <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>Conectar sólo a los nodos (o nodo) especificados</translation>
     </message>
     <message>
         <source>Corrupted block database detected</source>
@@ -1263,10 +1241,6 @@
     <message>
         <source>Transaction amount too small</source>
         <translation>Monto de la transacción muy pequeño</translation>
-    </message>
-    <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>Montos de transacciones deben ser positivos</translation>
     </message>
     <message>
         <source>Transaction too large</source>

@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -18,18 +18,15 @@
 #include <QMessageBox>
 #include <QPushButton>
 
-AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget *parent) :
+AskPassphraseDialog::AskPassphraseDialog(Mode _mode, QWidget *parent, const QString &info) :
     QDialog(parent),
     ui(new Ui::AskPassphraseDialog),
-    mode(mode),
+    mode(_mode),
     model(0),
-    fCapsLock(false)
+    fCapsLock(false),
+    info(info)
 {
     ui->setupUi(this);
-
-    ui->passEdit1->setMinimumSize(ui->passEdit1->sizeHint());
-    ui->passEdit2->setMinimumSize(ui->passEdit2->sizeHint());
-    ui->passEdit3->setMinimumSize(ui->passEdit3->sizeHint());
 
     ui->passEdit1->setMaxLength(MAX_PASSPHRASE_SIZE);
     ui->passEdit2->setMaxLength(MAX_PASSPHRASE_SIZE);
@@ -69,7 +66,12 @@ AskPassphraseDialog::AskPassphraseDialog(Mode mode, QWidget *parent) :
             ui->warningLabel->setText(tr("Enter the old passphrase and new passphrase to the wallet."));
             break;
     }
+    if(info.size() > 0)
+    {
+        ui->warningLabel->setText(info + "<br/>" + ui->warningLabel->text());
+    }
     textChanged();
+    adjustSize();
     connect(ui->passEdit1, SIGNAL(textChanged(QString)), this, SLOT(textChanged()));
     connect(ui->passEdit2, SIGNAL(textChanged(QString)), this, SLOT(textChanged()));
     connect(ui->passEdit3, SIGNAL(textChanged(QString)), this, SLOT(textChanged()));
@@ -81,9 +83,9 @@ AskPassphraseDialog::~AskPassphraseDialog()
     delete ui;
 }
 
-void AskPassphraseDialog::setModel(WalletModel *model)
+void AskPassphraseDialog::setModel(WalletModel *_model)
 {
-    this->model = model;
+    this->model = _model;
 }
 
 void AskPassphraseDialog::accept()
@@ -111,7 +113,7 @@ void AskPassphraseDialog::accept()
             break;
         }
         QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm wallet encryption"),
-                 tr("Warning: If you encrypt your wallet and lose your passphrase, you will <b>LOSE ALL OF YOUR BITCOINZEROS</b>!") + "<br><br>" + tr("Are you sure you wish to encrypt your wallet?"),
+                 tr("Warning: If you encrypt your wallet and lose your passphrase, you will <b>LOSE ALL OF YOUR BZXS</b>!") + "<br><br>" + tr("Are you sure you wish to encrypt your wallet?"),
                  QMessageBox::Yes|QMessageBox::Cancel,
                  QMessageBox::Cancel);
         if(retval == QMessageBox::Yes)
@@ -124,7 +126,7 @@ void AskPassphraseDialog::accept()
                                          "<qt>" +
                                          tr("%1 will close now to finish the encryption process. "
                                          "Remember that encrypting your wallet cannot fully protect "
-                                         "your bitcoinzeros from being stolen by malware infecting your computer.").arg(tr(PACKAGE_NAME)) +
+                                         "your BZXs from being stolen by malware infecting your computer.").arg(tr(PACKAGE_NAME)) +
                                          "<br><br><b>" +
                                          tr("IMPORTANT: Any previous backups you have made of your wallet file "
                                          "should be replaced with the newly generated, encrypted wallet file. "

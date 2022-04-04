@@ -1,4 +1,4 @@
-/* Copyright (c) 2009-2019, The Tor Project, Inc. */
+/* Copyright (c) 2009-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -18,6 +18,7 @@
 #include "feature/client/entrynodes.h"
 #include "feature/dircache/dirserv.h"
 #include "feature/dirclient/dlstatus.h"
+#include "feature/dirclient/dirclient_modes.h"
 #include "feature/dircommon/directory.h"
 #include "feature/dirparse/microdesc_parse.h"
 #include "feature/nodelist/dirlist.h"
@@ -536,8 +537,8 @@ microdesc_cache_reload(microdesc_cache_t *cache)
   journal_content = read_file_to_str(cache->journal_fname,
                                      RFTS_IGNORE_MISSING, &st);
   if (journal_content) {
-    cache->journal_len = (size_t) st.st_size;
-    warn_if_nul_found(journal_content, cache->journal_len, 0,
+    cache->journal_len = strlen(journal_content);
+    warn_if_nul_found(journal_content, (size_t)st.st_size, 0,
                       "reading microdesc journal");
     added = microdescs_add_to_cache(cache, journal_content,
                                     journal_content+st.st_size,
@@ -970,7 +971,7 @@ microdesc_list_missing_digest256(networkstatus_t *ns, microdesc_cache_t *cache,
       continue;
     if (skip && digest256map_get(skip, (const uint8_t*)rs->descriptor_digest))
       continue;
-    if (tor_mem_is_zero(rs->descriptor_digest, DIGEST256_LEN))
+    if (fast_mem_is_zero(rs->descriptor_digest, DIGEST256_LEN))
       continue;
     /* XXXX Also skip if we're a noncache and wouldn't use this router.
      * XXXX NM Microdesc
@@ -997,7 +998,7 @@ update_microdesc_downloads(time_t now)
 
   if (should_delay_dir_fetches(options, NULL))
     return;
-  if (directory_too_idle_to_fetch_descriptors(options, now))
+  if (dirclient_too_idle_to_fetch_descriptors(options, now))
     return;
 
   /* Give up if we don't have a reasonably live consensus. */

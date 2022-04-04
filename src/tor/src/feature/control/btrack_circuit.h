@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2019, The Tor Project, Inc. */
+/* Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -9,7 +9,10 @@
 #ifndef TOR_BTRACK_CIRCUIT_H
 #define TOR_BTRACK_CIRCUIT_H
 
+#include "lib/pubsub/pubsub.h"
+
 int btrack_circ_init(void);
 void btrack_circ_fini(void);
+int btrack_circ_add_pubsub(pubsub_connector_t *);
 
-#endif  /* defined(TOR_BTRACK_CIRCUIT_H) */
+#endif /* !defined(TOR_BTRACK_CIRCUIT_H) */

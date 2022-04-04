@@ -1,36 +1,43 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "walletview.h"
 
 #include "addressbookpage.h"
-#include "sigmadialog.h"
 #include "askpassphrasedialog.h"
+#include "automintdialog.h"
+#include "automintmodel.h"
 #include "bitcoingui.h"
 #include "clientmodel.h"
+#include "createpcodedialog.h"
 #include "guiutil.h"
+#include "lelantusdialog.h"
+#include "lelantusmodel.h"
+#include "metadexcanceldialog.h"
+#include "metadexdialog.h"
 #include "optionsmodel.h"
 #include "overviewpage.h"
 #include "platformstyle.h"
 #include "receivecoinsdialog.h"
 #include "sendcoinsdialog.h"
-#include "sendmpdialog.h"
-#include "lookupspdialog.h"
-#include "lookuptxdialog.h"
-#include "lookupaddressdialog.h"
-#include "metadexcanceldialog.h"
-#include "metadexdialog.h"
 #include "signverifymessagedialog.h"
 #include "tradehistorydialog.h"
 #include "transactiontablemodel.h"
 #include "transactionview.h"
-#include "txhistorydialog.h"
 #include "walletmodel.h"
 
 #include "ui_interface.h"
 
-#include <exodus/exodus.h>
+#ifdef ENABLE_ELYSIUM
+#include "lookupaddressdialog.h"
+#include "lookupspdialog.h"
+#include "lookuptxdialog.h"
+#include "sendmpdialog.h"
+#include "txhistorydialog.h"
+
+#include "../elysium/elysium.h"
+#endif
 
 #include <QAction>
 #include <QActionGroup>
@@ -44,48 +51,66 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-WalletView::WalletView(const PlatformStyle *platformStyle, QWidget *parent):
+WalletView::WalletView(const PlatformStyle *_platformStyle, QWidget *parent):
     QStackedWidget(parent),
     clientModel(0),
     walletModel(0),
     overviewPage(0),
-    sendExodusView(0),
-    sigmaView(0),
-    blankSigmaView(0),
-    exodusTransactionsView(0),
-    bitcoinzeroTransactionsView(0),
-    platformStyle(platformStyle),
+#ifdef ENABLE_ELYSIUM
+    elysiumTransactionsView(0),
     transactionTabs(0),
-    sendCoinsTabs(0)
+    sendElysiumView(0),
+    sendCoinsTabs(0),
+#endif
+    lelantusView(0),
+    BZXTransactionsView(0),
+    platformStyle(_platformStyle)
 {
     overviewPage = new OverviewPage(platformStyle);
     transactionsPage = new QWidget(this);
-    exoAssetsPage = new ExoAssetsDialog();
+#ifdef ENABLE_ELYSIUM
+    elyAssetsPage = new ElyAssetsDialog();
+#endif
     receiveCoinsPage = new ReceiveCoinsDialog(platformStyle);
+    createPcodePage = new CreatePcodeDialog(platformStyle);
     usedSendingAddressesPage = new AddressBookPage(platformStyle, AddressBookPage::ForEditing, AddressBookPage::SendingTab, this);
     usedReceivingAddressesPage = new AddressBookPage(platformStyle, AddressBookPage::ForEditing, AddressBookPage::ReceivingTab, this);
-    sigmaPage = new QWidget(this);
+    lelantusPage = new QWidget(this);
     sendCoinsPage = new QWidget(this);
+#ifdef ENABLE_ELYSIUM
     toolboxPage = new QWidget(this);
-    bznodeListPage = new BznodeList(platformStyle);
+#endif
+    masternodeListPage = new MasternodeList(platformStyle);
+
+    automintNotification = new AutomintNotification(this);
+    automintNotification->setWindowModality(Qt::NonModal);
 
     setupTransactionPage();
     setupSendCoinPage();
+#ifdef ENABLE_ELYSIUM
     setupToolboxPage();
-    setupSigmaPage();
+#endif
+    setupLelantusPage();
 
     addWidget(overviewPage);
-    addWidget(exoAssetsPage);
+#ifdef ENABLE_ELYSIUM
+    addWidget(elyAssetsPage);
+#endif
     addWidget(transactionsPage);
     addWidget(receiveCoinsPage);
+    addWidget(createPcodePage);
     addWidget(sendCoinsPage);
-    addWidget(sigmaPage);
+    addWidget(lelantusPage);
+#ifdef ENABLE_ELYSIUM
     addWidget(toolboxPage);
-    addWidget(bznodeListPage);
+#endif
+    addWidget(masternodeListPage);
 
     // Clicking on a transaction on the overview pre-selects the transaction on the transaction history page
     connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), this, SLOT(focusBitcoinHistoryTab(QModelIndex)));
-    connect(overviewPage, SIGNAL(exodusTransactionClicked(uint256)), this, SLOT(focusExodusTransaction(uint256)));
+#ifdef ENABLE_ELYSIUM
+    connect(overviewPage, SIGNAL(elysiumTransactionClicked(uint256)), this, SLOT(focusElysiumTransaction(uint256)));
+#endif
 }
 
 WalletView::~WalletView()
@@ -94,13 +119,13 @@ WalletView::~WalletView()
 
 void WalletView::setupTransactionPage()
 {
-    // Create BitcoinZero transactions list
-    coinTransactionList = new TransactionView(platformStyle);
+    // Create BZX transactions list
+    BZXTransactionList = new TransactionView(platformStyle);
 
-    connect(coinTransactionList, SIGNAL(doubleClicked(QModelIndex)), coinTransactionList, SLOT(showDetails()));
-    connect(coinTransactionList, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
+    connect(BZXTransactionList, SIGNAL(doubleClicked(QModelIndex)), BZXTransactionList, SLOT(showDetails()));
+    connect(BZXTransactionList, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
 
-    // Create export panel for BitcoinZero transactions
+    // Create export panel for BZX transactions
     auto exportButton = new QPushButton(tr("&Export"));
 
     exportButton->setToolTip(tr("Export the data in the current tab to a file"));
@@ -109,85 +134,95 @@ void WalletView::setupTransactionPage()
         exportButton->setIcon(platformStyle->SingleColorIcon(":/icons/export"));
     }
 
-    connect(exportButton, SIGNAL(clicked()), coinTransactionList, SLOT(exportClicked()));
+    connect(exportButton, SIGNAL(clicked()), BZXTransactionList, SLOT(exportClicked()));
 
     auto exportLayout = new QHBoxLayout();
     exportLayout->addStretch();
     exportLayout->addWidget(exportButton);
 
     // Compose transaction list and export panel together
-    auto coinLayout = new QVBoxLayout();
-    coinLayout->addWidget(coinTransactionList);
-    coinLayout->addLayout(exportLayout);
+    auto BZXLayout = new QVBoxLayout();
+    BZXLayout->addWidget(BZXTransactionList);
+    BZXLayout->addLayout(exportLayout);
+    // TODO: fix this
+    //connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), transactionView, SLOT(focusTransaction(QModelIndex)));
+    connect(overviewPage, SIGNAL(outOfSyncWarningClicked()), this, SLOT(requestedSyncWarningInfo()));
 
-    bitcoinzeroTransactionsView = new QWidget();
-    bitcoinzeroTransactionsView->setLayout(coinLayout);
+    BZXTransactionsView = new QWidget();
+    BZXTransactionsView->setLayout(BZXLayout);
 
+#ifdef ENABLE_ELYSIUM
     // Create tabs for transaction categories
-    if (isExodusEnabled()) {
-        exodusTransactionsView = new TXHistoryDialog();
+    if (isElysiumEnabled()) {
+        elysiumTransactionsView = new TXHistoryDialog();
 
         transactionTabs = new QTabWidget();
-        transactionTabs->addTab(bitcoinzeroTransactionsView, tr("BitcoinZero"));
-        transactionTabs->addTab(exodusTransactionsView, tr("Exodus"));
+        transactionTabs->addTab(BZXTransactionsView, tr("BZX"));
+        transactionTabs->addTab(elysiumTransactionsView, tr("Elysium"));
     }
+#endif
 
     // Set layout for transaction page
     auto pageLayout = new QVBoxLayout();
 
+#ifdef ENABLE_ELYSIUM
     if (transactionTabs) {
         pageLayout->addWidget(transactionTabs);
-    } else {
-        pageLayout->addWidget(bitcoinzeroTransactionsView);
-    }
+    } else
+#endif
+        pageLayout->addWidget(BZXTransactionsView);
 
     transactionsPage->setLayout(pageLayout);
 }
 
 void WalletView::setupSendCoinPage()
 {
-    sendBitcoinZeroView = new SendCoinsDialog(platformStyle);
+    sendBZXView = new SendCoinsDialog(platformStyle);
 
-    connect(sendBitcoinZeroView, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
+    connect(sendBZXView, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
 
+#ifdef ENABLE_ELYSIUM
     // Create tab for coin type
-    if (isExodusEnabled()) {
-        sendExodusView = new SendMPDialog(platformStyle);
+    if (isElysiumEnabled()) {
+        sendElysiumView = new SendMPDialog(platformStyle);
 
         sendCoinsTabs = new QTabWidget();
-        sendCoinsTabs->addTab(sendBitcoinZeroView, tr("BitcoinZero"));
-        sendCoinsTabs->addTab(sendExodusView, tr("Exodus"));
+        sendCoinsTabs->addTab(sendBZXView, tr("BZX"));
+        sendCoinsTabs->addTab(sendElysiumView, tr("Elysium"));
     }
+#endif
 
     // Set layout for send coin page
     auto pageLayout = new QVBoxLayout();
 
+#ifdef ENABLE_ELYSIUM
     if (sendCoinsTabs) {
         pageLayout->addWidget(sendCoinsTabs);
-    } else {
-        pageLayout->addWidget(sendBitcoinZeroView);
-    }
+    } else
+#endif
+        pageLayout->addWidget(sendBZXView);
 
     sendCoinsPage->setLayout(pageLayout);
 }
 
-void WalletView::setupSigmaPage()
+void WalletView::setupLelantusPage()
 {
-    // Set layout for Sigma page
     auto pageLayout = new QVBoxLayout();
 
-    if (pwalletMain->IsHDSeedAvailable()) {
-        sigmaView = new SigmaDialog(platformStyle);
-        connect(sigmaView, SIGNAL(message(QString, QString, unsigned int)), this, SIGNAL(message(QString, QString, unsigned int)));
-        pageLayout->addWidget(sigmaView);
-        sigmaPage->setLayout(pageLayout);
-    } else {
-        blankSigmaView = new BlankSigmaDialog();
-        pageLayout->addWidget(blankSigmaView);
-        sigmaPage->setLayout(pageLayout);
+    if (true) {
+        lelantusView = new LelantusDialog(platformStyle);
+        connect(lelantusView,
+            SIGNAL(message(QString, QString, unsigned int)),
+            this,
+            SIGNAL(message(QString, QString, unsigned int)));
+
+        pageLayout->addWidget(lelantusView);
     }
+
+    lelantusPage->setLayout(pageLayout);
 }
 
+#ifdef ENABLE_ELYSIUM
 void WalletView::setupToolboxPage()
 {
     // Create tools widget
@@ -207,6 +242,7 @@ void WalletView::setupToolboxPage()
     pageLayout->addWidget(tabs);
     toolboxPage->setLayout(pageLayout);
 }
+#endif
 
 void WalletView::setBitcoinGUI(BitcoinGUI *gui)
 {
@@ -214,7 +250,9 @@ void WalletView::setBitcoinGUI(BitcoinGUI *gui)
     {
         // Clicking on a transaction on the overview page simply sends you to transaction history page
         connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), gui, SLOT(gotoBitcoinHistoryTab()));
-        connect(overviewPage, SIGNAL(exodusTransactionClicked(uint256)), gui, SLOT(gotoExodusHistoryTab()));
+#ifdef ENABLE_ELYSIUM
+        connect(overviewPage, SIGNAL(elysiumTransactionClicked(uint256)), gui, SLOT(gotoElysiumHistoryTab()));
+#endif
 
         // Receive and report messages
         connect(this, SIGNAL(message(QString,QString,unsigned int)), gui, SLOT(message(QString,QString,unsigned int)));
@@ -224,73 +262,106 @@ void WalletView::setBitcoinGUI(BitcoinGUI *gui)
 
         // Pass through transaction notifications
         connect(this, SIGNAL(incomingTransaction(QString,int,CAmount,QString,QString,QString)), gui, SLOT(incomingTransaction(QString,int,CAmount,QString,QString,QString)));
+
+        // Connect HD enabled state signal
+        connect(this, SIGNAL(hdEnabledStatusChanged(int)), gui, SLOT(setHDStatus(int)));
     }
 }
 
-void WalletView::setClientModel(ClientModel *clientModel)
+void WalletView::setClientModel(ClientModel *_clientModel)
 {
-    this->clientModel = clientModel;
+    this->clientModel = _clientModel;
 
     overviewPage->setClientModel(clientModel);
-    sendBitcoinZeroView->setClientModel(clientModel);
-    bznodeListPage->setClientModel(clientModel);
-    exoAssetsPage->setClientModel(clientModel);
+    sendBZXView->setClientModel(clientModel);
+    masternodeListPage->setClientModel(clientModel);
+#ifdef ENABLE_ELYSIUM
+    elyAssetsPage->setClientModel(clientModel);
+#endif
     if (pwalletMain->IsHDSeedAvailable()) {
-        sigmaView->setClientModel(clientModel);
+        lelantusView->setClientModel(clientModel);
     }
 
-    if (exodusTransactionsView) {
-        exodusTransactionsView->setClientModel(clientModel);
+#ifdef ENABLE_ELYSIUM
+    if (elysiumTransactionsView) {
+        elysiumTransactionsView->setClientModel(clientModel);
     }
 
-    if (sendExodusView) {
-        sendExodusView->setClientModel(clientModel);
+    if (sendElysiumView) {
+        sendElysiumView->setClientModel(clientModel);
     }
+#endif
 }
 
-void WalletView::setWalletModel(WalletModel *walletModel)
+void WalletView::setWalletModel(WalletModel *_walletModel)
 {
-    this->walletModel = walletModel;
+    this->walletModel = _walletModel;
 
     // Put transaction list in tabs
-    coinTransactionList->setModel(walletModel);
-    overviewPage->setWalletModel(walletModel);
-    receiveCoinsPage->setModel(walletModel);
+    BZXTransactionList->setModel(_walletModel);
+    overviewPage->setWalletModel(_walletModel);
+    receiveCoinsPage->setModel(_walletModel);
+    createPcodePage->setModel(_walletModel);
+    // TODO: fix this
+    //sendCoinsPage->setModel(_walletModel);
     if (pwalletMain->IsHDSeedAvailable()) {
-        sigmaView->setWalletModel(walletModel);
+        lelantusView->setWalletModel(_walletModel);
     }
-    usedReceivingAddressesPage->setModel(walletModel->getAddressTableModel());
-    usedSendingAddressesPage->setModel(walletModel->getAddressTableModel());
-    bznodeListPage->setWalletModel(walletModel);
-    sendBitcoinZeroView->setModel(walletModel);
-    exoAssetsPage->setWalletModel(walletModel);
+    usedReceivingAddressesPage->setModel(_walletModel->getAddressTableModel());
+    usedSendingAddressesPage->setModel(_walletModel->getAddressTableModel());
+    masternodeListPage->setWalletModel(_walletModel);
+    sendBZXView->setModel(_walletModel);
+    automintNotification->setModel(_walletModel);
+#ifdef ENABLE_ELYSIUM
+    elyAssetsPage->setWalletModel(walletModel);
 
-    if (exodusTransactionsView) {
-        exodusTransactionsView->setWalletModel(walletModel);
-    }
-
-    if (sendExodusView) {
-        sendExodusView->setWalletModel(walletModel);
+    if (elysiumTransactionsView) {
+        elysiumTransactionsView->setWalletModel(walletModel);
     }
 
-    if (walletModel)
+    if (sendElysiumView) {
+        sendElysiumView->setWalletModel(walletModel);
+    }
+#endif
+
+    if (_walletModel)
     {
         // Receive and pass through messages from wallet model
-        connect(walletModel, SIGNAL(message(QString,QString,unsigned int)), this, SIGNAL(message(QString,QString,unsigned int)));
+        connect(_walletModel, SIGNAL(message(QString,QString,unsigned int)), this, SIGNAL(message(QString,QString,unsigned int)));
 
         // Handle changes in encryption status
-        connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SIGNAL(encryptionStatusChanged(int)));
+        connect(_walletModel, SIGNAL(encryptionStatusChanged(int)), this, SIGNAL(encryptionStatusChanged(int)));
         updateEncryptionStatus();
 
+        // update HD status
+        Q_EMIT hdEnabledStatusChanged(_walletModel->hdEnabled());
+
         // Balloon pop-up for new transaction
-        connect(walletModel->getTransactionTableModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
+        connect(_walletModel->getTransactionTableModel(), SIGNAL(rowsInserted(QModelIndex,int,int)),
                 this, SLOT(processNewTransaction(QModelIndex,int,int)));
 
         // Ask for passphrase if needed
-        connect(walletModel, SIGNAL(requireUnlock()), this, SLOT(unlockWallet()));
+        connect(_walletModel, SIGNAL(requireUnlock(QString)), this, SLOT(unlockWallet(QString)));
 
         // Show progress dialog
-        connect(walletModel, SIGNAL(showProgress(QString,int)), this, SLOT(showProgress(QString,int)));
+        connect(_walletModel, SIGNAL(showProgress(QString,int)), this, SLOT(showProgress(QString,int)));
+
+        // Check mintable amount
+        connect(_walletModel, SIGNAL(balanceChanged(CAmount,CAmount,CAmount,CAmount,CAmount,CAmount,CAmount,CAmount,CAmount)),
+            this, SLOT(checkMintableAmount(CAmount,CAmount,CAmount,CAmount,CAmount,CAmount,CAmount,CAmount,CAmount)));
+
+        auto lelantusModel = _walletModel->getLelantusModel();
+        if (lelantusModel) {
+            connect(lelantusModel, SIGNAL(askMintAll(AutoMintMode)), this, SLOT(askMintAll(AutoMintMode)));
+
+            auto autoMintModel = lelantusModel->getAutoMintModel();
+            connect(autoMintModel, SIGNAL(message(QString,QString,unsigned int)),
+                this, SIGNAL(message(QString,QString,unsigned int)));
+            connect(autoMintModel, SIGNAL(requireShowAutomintNotification()),
+                this, SLOT(showAutomintNotification()));
+            connect(autoMintModel, SIGNAL(closeAutomintNotification()),
+                this, SLOT(closeAutomintNotification()));
+        }
     }
 }
 
@@ -319,17 +390,20 @@ void WalletView::gotoOverviewPage()
     setCurrentWidget(overviewPage);
 }
 
-void WalletView::gotoExoAssetsPage()
+#ifdef ENABLE_ELYSIUM
+void WalletView::gotoElyAssetsPage()
 {
-    setCurrentWidget(exoAssetsPage);
+    setCurrentWidget(elyAssetsPage);
 }
+#endif
 
 void WalletView::gotoHistoryPage()
 {
     setCurrentWidget(transactionsPage);
 }
 
-void WalletView::gotoExodusHistoryTab()
+#ifdef ENABLE_ELYSIUM
+void WalletView::gotoElysiumHistoryTab()
 {
     if (!transactionTabs) {
         return;
@@ -338,35 +412,40 @@ void WalletView::gotoExodusHistoryTab()
     setCurrentWidget(transactionsPage);
     transactionTabs->setCurrentIndex(1);
 }
+#endif
 
 void WalletView::gotoBitcoinHistoryTab()
 {
     setCurrentWidget(transactionsPage);
 
+#ifdef ENABLE_ELYSIUM
     if (transactionTabs) {
         transactionTabs->setCurrentIndex(0);
     }
+#endif
 }
 
-void WalletView::focusExodusTransaction(const uint256& txid)
+#ifdef ENABLE_ELYSIUM
+void WalletView::focusElysiumTransaction(const uint256& txid)
 {
-    if (!exodusTransactionsView) {
+    if (!elysiumTransactionsView) {
         return;
     }
 
-    gotoExodusHistoryTab();
-    exodusTransactionsView->focusTransaction(txid);
+    gotoElysiumHistoryTab();
+    elysiumTransactionsView->focusTransaction(txid);
 }
+#endif
 
 void WalletView::focusBitcoinHistoryTab(const QModelIndex &idx)
 {
     gotoBitcoinHistoryTab();
-    coinTransactionList->focusTransaction(idx);
+    BZXTransactionList->focusTransaction(idx);
 }
 
-void WalletView::gotoBznodePage()
+void WalletView::gotoMasternodePage()
 {
-    setCurrentWidget(bznodeListPage);
+    setCurrentWidget(masternodeListPage);
 }
 
 void WalletView::gotoReceiveCoinsPage()
@@ -374,22 +453,29 @@ void WalletView::gotoReceiveCoinsPage()
     setCurrentWidget(receiveCoinsPage);
 }
 
-void WalletView::gotoSigmaPage()
+void WalletView::gotoCreatePcodePage()
 {
-    setCurrentWidget(sigmaPage);
+    setCurrentWidget(createPcodePage);
 }
 
+void WalletView::gotoLelantusPage()
+{
+    setCurrentWidget(lelantusPage);
+}
+
+#ifdef ENABLE_ELYSIUM
 void WalletView::gotoToolboxPage()
 {
     setCurrentWidget(toolboxPage);
 }
+#endif
 
 void WalletView::gotoSendCoinsPage(QString addr)
 {
     setCurrentWidget(sendCoinsPage);
 
     if (!addr.isEmpty()){
-        sendBitcoinZeroView->setAddress(addr);
+        sendBZXView->setAddress(addr);
     }
 }
 
@@ -419,11 +505,13 @@ void WalletView::gotoVerifyMessageTab(QString addr)
 
 bool WalletView::handlePaymentRequest(const SendCoinsRecipient& recipient)
 {
+#ifdef ENABLE_ELYSIUM
     if (sendCoinsTabs) {
         sendCoinsTabs->setCurrentIndex(0);
     }
+#endif
 
-    return sendBitcoinZeroView->handlePaymentRequest(recipient);
+    return sendBZXView->handlePaymentRequest(recipient);
 }
 
 void WalletView::showOutOfSyncWarning(bool fShow)
@@ -473,14 +561,14 @@ void WalletView::changePassphrase()
     dlg.exec();
 }
 
-void WalletView::unlockWallet()
+void WalletView::unlockWallet(const QString &info)
 {
     if(!walletModel)
         return;
     // Unlock wallet when requested by wallet model
     if (walletModel->getEncryptionStatus() == WalletModel::Locked)
     {
-        AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, this);
+        AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, this, info);
         dlg.setModel(walletModel);
         dlg.exec();
     }
@@ -527,4 +615,92 @@ void WalletView::showProgress(const QString &title, int nProgress)
     }
     else if (progressDialog)
         progressDialog->setValue(nProgress);
+}
+
+void WalletView::requestedSyncWarningInfo()
+{
+    Q_EMIT outOfSyncWarningClicked();
+}
+
+void WalletView::showAutomintNotification()
+{
+    auto lelantusModel = walletModel->getLelantusModel();
+    if (!lelantusModel) {
+        return;
+    }
+
+    if (!isActiveWindow() || !underMouse()) {
+        lelantusModel->sendAckMintAll(AutoMintAck::WaitUserToActive);
+        return;
+    }
+
+    automintNotification->setWindowFlags(automintNotification->windowFlags() | Qt::Popup | Qt::FramelessWindowHint);
+
+    QRect rect(this->mapToGlobal(QPoint(0, 0)), this->size());
+    auto pos = QStyle::alignedRect(
+        Qt::LeftToRight,
+        Qt::AlignRight | Qt::AlignBottom,
+        automintNotification->size(),
+        rect).topLeft();
+
+    pos.setX(pos.x());
+    pos.setY(pos.y());
+    automintNotification->move(pos);
+
+    automintNotification->show();
+    automintNotification->raise();
+}
+
+void WalletView::repositionAutomintNotification()
+{
+    if (automintNotification->isVisible()) {
+        QRect rect(this->mapToGlobal(QPoint(0, 0)), this->size());
+        auto pos = QStyle::alignedRect(
+            Qt::LeftToRight,
+            Qt::AlignRight | Qt::AlignBottom,
+            automintNotification->size(),
+            rect).topLeft();
+
+        pos.setX(pos.x());
+        pos.setY(pos.y());
+        automintNotification->move(pos);
+    }
+}
+
+void WalletView::checkMintableAmount(CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount, CAmount anonymizableBalance)
+{
+    if (automintNotification->isVisible() && anonymizableBalance == 0) {
+        // hide if notification is showing but there no any fund to anonymize
+        closeAutomintNotification();
+    }
+}
+
+void WalletView::closeAutomintNotification()
+{
+    automintNotification->close();
+}
+
+void WalletView::askMintAll(AutoMintMode mode)
+{
+    automintNotification->setVisible(false);
+
+    if (!walletModel) {
+        return;
+    }
+
+    AutoMintDialog dlg(mode, this);
+    dlg.setModel(walletModel);
+    dlg.exec();
+}
+
+bool WalletView::eventFilter(QObject *watched, QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::Type::Resize:
+    case QEvent::Type::Move:
+        repositionAutomintNotification();
+        break;
+    }
+
+    return QStackedWidget::eventFilter(watched, event);
 }

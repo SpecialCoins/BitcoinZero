@@ -1,6 +1,6 @@
 /* Copyright (c) 2003-2004, Roger Dingledine
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -90,8 +90,8 @@ STATIC bool process_win32_handle_read_completion(process_win32_handle_t *,
 
 STATIC char *format_win_cmdline_argument(const char *arg);
 STATIC char *tor_join_win_cmdline(const char *argv[]);
-#endif /* defined(PROCESS_WIN32_PRIVATE). */
+#endif /* defined(PROCESS_WIN32_PRIVATE) */
 
-#endif /* ! defined(_WIN32). */
+#endif /* defined(_WIN32) */
 
-#endif /* defined(TOR_PROCESS_WIN32_H). */
+#endif /* !defined(TOR_PROCESS_WIN32_H) */

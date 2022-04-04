@@ -1,5 +1,5 @@
-#ifndef BITCOINZERO_SIGMA_SIGMAPLUS_PROVER_H
-#define BITCOINZERO_SIGMA_SIGMAPLUS_PROVER_H
+#ifndef BZX_SIGMA_SIGMAPLUS_PROVER_H
+#define BZX_SIGMA_SIGMAPLUS_PROVER_H
 
 #include "r1_proof_generator.h"
 #include "sigmaplus_proof.h"
@@ -13,21 +13,22 @@ class SigmaPlusProver{
 
 public:
     SigmaPlusProver(const GroupElement& g,
-                    const std::vector<GroupElement>& h_gens, int n, int m);
+                    const std::vector<GroupElement>& h_gens, std::size_t n, std::size_t m);
     void proof(const std::vector<GroupElement>& commits,
                std::size_t l,
                const Exponent& r,
+               bool fPadding,
                SigmaPlusProof<Exponent, GroupElement>& proof_out);
 
 private:
     GroupElement g_;
     std::vector<GroupElement> h_;
-    int n_;
-    int m_;
+    std::size_t n_;
+    std::size_t m_;
 };
 
 } // namespace sigma
 
 #include "sigmaplus_prover.hpp"
 
-#endif // BITCOINZERO_SIGMA_SIGMAPLUS_PROVER_H
+#endif // BZX_SIGMA_SIGMAPLUS_PROVER_H

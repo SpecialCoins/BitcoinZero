@@ -1,5 +1,5 @@
-#ifndef BITCOINZERO_WALLET_WALLETEXCEPT_H
-#define BITCOINZERO_WALLET_WALLETEXCEPT_H
+#ifndef BZX_WALLET_WALLETEXCEPT_H
+#define BZX_WALLET_WALLETEXCEPT_H
 
 #include <stdexcept>
 
@@ -24,5 +24,4 @@ public:
     explicit InsufficientFunds(const std::string& what);
 };
 
-#endif // BITCOINZERO_WALLET_WALLETEXCEPT_H
-
+#endif // BZX_WALLET_WALLETEXCEPT_H

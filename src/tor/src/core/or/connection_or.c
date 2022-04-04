@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -27,7 +27,7 @@
  * Define this so we get channel internal functions, since we're implementing
  * part of a subclass (channel_tls_t).
  */
-#define TOR_CHANNEL_INTERNAL_
+#define CHANNEL_OBJECT_PRIVATE
 #define CONNECTION_OR_PRIVATE
 #define ORCONN_EVENT_PRIVATE
 #include "core/or/channel.h"
@@ -39,7 +39,7 @@
 #include "app/config/config.h"
 #include "core/mainloop/connection.h"
 #include "core/or/connection_or.h"
-#include "feature/control/control.h"
+#include "feature/control/control_events.h"
 #include "lib/crypt_ops/crypto_rand.h"
 #include "lib/crypt_ops/crypto_util.h"
 #include "feature/dirauth/reachability.h"
@@ -94,13 +94,6 @@ static void connection_or_tls_renegotiated_cb(tor_tls_t *tls, void *_conn);
 static unsigned int
 connection_or_is_bad_for_new_circs(or_connection_t *or_conn);
 static void connection_or_mark_bad_for_new_circs(or_connection_t *or_conn);
-
-/*
- * Call this when changing connection state, so notifications to the owning
- * channel can be handled.
- */
-
-static void connection_or_change_state(or_connection_t *conn, uint8_t state);
 
 static void connection_or_check_canonicity(or_connection_t *conn,
                                            int started_here);
@@ -414,13 +407,12 @@ void
 connection_or_event_status(or_connection_t *conn, or_conn_status_event_t tp,
                            int reason)
 {
-  orconn_event_msg_t msg;
+  orconn_status_msg_t *msg = tor_malloc(sizeof(*msg));
 
-  msg.type = ORCONN_MSGTYPE_STATUS;
-  msg.u.status.gid = conn->base_.global_identifier;
-  msg.u.status.status = tp;
-  msg.u.status.reason = reason;
-  orconn_event_publish(&msg);
+  msg->gid = conn->base_.global_identifier;
+  msg->status = tp;
+  msg->reason = reason;
+  orconn_status_publish(msg);
   control_event_or_conn_status(conn, tp, reason);
 }
 
@@ -433,34 +425,33 @@ connection_or_event_status(or_connection_t *conn, or_conn_status_event_t tp,
 static void
 connection_or_state_publish(const or_connection_t *conn, uint8_t state)
 {
-  orconn_event_msg_t msg;
+  orconn_state_msg_t *msg = tor_malloc(sizeof(*msg));
 
-  msg.type = ORCONN_MSGTYPE_STATE;
-  msg.u.state.gid = conn->base_.global_identifier;
+  msg->gid = conn->base_.global_identifier;
   if (conn->is_pt) {
     /* Do extra decoding because conn->proxy_type indicates the proxy
      * protocol that tor uses to talk with the transport plugin,
      * instead of PROXY_PLUGGABLE. */
     tor_assert_nonfatal(conn->proxy_type != PROXY_NONE);
-    msg.u.state.proxy_type = PROXY_PLUGGABLE;
+    msg->proxy_type = PROXY_PLUGGABLE;
   } else {
-    msg.u.state.proxy_type = conn->proxy_type;
+    msg->proxy_type = conn->proxy_type;
   }
-  msg.u.state.state = state;
+  msg->state = state;
   if (conn->chan) {
-    msg.u.state.chan = TLS_CHAN_TO_BASE(conn->chan)->global_identifier;
+    msg->chan = TLS_CHAN_TO_BASE(conn->chan)->global_identifier;
   } else {
-    msg.u.state.chan = 0;
+    msg->chan = 0;
   }
-  orconn_event_publish(&msg);
+  orconn_state_publish(msg);
 }
 
 /** Call this to change or_connection_t states, so the owning channel_tls_t can
  * be notified.
  */
 
-static void
-connection_or_change_state(or_connection_t *conn, uint8_t state)
+MOCK_IMPL(STATIC void,
+connection_or_change_state,(or_connection_t *conn, uint8_t state))
 {
   tor_assert(conn);
 
@@ -728,6 +719,19 @@ connection_or_finished_flushing(or_connection_t *conn)
 
   switch (conn->base_.state) {
     case OR_CONN_STATE_PROXY_HANDSHAKING:
+      /* PROXY_HAPROXY gets connected by receiving an ack. */
+      if (conn->proxy_type == PROXY_HAPROXY) {
+        tor_assert(TO_CONN(conn)->proxy_state == PROXY_HAPROXY_WAIT_FOR_FLUSH);
+        TO_CONN(conn)->proxy_state = PROXY_CONNECTED;
+
+        if (connection_tls_start_handshake(conn, 0) < 0) {
+          /* TLS handshaking error of some kind. */
+          connection_or_close_for_error(conn, 0);
+          return -1;
+        }
+        break;
+      }
+      break;
     case OR_CONN_STATE_OPEN:
     case OR_CONN_STATE_OR_HANDSHAKING_V2:
     case OR_CONN_STATE_OR_HANDSHAKING_V3:
@@ -767,8 +771,9 @@ connection_or_finished_connecting(or_connection_t *or_conn)
       return -1;
     }
 
-    connection_start_reading(conn);
     connection_or_change_state(or_conn, OR_CONN_STATE_PROXY_HANDSHAKING);
+    connection_start_reading(conn);
+
     return 0;
   }
 
@@ -2308,6 +2313,8 @@ connection_or_write_cell_to_buf(const cell_t *cell, or_connection_t *conn)
 
   cell_pack(&networkcell, cell, conn->wide_circ_ids);
 
+  /* We need to count padding cells from this non-packed code path
+   * since they are sent via chan->write_cell() (which is not packed) */
   rep_hist_padding_count_write(PADDING_TYPE_TOTAL);
   if (cell->command == CELL_PADDING)
     rep_hist_padding_count_write(PADDING_TYPE_CELL);
@@ -2318,7 +2325,7 @@ connection_or_write_cell_to_buf(const cell_t *cell, or_connection_t *conn)
   if (conn->chan) {
     channel_timestamp_active(TLS_CHAN_TO_BASE(conn->chan));
 
-    if (TLS_CHAN_TO_BASE(conn->chan)->currently_padding) {
+    if (TLS_CHAN_TO_BASE(conn->chan)->padding_enabled) {
       rep_hist_padding_count_write(PADDING_TYPE_ENABLED_TOTAL);
       if (cell->command == CELL_PADDING)
         rep_hist_padding_count_write(PADDING_TYPE_ENABLED_CELL);
@@ -2348,6 +2355,7 @@ connection_or_write_var_cell_to_buf,(const var_cell_t *cell,
   if (conn->base_.state == OR_CONN_STATE_OR_HANDSHAKING_V3)
     or_handshake_state_record_var_cell(conn, conn->handshake_state, cell, 0);
 
+  rep_hist_padding_count_write(PADDING_TYPE_TOTAL);
   /* Touch the channel's active timestamp if there is one */
   if (conn->chan)
     channel_timestamp_active(TLS_CHAN_TO_BASE(conn->chan));

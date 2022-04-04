@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -44,14 +44,13 @@ class CoinControlDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit CoinControlDialog(const PlatformStyle *platformStyle, QWidget *parent = 0);
+    explicit CoinControlDialog(bool anonymousMode, const PlatformStyle *platformStyle, QWidget *parent = 0);
     ~CoinControlDialog();
 
     void setModel(WalletModel *model);
 
     // static because also called from sendcoinsdialog
-    static void updateLabels(WalletModel*, QDialog*);
-    static QString getPriorityLabel(double dPriority, double mempoolEstimatePriority);
+    static void updateLabels(WalletModel*, QDialog*, bool anonymousMode = false);
 
     static QList<CAmount> payAmounts;
     static CCoinControl *coinControl;
@@ -71,6 +70,8 @@ private:
 
     const PlatformStyle *platformStyle;
 
+    bool anonymousMode;
+
     void sortView(int, Qt::SortOrder);
     void updateView();
 
@@ -82,7 +83,6 @@ private:
         COLUMN_ADDRESS,
         COLUMN_DATE,
         COLUMN_CONFIRMATIONS,
-        COLUMN_PRIORITY,
         COLUMN_TXHASH,
         COLUMN_VOUT_INDEX,
     };
@@ -101,7 +101,6 @@ private Q_SLOTS:
     void clipboardFee();
     void clipboardAfterFee();
     void clipboardBytes();
-    void clipboardPriority();
     void clipboardLowOutput();
     void clipboardChange();
     void radioTreeMode(bool);

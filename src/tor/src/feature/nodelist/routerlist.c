@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -67,12 +67,13 @@
 #include "core/mainloop/mainloop.h"
 #include "core/or/policies.h"
 #include "feature/client/bridges.h"
-#include "feature/control/control.h"
+#include "feature/control/control_events.h"
 #include "feature/dirauth/authmode.h"
 #include "feature/dirauth/process_descs.h"
 #include "feature/dirauth/reachability.h"
 #include "feature/dircache/dirserv.h"
 #include "feature/dirclient/dirclient.h"
+#include "feature/dirclient/dirclient_modes.h"
 #include "feature/dirclient/dlstatus.h"
 #include "feature/dircommon/directory.h"
 #include "feature/nodelist/authcert.h"
@@ -954,20 +955,18 @@ routerlist_free_(routerlist_t *rl)
   smartlist_free(rl->routers);
   smartlist_free(rl->old_routers);
   if (rl->desc_store.mmap) {
-    int res = tor_munmap_file(routerlist->desc_store.mmap);
+    int res = tor_munmap_file(rl->desc_store.mmap);
     if (res != 0) {
       log_warn(LD_FS, "Failed to munmap routerlist->desc_store.mmap");
     }
   }
   if (rl->extrainfo_store.mmap) {
-    int res = tor_munmap_file(routerlist->extrainfo_store.mmap);
+    int res = tor_munmap_file(rl->extrainfo_store.mmap);
     if (res != 0) {
       log_warn(LD_FS, "Failed to munmap routerlist->extrainfo_store.mmap");
     }
   }
   tor_free(rl);
-
-  router_dir_info_changed();
 }
 
 /** Log information about how much memory is being used for routerlist,
@@ -1426,8 +1425,10 @@ routerlist_reparse_old(routerlist_t *rl, signed_descriptor_t *sd)
 void
 routerlist_free_all(void)
 {
-  routerlist_free(routerlist);
-  routerlist = NULL;
+  routerlist_t *rl = routerlist;
+  routerlist = NULL; // Prevent internals of routerlist_free() from using
+                     // routerlist.
+  routerlist_free(rl);
   dirlist_free_all();
   if (warned_nicknames) {
     SMARTLIST_FOREACH(warned_nicknames, char *, cp, tor_free(cp));
@@ -1459,12 +1460,13 @@ router_descriptor_is_older_than,(const routerinfo_t *router, int seconds))
 }
 
 /** Add <b>router</b> to the routerlist, if we don't already have it.  Replace
- * older entries (if any) with the same key.  Note: Callers should not hold
- * their pointers to <b>router</b> if this function fails; <b>router</b>
- * will either be inserted into the routerlist or freed. Similarly, even
- * if this call succeeds, they should not hold their pointers to
- * <b>router</b> after subsequent calls with other routerinfo's -- they
- * might cause the original routerinfo to get freed.
+ * older entries (if any) with the same key.
+ *
+ * Note: Callers should not hold their pointers to <b>router</b> if this
+ * function fails; <b>router</b> will either be inserted into the routerlist or
+ * freed. Similarly, even if this call succeeds, they should not hold their
+ * pointers to <b>router</b> after subsequent calls with other routerinfo's --
+ * they might cause the original routerinfo to get freed.
  *
  * Returns the status for the operation. Might set *<b>msg</b> if it wants
  * the poster of the router to know something.
@@ -1926,6 +1928,8 @@ routerlist_remove_old_routers(void)
 void
 routerlist_descriptors_added(smartlist_t *sl, int from_cache)
 {
+  // XXXX use pubsub mechanism here.
+
   tor_assert(sl);
   control_event_descriptors_changed(sl);
   SMARTLIST_FOREACH_BEGIN(sl, routerinfo_t *, ri) {
@@ -2401,7 +2405,7 @@ max_dl_per_request(const or_options_t *options, int purpose)
   }
   /* If we're going to tunnel our connections, we can ask for a lot more
    * in a request. */
-  if (directory_must_use_begindir(options)) {
+  if (dirclient_must_use_begindir(options)) {
     max = 500;
   }
   return max;
@@ -2444,7 +2448,7 @@ launch_descriptor_downloads(int purpose,
   if (!n_downloadable)
     return;
 
-  if (!directory_fetches_dir_info_early(options)) {
+  if (!dirclient_fetches_dir_info_early(options)) {
     if (n_downloadable >= MAX_DL_TO_DELAY) {
       log_debug(LD_DIR,
                 "There are enough downloadable %ss to launch requests.",
@@ -2535,7 +2539,7 @@ update_consensus_router_descriptor_downloads(time_t now, int is_vote,
   int n_delayed=0, n_have=0, n_would_reject=0, n_wouldnt_use=0,
     n_inprogress=0, n_in_oldrouters=0;
 
-  if (directory_too_idle_to_fetch_descriptors(options, now))
+  if (dirclient_too_idle_to_fetch_descriptors(options, now))
     goto done;
   if (!consensus)
     goto done;
@@ -2555,8 +2559,15 @@ update_consensus_router_descriptor_downloads(time_t now, int is_vote,
   map = digestmap_new();
   list_pending_descriptor_downloads(map, 0);
   SMARTLIST_FOREACH_BEGIN(consensus->routerstatus_list, void *, rsp) {
-      routerstatus_t *rs =
-        is_vote ? &(((vote_routerstatus_t *)rsp)->status) : rsp;
+      routerstatus_t *rs;
+      vote_routerstatus_t *vrs;
+      if (is_vote) {
+        rs = &(((vote_routerstatus_t *)rsp)->status);
+        vrs = rsp;
+      } else {
+        rs = rsp;
+        vrs = NULL;
+      }
       signed_descriptor_t *sd;
       if ((sd = router_get_by_descriptor_digest(rs->descriptor_digest))) {
         const routerinfo_t *ri;
@@ -2581,7 +2592,7 @@ update_consensus_router_descriptor_downloads(time_t now, int is_vote,
         ++n_delayed; /* Not ready for retry. */
         continue;
       }
-      if (authdir && dirserv_would_reject_router(rs)) {
+      if (authdir && is_vote && dirserv_would_reject_router(rs, vrs)) {
         ++n_would_reject;
         continue; /* We would throw it out immediately. */
       }
@@ -2856,7 +2867,7 @@ int
 router_differences_are_cosmetic(const routerinfo_t *r1, const routerinfo_t *r2)
 {
   time_t r1pub, r2pub;
-  long time_difference;
+  time_t time_difference;
   tor_assert(r1 && r2);
 
   /* r1 should be the one that was published first. */
@@ -2920,7 +2931,9 @@ router_differences_are_cosmetic(const routerinfo_t *r1, const routerinfo_t *r2)
    * give or take some slop? */
   r1pub = r1->cache_info.published_on;
   r2pub = r2->cache_info.published_on;
-  time_difference = labs(r2->uptime - (r1->uptime + (r2pub - r1pub)));
+  time_difference = r2->uptime - (r1->uptime + (r2pub - r1pub));
+  if (time_difference < 0)
+    time_difference = - time_difference;
   if (time_difference > ROUTER_ALLOW_UPTIME_DRIFT &&
       time_difference > r1->uptime * .05 &&
       time_difference > r2->uptime * .05)
@@ -2969,7 +2982,7 @@ routerinfo_incompatible_with_extrainfo(const crypto_pk_t *identity_pkey,
   digest256_matches = tor_memeq(ei->digest256,
                                 sd->extra_info_digest256, DIGEST256_LEN);
   digest256_matches |=
-    tor_mem_is_zero(sd->extra_info_digest256, DIGEST256_LEN);
+    fast_mem_is_zero(sd->extra_info_digest256, DIGEST256_LEN);
 
   /* The identity must match exactly to have been generated at the same time
    * by the same router. */
@@ -3053,7 +3066,7 @@ routerinfo_has_curve25519_onion_key(const routerinfo_t *ri)
     return 0;
   }
 
-  if (tor_mem_is_zero((const char*)ri->onion_curve25519_pkey->public_key,
+  if (fast_mem_is_zero((const char*)ri->onion_curve25519_pkey->public_key,
                       CURVE25519_PUBKEY_LEN)) {
     return 0;
   }

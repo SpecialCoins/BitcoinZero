@@ -1,6 +1,6 @@
 /* Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -13,10 +13,12 @@
 #include "feature/dirauth/bwauth.h"
 
 #include "app/config/config.h"
+#include "feature/dirauth/dirauth_sys.h"
 #include "feature/nodelist/networkstatus.h"
 #include "feature/nodelist/routerlist.h"
 #include "feature/dirparse/ns_parse.h"
 
+#include "feature/dirauth/dirauth_options_st.h"
 #include "feature/nodelist/routerinfo_st.h"
 #include "feature/nodelist/vote_routerstatus_st.h"
 
@@ -56,7 +58,7 @@ dirserv_get_last_n_measured_bws(void)
 }
 
 /** Measured bandwidth cache entry */
-typedef struct mbw_cache_entry_s {
+typedef struct mbw_cache_entry_t {
   long mbw_kb;
   time_t as_of;
 } mbw_cache_entry_t;
@@ -182,7 +184,7 @@ dirserv_get_credible_bandwidth_kb(const routerinfo_t *ri)
   /* Check if we have a measured bandwidth, and check the threshold if not */
   if (!(dirserv_query_measured_bw_cache_kb(ri->cache_info.identity_digest,
                                        &mbw_kb, NULL))) {
-    threshold = get_options()->MinMeasuredBWsForAuthToIgnoreAdvertised;
+    threshold = dirauth_get_options()->MinMeasuredBWsForAuthToIgnoreAdvertised;
     if (routers_with_measured_bw > threshold) {
       /* Return zero for unmeasured bandwidth if we are above threshold */
       bw_kb = 0;
@@ -199,9 +201,32 @@ dirserv_get_credible_bandwidth_kb(const routerinfo_t *ri)
 }
 
 /**
- * Read the measured bandwidth list file, apply it to the list of
- * vote_routerstatus_t and store all the headers in <b>bw_file_headers</b>.
+ * Read the measured bandwidth list <b>from_file</b>:
+ * - store all the headers in <b>bw_file_headers</b>,
+ * - apply bandwidth lines to the list of vote_routerstatus_t in
+ *   <b>routerstatuses</b>,
+ * - cache bandwidth lines for dirserv_get_bandwidth_for_router(),
+ * - expire old entries in the measured bandwidth cache, and
+ * - store the DIGEST_SHA256 of the contents of the file in <b>digest_out</b>.
+ *
  * Returns -1 on error, 0 otherwise.
+ *
+ * If the file can't be read, or is empty:
+ * - <b>bw_file_headers</b> is empty,
+ * - <b>routerstatuses</b> is not modified,
+ * - the measured bandwidth cache is not modified, and
+ * - <b>digest_out</b> is the zero-byte digest.
+ *
+ * Otherwise, if there is an error later in the file:
+ * - <b>bw_file_headers</b> contains all the headers up to the error,
+ * - <b>routerstatuses</b> is updated with all the relay lines up to the error,
+ * - the measured bandwidth cache is updated with all the relay lines up to
+ *   the error,
+ * - if the timestamp is valid and recent, old entries in the  measured
+ *   bandwidth cache are expired, and
+ * - <b>digest_out</b> is the digest up to the first read error (if any).
+ *   The digest is taken over all the readable file contents, even if the
+ *   file is outdated or unparseable.
  */
 int
 dirserv_read_measured_bandwidths(const char *from_file,
@@ -223,15 +248,12 @@ dirserv_read_measured_bandwidths(const char *from_file,
   size_t n = 0;
   crypto_digest_t *digest = crypto_digest256_new(DIGEST_SHA256);
 
-  /* Initialise line, so that we can't possibly run off the end. */
-
   if (fp == NULL) {
     log_warn(LD_CONFIG, "Can't open bandwidth file at configured location: %s",
              from_file);
     goto err;
   }
 
-  /* If fgets fails, line is either unmodified, or indeterminate. */
   if (tor_getline(&line,&n,fp) <= 0) {
     log_warn(LD_DIRSERV, "Empty bandwidth file");
     goto err;
@@ -345,6 +367,9 @@ dirserv_read_measured_bandwidths(const char *from_file,
  * the header block yet. If we encounter an incomplete bw line, return -1 but
  * don't warn since there could be additional header lines coming. If we
  * encounter a proper bw line, return 0 (and we got past the headers).
+ *
+ * If the line contains "vote=0", stop parsing it, and return -1, so that the
+ * line is ignored during voting.
  */
 STATIC int
 measured_bw_line_parse(measured_bw_line_t *out, const char *orig_line,

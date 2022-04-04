@@ -1,5 +1,5 @@
-#ifndef SIGMA_COINSPEND_H
-#define SIGMA_COINSPEND_H
+#ifndef BZX_SIGMA_COINSPEND_H
+#define BZX_SIGMA_COINSPEND_H
 
 #include "coin.h"
 #include "sigmaplus_proof.h"
@@ -16,7 +16,7 @@ public:
     template<typename Stream>
     CoinSpend(const Params* p,  Stream& strm):
         params(p),
-        denomination(CoinDenomination::SIGMA_DENOM_X1),
+        denomination(CoinDenomination::SIGMA_DENOM_1),
         sigmaProof(p->get_n(), p->get_m()) {
             strm >> * this;
         }
@@ -25,11 +25,14 @@ public:
     CoinSpend(const Params* p,
               const PrivateCoin& coin,
               const std::vector<sigma::PublicCoin>& anonymity_set,
-              const SpendMetaData& m);
+              const SpendMetaData& m,
+              bool fPadding);
 
     void updateMetaData(const PrivateCoin& coin, const SpendMetaData& m);
 
     const Scalar& getCoinSerialNumber();
+
+    const SigmaPlusProof<Scalar, GroupElement>& getProof();
 
     CoinDenomination getDenomination() const;
 
@@ -49,11 +52,15 @@ public:
 
     bool HasValidSerial() const;
 
-    bool Verify(const std::vector<sigma::PublicCoin>& anonymity_set, const SpendMetaData &m) const;
+    bool Verify(
+            const std::vector<sigma::PublicCoin>& anonymity_set,
+            const SpendMetaData &m,
+            bool fPadding,
+            bool fSkipVerification = false) const;
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
-    void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(sigmaProof);
         READWRITE(coinSerialNumber);
         READWRITE(version);
@@ -70,7 +77,7 @@ public:
         READWRITE(ecdsaPubkey);
         READWRITE(ecdsaSignature);
     }
-    
+
     uint256 signatureHash(const SpendMetaData& m) const;
 
 private:
@@ -87,4 +94,4 @@ private:
 
 } //namespace sigma
 
-#endif // SIGMA_COINSPEND_H
+#endif // BZX_SIGMA_COINSPEND_H

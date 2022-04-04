@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -28,9 +28,12 @@ typedef std::map<int, uint256> MapCheckpoints;
 
 struct CCheckpointData {
     MapCheckpoints mapCheckpoints;
-    int64_t nTimeLastCheckpoint;
-    int64_t nTransactionsLastCheckpoint;
-    double fTransactionsPerDay;
+};
+
+struct ChainTxData {
+    int64_t nTime;
+    int64_t nTxCount;
+    double dTxRate;
 };
 
 /**
@@ -67,19 +70,20 @@ public:
     uint64_t PruneAfterHeight() const { return nPruneAfterHeight; }
     /** Make miner stop after a block is found. In RPC, don't return until nGenProcLimit blocks are generated */
     bool MineBlocksOnDemand() const { return fMineBlocksOnDemand; }
-    /** In the future use NetworkIDString() for RPC fields */
-    bool TestnetToBeDeprecatedFieldRPC() const { return fTestnetToBeDeprecatedFieldRPC; }
+    /** Allow nodes with the same address and multiple ports */
+    bool AllowMultiplePorts() const { return fAllowMultiplePorts; }
     /** Return the BIP70 network string (main, test or regtest) */
     std::string NetworkIDString() const { return strNetworkID; }
     const std::vector<CDNSSeedData>& DNSSeeds() const { return vSeeds; }
     const std::vector<unsigned char>& Base58Prefix(Base58Type type) const { return base58Prefixes[type]; }
     const std::vector<SeedSpec6>& FixedSeeds() const { return vFixedSeeds; }
     const CCheckpointData& Checkpoints() const { return checkpointData; }
-    /** bznode code from Dash*/
+    /** masternode code from Dash*/
     int64_t MaxTipAge() const { return nMaxTipAge; }
     int PoolMaxTransactions() const { return nPoolMaxTransactions; }
     int FulfilledRequestExpireTime() const { return nFulfilledRequestExpireTime; }
-    std::string SporkPubKey() const { return strSporkPubKey; }
+
+    const ChainTxData& TxData() const { return chainTxData; }
 
 protected:
     CChainParams() {}
@@ -97,14 +101,14 @@ protected:
     bool fDefaultConsistencyChecks;
     bool fRequireStandard;
     bool fMineBlocksOnDemand;
-    bool fTestnetToBeDeprecatedFieldRPC;
+    bool fAllowMultiplePorts;
     CCheckpointData checkpointData;
 	
-    /** bznode params*/
+    /** masternode params*/
     long nMaxTipAge;
     int nPoolMaxTransactions;
     int nFulfilledRequestExpireTime;
-    std::string strSporkPubKey;
+    ChainTxData chainTxData;
 };
 
 /**

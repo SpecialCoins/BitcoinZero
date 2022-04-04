@@ -41,6 +41,26 @@
         <source>&amp;Delete</source>
         <translation>&amp;Xó&amp;a</translation>
     </message>
+    <message>
+        <source>Choose the address to send coins to</source>
+        <translation>Chọn địa chỉ để gửi coin đến</translation>
+    </message>
+    <message>
+        <source>Choose the address to receive coins with</source>
+        <translation>Chọn địa chỉ để nhận coin</translation>
+    </message>
+    <message>
+        <source>C&amp;hoose</source>
+        <translation>Chọn</translation>
+    </message>
+    <message>
+        <source>Sending addresses</source>
+        <translation>Địa chỉ gửi đến</translation>
+    </message>
+    <message>
+        <source>Receiving addresses</source>
+        <translation>Địa chỉ nhận</translation>
+    </message>
     </context>
 <context>
     <name>AddressTableModel</name>
@@ -76,7 +96,7 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>Chứ ký &amp; Tin nhắn...</translation>
@@ -166,8 +186,8 @@
         <translation>Đánh chỉ số (indexing) lại các khối (blocks) trên ổ đĩa ...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>Gửi coins đến tài khoản BitcoinZero</translation>
+        <source>Send coins to a address</source>
+        <translation>Gửi coins đến tài khoản BZX</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -186,8 +206,8 @@
         <translation>&amp;Tin nhắn xác thực</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -214,12 +234,12 @@
         <translation>Mã hoá các khoá bí mật trong Ví của bạn.</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
-        <translation>Dùng địa chỉ BitcoinZero của bạn ký các tin nhắn để xác minh những nội dung tin nhắn đó là của bạn.</translation>
+        <source>Sign messages with your addresses to prove you own them</source>
+        <translation>Dùng địa chỉ BZX của bạn ký các tin nhắn để xác minh những nội dung tin nhắn đó là của bạn.</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
-        <translation>Kiểm tra các tin nhắn để chắc chắn rằng chúng được ký bằng các địa chỉ BitcoinZero xác định.</translation>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
+        <translation>Kiểm tra các tin nhắn để chắc chắn rằng chúng được ký bằng các địa chỉ BZX xác định.</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -238,8 +258,8 @@
         <translation>Thanh công cụ (toolbar)</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>Yêu cầu thanh toán(tạo mã QR và địa chỉ BitcoinZero: URIs)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>Yêu cầu thanh toán(tạo mã QR và địa chỉ BZX: URLs)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -250,32 +270,12 @@
         <translation>Hiện thỉ danh sách các địa chỉ và nhãn đã dùng để nhận.</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>Mở BitcoinZero: URI hoặc yêu cầu thanh toán</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>Mở BZX:URL hoặc yêu cầu thanh toán</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>7Tùy chọn dòng lệnh</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n giờ</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n ngày</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n tuần</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 và %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n năm</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -355,7 +355,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>Ví tiền &lt;b&gt; đã được mã hóa&lt;/b&gt;và hiện &lt;b&gt;đang khóa&lt;/b&gt;</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -369,10 +369,6 @@
     <message>
         <source>Amount:</source>
         <translation>Lượng:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Tầm quan trọng:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -413,10 +409,6 @@
     <message>
         <source>Confirmed</source>
         <translation>Đã xác nhận</translation>
-    </message>
-    <message>
-        <source>Priority</source>
-        <translation>Tầm quan trọng</translation>
     </message>
     </context>
 <context>
@@ -488,6 +480,17 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Ẩn</translation>
+    </message>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     <message>
         <source>Open URI</source>
@@ -533,8 +536,8 @@
         <translation>Ví</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a SOCKS5 proxy.</source>
-        <translation>Kết nối đến máy chủ BitcoinZero thông qua SOCKS5 proxy.</translation>
+        <source>Connect to the BZX network through a SOCKS5 proxy.</source>
+        <translation>Kết nối đến máy chủ BZX thông qua SOCKS5 proxy.</translation>
     </message>
     <message>
         <source>Proxy &amp;IP:</source>
@@ -616,6 +619,13 @@
         <source>Amount</source>
         <translation>Lượng</translation>
     </message>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 và %2</translation>
+    </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -785,6 +795,10 @@
         <translation>URI</translation>
     </message>
     <message>
+        <source>Amount</source>
+        <translation>Lượng</translation>
+    </message>
+    <message>
         <source>Message</source>
         <translation>Tin nhắn</translation>
     </message>
@@ -839,10 +853,6 @@
         <translation>Lượng:</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>Tầm quan trọng:</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>Phí:</translation>
     </message>
@@ -881,10 +891,6 @@
     <message>
         <source>(read the tooltip)</source>
         <translation>(Đọc hướng dẫn)</translation>
-    </message>
-    <message>
-        <source>Confirmation time:</source>
-        <translation>Thời gian xác nhận</translation>
     </message>
     <message>
         <source>normal</source>
@@ -975,6 +981,10 @@
         <source>Message</source>
         <translation>Tin nhắn</translation>
     </message>
+    <message>
+        <source>Amount</source>
+        <translation>Lượng</translation>
+    </message>
     </context>
 <context>
     <name>TransactionDescDialog</name>
@@ -1002,14 +1012,14 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Lựa chọn:</translation>
     </message>
     <message>
-        <source>BitcoinZero Core</source>
-        <translation>BitcoinZero Core</translation>
+        <source>BZX Core</source>
+        <translation>BZX Core</translation>
     </message>
     <message>
         <source>(default: %u)</source>

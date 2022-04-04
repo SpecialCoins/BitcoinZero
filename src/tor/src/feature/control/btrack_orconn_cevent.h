@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2019, The Tor Project, Inc. */
+/* Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -7,6 +7,7 @@
  **/
 
 #ifndef TOR_BTRACK_ORCONN_CEVENT_H
+#define TOR_BTRACK_ORCONN_CEVENT_H
 
 #include "feature/control/btrack_orconn.h"
 
@@ -14,4 +15,4 @@ void bto_cevent_anyconn(const bt_orconn_t *);
 void bto_cevent_apconn(const bt_orconn_t *);
 void bto_cevent_reset(void);
 
-#endif  /* defined(TOR_BTRACK_ORCONN_CEVENT_H) */
+#endif /* !defined(TOR_BTRACK_ORCONN_CEVENT_H) */

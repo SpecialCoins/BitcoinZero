@@ -1,4 +1,4 @@
-// Copyright (c) 2011-2015 The Bitcoin Core developers
+// Copyright (c) 2011-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -36,6 +36,11 @@ public:
     explicit RPCConsole(const PlatformStyle *platformStyle, QWidget *parent);
     ~RPCConsole();
 
+    static bool RPCParseCommandLine(std::string &strResult, const std::string &strCommand, bool fExecute, std::string * const pstrFilteredOut = NULL);
+    static bool RPCExecuteCommandLine(std::string &strResult, const std::string &strCommand, std::string * const pstrFilteredOut = NULL) {
+        return RPCParseCommandLine(strResult, strCommand, true, pstrFilteredOut);
+    }
+
     void setClientModel(ClientModel *model);
 
     enum MessageClass {
@@ -50,7 +55,8 @@ public:
         TAB_INFO = 0,
         TAB_CONSOLE = 1,
         TAB_GRAPH = 2,
-        TAB_PEERS = 3
+        TAB_PEERS = 3,
+        TAB_REPAIR = 4
     };
 
 protected:
@@ -60,6 +66,7 @@ protected:
 private Q_SLOTS:
     void on_lineEdit_returnPressed();
     void on_tabWidget_currentChanged(int index);
+    /** open the debug.log from the current datadir */
     void on_openDebugLogfileButton_clicked();
     /** change the time range of the network traffic graph */
     void on_sldGraphRange_valueChanged(int value);
@@ -78,6 +85,7 @@ private Q_SLOTS:
     void clearSelectedNode();
 
 public Q_SLOTS:
+    void clear(bool clearHistory = true);
     /** Wallet repair options */
     void walletSalvage();
     void walletRescan();
@@ -85,9 +93,6 @@ public Q_SLOTS:
     void walletZaptxes2();
     void walletUpgrade();
     void walletReindex();
-    void walletResync();
-    void clear(bool clearHistory = true);
-    void ResetBlock();
     void fontBigger();
     void fontSmaller();
     void setFontSize(int newSize);
@@ -95,8 +100,8 @@ public Q_SLOTS:
     void message(int category, const QString &message, bool html = false);
     /** Set number of connections shown in the UI */
     void setNumConnections(int count);
-    /** Set number of masternodes shown in the UI */
-    void setbznodeCount(const QString &strbznodes);
+    /** Set network state shown in the UI */
+    void setNetworkActive(bool networkActive);
     /** Set number of blocks and last block date shown in the UI */
     void setNumBlocks(int count, const QDateTime& blockDate, double nVerificationProgress, bool headers);
     /** Set size (number of transactions and memory usage) of the mempool in the UI */
@@ -107,6 +112,8 @@ public Q_SLOTS:
     void scrollToEnd();
     /** Handle selection of peer in peers list */
     void peerSelected(const QItemSelection &selected, const QItemSelection &deselected);
+    /** Handle selection caching before update */
+    void peerLayoutAboutToChange();
     /** Handle updated peer information */
     void peerLayoutChanged();
     /** Disconnect a selected node on the Peers tab */
@@ -122,15 +129,17 @@ Q_SIGNALS:
     // For RPC command executor
     void stopExecutor();
     void cmdRequest(const QString &command);
+    /** Get restart command-line parameters and handle restart */
     void handleRestart(QStringList args);
 
 private:
     static QString FormatBytes(quint64 bytes);
     void startExecutor();
     void setTrafficGraphRange(int mins);
-    void buildParameterlist(QString arg);
     /** show detailed information on ui about selected node */
     void updateNodeDetail(const CNodeCombinedStats *stats);
+    /** Build parameter list for restart */
+    void buildParameterlist(QString arg);
 
     enum ColumnWidths
     {
@@ -146,7 +155,8 @@ private:
     ClientModel *clientModel;
     QStringList history;
     int historyPtr;
-    NodeId cachedNodeid;
+    QString cmdBeforeBrowsing;
+    QList<NodeId> cachedNodeids;
     const PlatformStyle *platformStyle;
     RPCTimerInterface *rpcTimerInterface;
     QMenu *peersTableContextMenu;
@@ -154,6 +164,9 @@ private:
     int consoleFontSize;
     QCompleter *autoCompleter;
     QThread thread;
+
+    /** Update UI with latest network info from model. */
+    void updateNetworkState();
 };
 
 #endif // BITCOIN_QT_RPCCONSOLE_H

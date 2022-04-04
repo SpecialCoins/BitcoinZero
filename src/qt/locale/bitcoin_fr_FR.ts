@@ -41,10 +41,46 @@
         <source>&amp;Delete</source>
         <translation>&amp;Supprimer</translation>
     </message>
+    <message>
+        <source>C&amp;hoose</source>
+        <translation>C&amp;oisir</translation>
+    </message>
+    <message>
+        <source>Copy &amp;Label</source>
+        <translation>Copier &amp;Étiquette </translation>
+    </message>
+    <message>
+        <source>&amp;Edit</source>
+        <translation>&amp;Éditer </translation>
+    </message>
+    <message>
+        <source>Export Address List</source>
+        <translation>Exporter la liste d'adresses</translation>
+    </message>
+    <message>
+        <source>Comma separated file (*.csv)</source>
+        <translation>Valeurs séparées par des virgules (*.csv)</translation>
+    </message>
+    <message>
+        <source>Exporting Failed</source>
+        <translation>Échec de l'export</translation>
+    </message>
     </context>
 <context>
     <name>AddressTableModel</name>
-    </context>
+    <message>
+        <source>Label</source>
+        <translation>Étiquette</translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation>Adresse</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(aucune étiquette)</translation>
+    </message>
+</context>
 <context>
     <name>AskPassphraseDialog</name>
     <message>
@@ -63,6 +99,22 @@
         <source>Repeat new passphrase</source>
         <translation>Répétez la phrase de passe</translation>
     </message>
+    <message>
+        <source>Encrypt wallet</source>
+        <translation>Chiffrer le porte-monnaie</translation>
+    </message>
+    <message>
+        <source>Unlock wallet</source>
+        <translation>Déverrouiller le porte-monnaie</translation>
+    </message>
+    <message>
+        <source>Decrypt wallet</source>
+        <translation>Décrypter le porte-monnaie</translation>
+    </message>
+    <message>
+        <source>Wallet encrypted</source>
+        <translation>Porte-monnaie chiffré</translation>
+    </message>
     </context>
 <context>
     <name>BanTableModel</name>
@@ -76,7 +128,7 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>Signer &amp;message...</translation>
@@ -166,8 +218,8 @@
         <translation>Réindexer les blocs sur le disque...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>Envoyer des pièces à une adresse BitcoinZero</translation>
+        <source>Send coins to a address</source>
+        <translation>Envoyer des pièces à une adresse BZX</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -190,8 +242,8 @@
         <translation>&amp;Vérification du message</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -218,8 +270,8 @@
         <translation>Crypter les clé privées qui appartiennent votre portefeuille</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
-        <translation>Signer vos messages avec vos adresses BitcoinZero pour prouver que vous les détenez</translation>
+        <source>Sign messages with your addresses to prove you own them</source>
+        <translation>Signer vos messages avec vos adresses BZX pour prouver que vous les détenez</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -238,52 +290,28 @@
         <translation>Barre d'outils des onglets</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>Demander des paiements (générer QR codes et BitcoinZero: URIs)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>Demander des paiements (générer QR codes et BZX: URIs)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
         <translation>Montrer la liste des adresses d'envois utilisées et les étiquettes</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>Ouvrir un BitcoinZero: URI ou demande de paiement</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>Ouvrir un BZX: URI ou demande de paiement</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>&amp;Options de ligne de commande</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to BitcoinZero network</source>
-        <translation><numerusform>%n connexion active au réseau BitcoinZero</numerusform><numerusform>%n connexions actives au réseau BitcoinZero</numerusform></translation>
+        <source>%n active connection(s) to BZX network</source>
+        <translation><numerusform>%n connexion active au réseau BZX</numerusform><numerusform>%n connexions actives au réseau BZX</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
         <translation>Indexation des blocs sur le disque...</translation>
-    </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>Aucun bloc source disponible</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n heure</numerusform><numerusform>%n heures</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n jour</numerusform><numerusform>%n jours</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n semaine</numerusform><numerusform>%n semaines</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 et %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n an</numerusform><numerusform>%n années</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -367,7 +395,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>Le porte-monnaie est &lt;b&gt;chiffré&lt;/b&gt; et est actuellement &lt;b&gt;verrouillé&lt;/b&gt;</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -385,10 +413,6 @@
     <message>
         <source>Amount:</source>
         <translation>Montant :</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Priorité:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -443,8 +467,40 @@
         <translation>Confirmée</translation>
     </message>
     <message>
-        <source>Priority</source>
-        <translation>Priorité</translation>
+        <source>Copy address</source>
+        <translation>Copier l'adresse</translation>
+    </message>
+    <message>
+        <source>Copy label</source>
+        <translation>Copier l'étiquette</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>Copier le montant</translation>
+    </message>
+    <message>
+        <source>Copy fee</source>
+        <translation>Copier les frais</translation>
+    </message>
+    <message>
+        <source>Copy after fee</source>
+        <translation>Copier après les frais</translation>
+    </message>
+    <message>
+        <source>Copy bytes</source>
+        <translation>Copier les octets</translation>
+    </message>
+    <message>
+        <source>yes</source>
+        <translation>oui</translation>
+    </message>
+    <message>
+        <source>no</source>
+        <translation>non</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(aucune étiquette)</translation>
     </message>
     </context>
 <context>
@@ -552,6 +608,17 @@
     </message>
 </context>
 <context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Cacher</translation>
+    </message>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     <message>
         <source>Open URI</source>
@@ -617,8 +684,8 @@
         <translation>Expert</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>Ouvrir le port du client BitcoinZero automatiquement sur le routeur. Cela ne fonctionne que si votre routeur supporte l'UPnP et si la fonctionnalité est activée.</translation>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>Ouvrir le port du client BZX automatiquement sur le routeur. Cela ne fonctionne que si votre routeur supporte l'UPnP et si la fonctionnalité est activée.</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
@@ -769,11 +836,7 @@
         <source>Node/Service</source>
         <translation>Nœud/Service </translation>
     </message>
-    <message>
-        <source>Ping Time</source>
-        <translation>Temps du ping</translation>
-    </message>
-</context>
+    </context>
 <context>
     <name>QObject</name>
     <message>
@@ -781,8 +844,8 @@
         <translation>Montant</translation>
     </message>
     <message>
-        <source>Enter a BitcoinZero address (e.g. %1)</source>
-        <translation>Entrer une adresse BitcoinZero (e.g. %1)</translation>
+        <source>Enter a address (e.g. %1)</source>
+        <translation>Entrer une adresse BZX (e.g. %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -812,9 +875,24 @@
         <source>%1 ms</source>
         <translation>%1 ms</translation>
     </message>
-</context>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 et %2</translation>
+    </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
+    </context>
 <context>
     <name>QRImageWidget</name>
+    <message>
+        <source>&amp;Copy Image</source>
+        <translation>&amp;Copier image</translation>
+    </message>
+    <message>
+        <source>Save QR Code</source>
+        <translation>Sauvegarder QR code</translation>
+    </message>
     </context>
 <context>
     <name>RPCConsole</name>
@@ -1073,7 +1151,15 @@
         <source>Remove</source>
         <translation>Retirer</translation>
     </message>
-    </context>
+    <message>
+        <source>Copy label</source>
+        <translation>Copier l'étiquette</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>Copier le montant</translation>
+    </message>
+</context>
 <context>
     <name>ReceiveRequestDialog</name>
     <message>
@@ -1092,9 +1178,37 @@
         <source>&amp;Save Image...</source>
         <translation>&amp;Sauvegarder image</translation>
     </message>
+    <message>
+        <source>Address</source>
+        <translation>Adresse</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Étiquette</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Message</translation>
+    </message>
     </context>
 <context>
     <name>RecentRequestsTableModel</name>
+    <message>
+        <source>Date</source>
+        <translation>Date</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Étiquette</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Message</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(aucune étiquette)</translation>
+    </message>
     </context>
 <context>
     <name>SendCoinsDialog</name>
@@ -1125,10 +1239,6 @@
     <message>
         <source>Amount:</source>
         <translation>Montant :</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>Priorité:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -1167,10 +1277,6 @@
         <translation>Recommandé: </translation>
     </message>
     <message>
-        <source>Confirmation time:</source>
-        <translation>Temps de confirmation:</translation>
-    </message>
-    <message>
         <source>normal</source>
         <translation>normal</translation>
     </message>
@@ -1202,7 +1308,31 @@
         <source>Confirm the send action</source>
         <translation>Confirmer l'action d'envoi</translation>
     </message>
-    </context>
+    <message>
+        <source>S&amp;end</source>
+        <translation>E&amp;voyer</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>Copier le montant</translation>
+    </message>
+    <message>
+        <source>Copy fee</source>
+        <translation>Copier les frais</translation>
+    </message>
+    <message>
+        <source>Copy after fee</source>
+        <translation>Copier après les frais</translation>
+    </message>
+    <message>
+        <source>Copy bytes</source>
+        <translation>Copier les octets</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(aucune étiquette)</translation>
+    </message>
+</context>
 <context>
     <name>SendCoinsEntry</name>
     <message>
@@ -1327,7 +1457,83 @@
 </context>
 <context>
     <name>TransactionDesc</name>
-    </context>
+    <message>
+        <source>Status</source>
+        <translation>État</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>Date</translation>
+    </message>
+    <message>
+        <source>Source</source>
+        <translation>Source</translation>
+    </message>
+    <message>
+        <source>Generated</source>
+        <translation>Généré</translation>
+    </message>
+    <message>
+        <source>From</source>
+        <translation>De</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>inconnu</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>Á</translation>
+    </message>
+    <message>
+        <source>own address</source>
+        <translation>Votre adresse</translation>
+    </message>
+    <message>
+        <source>watch-only</source>
+        <translation>Lecture uniquement</translation>
+    </message>
+    <message>
+        <source>label</source>
+        <translation>Étiquette </translation>
+    </message>
+    <message>
+        <source>Credit</source>
+        <translation>Crédit</translation>
+    </message>
+    <message>
+        <source>Debit</source>
+        <translation>Débit</translation>
+    </message>
+    <message>
+        <source>Total debit</source>
+        <translation>Débit total</translation>
+    </message>
+    <message>
+        <source>Total credit</source>
+        <translation>Crédit total </translation>
+    </message>
+    <message>
+        <source>Net amount</source>
+        <translation>Montant net</translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation>Message</translation>
+    </message>
+    <message>
+        <source>Comment</source>
+        <translation>Commentaire </translation>
+    </message>
+    <message>
+        <source>true</source>
+        <translation>vrai</translation>
+    </message>
+    <message>
+        <source>false</source>
+        <translation>faux</translation>
+    </message>
+</context>
 <context>
     <name>TransactionDescDialog</name>
     <message>
@@ -1337,9 +1543,85 @@
     </context>
 <context>
     <name>TransactionTableModel</name>
+    <message>
+        <source>Date</source>
+        <translation>Date</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Étiquette</translation>
+    </message>
+    <message>
+        <source>watch-only</source>
+        <translation>Lecture uniquement</translation>
+    </message>
+    <message>
+        <source>(no label)</source>
+        <translation>(aucune étiquette)</translation>
+    </message>
     </context>
 <context>
     <name>TransactionView</name>
+    <message>
+        <source>All</source>
+        <translation>Toutes</translation>
+    </message>
+    <message>
+        <source>Today</source>
+        <translation>Aujourd'hui</translation>
+    </message>
+    <message>
+        <source>This week</source>
+        <translation>Cette semaine</translation>
+    </message>
+    <message>
+        <source>This month</source>
+        <translation>Ce mois</translation>
+    </message>
+    <message>
+        <source>Last month</source>
+        <translation>Mois dernier</translation>
+    </message>
+    <message>
+        <source>This year</source>
+        <translation>Cette année</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Autres</translation>
+    </message>
+    <message>
+        <source>Copy address</source>
+        <translation>Copier l'adresse</translation>
+    </message>
+    <message>
+        <source>Copy label</source>
+        <translation>Copier l'étiquette</translation>
+    </message>
+    <message>
+        <source>Copy amount</source>
+        <translation>Copier le montant</translation>
+    </message>
+    <message>
+        <source>Comma separated file (*.csv)</source>
+        <translation>Valeurs séparées par des virgules (*.csv)</translation>
+    </message>
+    <message>
+        <source>Date</source>
+        <translation>Date</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Étiquette</translation>
+    </message>
+    <message>
+        <source>Address</source>
+        <translation>Adresse</translation>
+    </message>
+    <message>
+        <source>Exporting Failed</source>
+        <translation>Échec de l'export</translation>
+    </message>
     </context>
 <context>
     <name>UnitDisplayStatusBarControl</name>
@@ -1354,7 +1636,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>Options :</translation>
@@ -1380,8 +1662,8 @@
         <translation>Impossible de démarrer le serveur HTTP. Voir le journal de débogage pour plus de détails.</translation>
     </message>
     <message>
-        <source>BitcoinZero Core</source>
-        <translation>BitcoinZero Core</translation>
+        <source>BZX Core</source>
+        <translation>BZX Core</translation>
     </message>
     <message>
         <source>&lt;category&gt; can be:</source>
@@ -1451,10 +1733,6 @@ Importation ...</translation>
     <message>
         <source>Transaction amount too small</source>
         <translation>Montant de la transaction trop bas</translation>
-    </message>
-    <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>Les montants de la transaction doivent être positif</translation>
     </message>
     <message>
         <source>Transaction too large for fee policy</source>

@@ -1,5 +1,10 @@
-/* Copyright (c) 2015-2019, The Tor Project, Inc. */
+/* Copyright (c) 2015-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
+
+/**
+ * @file periodic.h
+ * @brief Header for periodic.c
+ **/
 
 #ifndef TOR_PERIODIC_H
 #define TOR_PERIODIC_H
@@ -71,8 +76,10 @@ typedef struct periodic_event_item_t {
 } periodic_event_item_t;
 
 /** events will get their interval from first execution */
+#ifndef COCCI
 #define PERIODIC_EVENT(fn, r, f) { fn##_callback, 0, NULL, #fn, r, f, 0 }
 #define END_OF_PERIODIC_EVENTS { NULL, 0, NULL, NULL, 0, 0, 0 }
+#endif
 
 /* Return true iff the given event was setup before thus is enabled to be
  * scheduled. */
@@ -83,11 +90,20 @@ periodic_event_is_enabled(const periodic_event_item_t *item)
 }
 
 void periodic_event_launch(periodic_event_item_t *event);
-void periodic_event_setup(periodic_event_item_t *event);
-void periodic_event_destroy(periodic_event_item_t *event);
+void periodic_event_connect(periodic_event_item_t *event);
+//void periodic_event_disconnect(periodic_event_item_t *event);
 void periodic_event_reschedule(periodic_event_item_t *event);
 void periodic_event_enable(periodic_event_item_t *event);
 void periodic_event_disable(periodic_event_item_t *event);
 void periodic_event_schedule_and_disable(periodic_event_item_t *event);
+
+void periodic_events_register(periodic_event_item_t *item);
+void periodic_events_connect_all(void);
+void periodic_events_reset_all(void);
+periodic_event_item_t *periodic_events_find(const char *name);
+void periodic_events_rescan_by_roles(int roles, bool net_disabled);
+void periodic_events_disconnect_all(void);
+
+int safe_timer_diff(time_t now, time_t next);
 
 #endif /* !defined(TOR_PERIODIC_H) */

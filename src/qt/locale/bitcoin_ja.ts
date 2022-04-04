@@ -62,11 +62,11 @@
         <translation>受け取りアドレス</translation>
     </message>
     <message>
-        <source>These are your BitcoinZero addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
-        <translation>これらは支払いを送信するためのあなたの BitcoinZero アドレスです。コインを送信する前に、常に額と受信アドレスを確認してください。</translation>
+        <source>These are your addresses for sending payments. Always check the amount and the receiving address before sending coins.</source>
+        <translation>これらは支払いを送信するためのあなたの BZX アドレスです。コインを送信する前に、常に額と受信アドレスを確認してください。</translation>
     </message>
     <message>
-        <source>These are your BitcoinZero addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
+        <source>These are your addresses for receiving payments. It is recommended to use a new receiving address for each transaction.</source>
         <translation>これらは支払いを受け取るためのビットコインアドレスです。トランザクションごとに新しい受け取り用アドレスを作成することが推奨されます。</translation>
     </message>
     <message>
@@ -168,8 +168,8 @@
         <translation>ウォレットの暗号化を確認する</translation>
     </message>
     <message>
-        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR BITCOINS&lt;/b&gt;!</source>
-        <translation>警告: もしもあなたのウォレットを暗号化してパスフレーズを失ってしまったなら、&lt;b&gt;あなたの BitcoinZero はすべて失われます&lt;/b&gt;!</translation>
+        <source>Warning: If you encrypt your wallet and lose your passphrase, you will &lt;b&gt;LOSE ALL OF YOUR BZXS&lt;/b&gt;!</source>
+        <translation>警告: もしもあなたのウォレットを暗号化してパスフレーズを失ってしまったなら、&lt;b&gt;あなたの BZX はすべて失われます&lt;/b&gt;!</translation>
     </message>
     <message>
         <source>Are you sure you wish to encrypt your wallet?</source>
@@ -180,7 +180,7 @@
         <translation>ウォレットは暗号化されました</translation>
     </message>
     <message>
-        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your bitcoinzeros from being stolen by malware infecting your computer.</source>
+        <source>%1 will close now to finish the encryption process. Remember that encrypting your wallet cannot fully protect your BZXs from being stolen by malware infecting your computer.</source>
         <translation>暗号化処理を完了させるため %1 をいますぐ終了します。ウォレットの暗号化では、コンピュータに感染したマルウェアなどによるビットコインの盗難から完全に守ることはできないことにご注意ください。</translation>
     </message>
     <message>
@@ -232,7 +232,7 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Sign &amp;message...</source>
         <translation>メッセージの署名... (&amp;m)</translation>
@@ -318,12 +318,28 @@
         <translation>URI を開く (&amp;U)...</translation>
     </message>
     <message>
+        <source>Click to disable network activity.</source>
+        <translation>クリックするとネットワーク活動を無効化します。</translation>
+    </message>
+    <message>
+        <source>Network activity disabled.</source>
+        <translation>ネットワーク活動は無効化されました。</translation>
+    </message>
+    <message>
+        <source>Click to enable network activity again.</source>
+        <translation>クリックするとネットワーク活動を再び有効化します。</translation>
+    </message>
+    <message>
+        <source>Syncing Headers (%1%)...</source>
+        <translation>未知。ヘッダを同期しています (%1%)...</translation>
+    </message>
+    <message>
         <source>Reindexing blocks on disk...</source>
         <translation>ディスク上のブロックのインデックスを再作成中...</translation>
     </message>
     <message>
-        <source>Send coins to a BitcoinZero address</source>
-        <translation>BitcoinZero アドレスにコインを送る</translation>
+        <source>Send coins to a address</source>
+        <translation>BZX アドレスにコインを送る</translation>
     </message>
     <message>
         <source>Backup wallet to another location</source>
@@ -346,8 +362,8 @@
         <translation>メッセージの検証... (&amp;V)</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
-        <translation>BitcoinZero</translation>
+        <source>BZX</source>
+        <translation>BZX</translation>
     </message>
     <message>
         <source>Wallet</source>
@@ -374,12 +390,12 @@
         <translation>あなたのウォレットの秘密鍵を暗号化します</translation>
     </message>
     <message>
-        <source>Sign messages with your BitcoinZero addresses to prove you own them</source>
-        <translation>あなたが所有していることを証明するために、あなたの BitcoinZero アドレスでメッセージに署名してください</translation>
+        <source>Sign messages with your addresses to prove you own them</source>
+        <translation>あなたが所有していることを証明するために、あなたの BZX アドレスでメッセージに署名してください</translation>
     </message>
     <message>
-        <source>Verify messages to ensure they were signed with specified BitcoinZero addresses</source>
-        <translation>指定された BitcoinZero アドレスで署名されたことを確認するためにメッセージを検証します</translation>
+        <source>Verify messages to ensure they were signed with specified addresses</source>
+        <translation>指定された BZX アドレスで署名されたことを確認するためにメッセージを検証します</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -398,8 +414,8 @@
         <translation>タブツールバー</translation>
     </message>
     <message>
-        <source>Request payments (generates QR codes and BitcoinZero: URIs)</source>
-        <translation>支払いを要求する (QRコードとBitcoinZero:ではじまるURIを生成する)</translation>
+        <source>Request payments (generates QR codes and BZX: URIs)</source>
+        <translation>支払いを要求する (QRコードとBZX:ではじまるURIを生成する)</translation>
     </message>
     <message>
         <source>Show the list of used sending addresses and labels</source>
@@ -410,16 +426,16 @@
         <translation>支払いを受け取るアドレスとラベルのリストを表示する</translation>
     </message>
     <message>
-        <source>Open a BitcoinZero: URI or payment request</source>
-        <translation>BitcoinZero: URIまたは支払いリクエストを開く</translation>
+        <source>Open a BZX: URI or payment request</source>
+        <translation>BZX: URIまたは支払いリクエストを開く</translation>
     </message>
     <message>
         <source>&amp;Command-line options</source>
         <translation>コマンドラインオプション (&amp;C)</translation>
     </message>
     <message numerus="yes">
-        <source>%n active connection(s) to BitcoinZero network</source>
-        <translation><numerusform>%n の BitcoinZero ネットワークへのアクティブな接続</numerusform></translation>
+        <source>%n active connection(s) to BZX network</source>
+        <translation><numerusform>%n の BZX ネットワークへのアクティブな接続</numerusform></translation>
     </message>
     <message>
         <source>Indexing blocks on disk...</source>
@@ -429,33 +445,9 @@
         <source>Processing blocks on disk...</source>
         <translation>ディスク上のブロックを処理しています...</translation>
     </message>
-    <message>
-        <source>No block source available...</source>
-        <translation>利用可能なブロックがありません...</translation>
-    </message>
     <message numerus="yes">
         <source>Processed %n block(s) of transaction history.</source>
         <translation><numerusform>トランザクション履歴の %n ブロックを処理しました。</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n hour(s)</source>
-        <translation><numerusform>%n 時間</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n day(s)</source>
-        <translation><numerusform>%n 日</numerusform></translation>
-    </message>
-    <message numerus="yes">
-        <source>%n week(s)</source>
-        <translation><numerusform>%n 週間</numerusform></translation>
-    </message>
-    <message>
-        <source>%1 and %2</source>
-        <translation>%1 と %2</translation>
-    </message>
-    <message numerus="yes">
-        <source>%n year(s)</source>
-        <translation><numerusform>%n 年</numerusform></translation>
     </message>
     <message>
         <source>%1 behind</source>
@@ -486,12 +478,16 @@
         <translation>バージョンは最新です</translation>
     </message>
     <message>
-        <source>Show the %1 help message to get a list with possible BitcoinZero command-line options</source>
-        <translation>有効な BitcoinZero のコマンドライン オプションを見るために %1 のヘルプメッセージを表示します。</translation>
+        <source>Show the %1 help message to get a list with possible BZX command-line options</source>
+        <translation>有効な BZX のコマンドライン オプションを見るために %1 のヘルプメッセージを表示します。</translation>
     </message>
     <message>
         <source>%1 client</source>
         <translation>%1 クライアント</translation>
+    </message>
+    <message>
+        <source>Connecting to peers...</source>
+        <translation>ピアに接続しています...</translation>
     </message>
     <message>
         <source>Catching up...</source>
@@ -536,12 +532,24 @@
         <translation>着金取引</translation>
     </message>
     <message>
+        <source>HD key generation is &lt;b&gt;enabled&lt;/b&gt;</source>
+        <translation>HD鍵生成は&lt;b&gt;有効化&lt;/b&gt;されています</translation>
+    </message>
+    <message>
+        <source>HD key generation is &lt;b&gt;disabled&lt;/b&gt;</source>
+        <translation>HD鍵生成は&lt;b&gt;無効化&lt;/b&gt;されています</translation>
+    </message>
+    <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;unlocked&lt;/b&gt;</source>
         <translation>ウォレットは&lt;b&gt;暗号化されて、アンロックされています&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>ウォレットは&lt;b&gt;暗号化されて、ロックされています&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>A fatal error occurred. BZX can no longer continue safely and will quit.</source>
+        <translation>致命的なエラーが発生しました。BZX は安全に継続することができず終了するでしょう。</translation>
     </message>
 </context>
 <context>
@@ -561,10 +569,6 @@
     <message>
         <source>Amount:</source>
         <translation>総額:</translation>
-    </message>
-    <message>
-        <source>Priority:</source>
-        <translation>優先度:</translation>
     </message>
     <message>
         <source>Fee:</source>
@@ -619,10 +623,6 @@
         <translation>検証済み</translation>
     </message>
     <message>
-        <source>Priority</source>
-        <translation>優先度</translation>
-    </message>
-    <message>
         <source>Copy address</source>
         <translation>アドレスをコピーする</translation>
     </message>
@@ -663,10 +663,6 @@
         <translation>バイト数をコピーする</translation>
     </message>
     <message>
-        <source>Copy priority</source>
-        <translation>優先度をコピーする</translation>
-    </message>
-    <message>
         <source>Copy dust</source>
         <translation>ダストをコピーする</translation>
     </message>
@@ -675,48 +671,8 @@
         <translation>釣り銭をコピー</translation>
     </message>
     <message>
-        <source>highest</source>
-        <translation>最高</translation>
-    </message>
-    <message>
-        <source>higher</source>
-        <translation>非常に高</translation>
-    </message>
-    <message>
-        <source>high</source>
-        <translation>高</translation>
-    </message>
-    <message>
-        <source>medium-high</source>
-        <translation>中〜高</translation>
-    </message>
-    <message>
-        <source>medium</source>
-        <translation>中</translation>
-    </message>
-    <message>
-        <source>low-medium</source>
-        <translation>低〜中</translation>
-    </message>
-    <message>
-        <source>low</source>
-        <translation>低</translation>
-    </message>
-    <message>
-        <source>lower</source>
-        <translation>非常に低</translation>
-    </message>
-    <message>
-        <source>lowest</source>
-        <translation>最低</translation>
-    </message>
-    <message>
         <source>(%1 locked)</source>
         <translation>(%1 がロック済み)</translation>
-    </message>
-    <message>
-        <source>none</source>
-        <translation>なし</translation>
     </message>
     <message>
         <source>yes</source>
@@ -725,26 +681,6 @@
     <message>
         <source>no</source>
         <translation>いいえ</translation>
-    </message>
-    <message>
-        <source>This label turns red if the transaction size is greater than 1000 bytes.</source>
-        <translation>トランザクションのサイズが1000バイトを超える場合にはこのラベルは赤色になります。</translation>
-    </message>
-    <message>
-        <source>This means a fee of at least %1 per kB is required.</source>
-        <translation>これは少なくとも1kBあたり %1 の手数料が必要であることを意味します。</translation>
-    </message>
-    <message>
-        <source>Can vary +/- 1 byte per input.</source>
-        <translation>ひとつの入力につき1バイト程度ずれることがあります。</translation>
-    </message>
-    <message>
-        <source>Transactions with higher priority are more likely to get included into a block.</source>
-        <translation>より高い優先度を持つトランザクションの方がブロックに取り込まれやすくなります。</translation>
-    </message>
-    <message>
-        <source>This label turns red if the priority is smaller than "medium".</source>
-        <translation>優先度が「中」未満の場合、このラベルは赤色になります。</translation>
     </message>
     <message>
         <source>This label turns red if any recipient receives an amount smaller than the current dust threshold.</source>
@@ -806,8 +742,8 @@
         <translation>送信アドレスを編集</translation>
     </message>
     <message>
-        <source>The entered address "%1" is not a valid BitcoinZero address.</source>
-        <translation>入力されたアドレス "%1" は無効な BitcoinZero アドレスです。</translation>
+        <source>The entered address "%1" is not a valid address.</source>
+        <translation>入力されたアドレス "%1" は無効な BZX アドレスです。</translation>
     </message>
     <message>
         <source>The entered address "%1" is already in the address book.</source>
@@ -915,7 +851,7 @@
         <translation>これはプログラム最初の起動です。%1 がデータを保存する場所を選択して下さい。</translation>
     </message>
     <message>
-        <source>%1 will download and store a copy of the BitcoinZero block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
+        <source>%1 will download and store a copy of the BZX block chain. At least %2GB of data will be stored in this directory, and it will grow over time. The wallet will also be stored in this directory.</source>
         <translation>%1 は、ビットコインのブロックチェーンのコピーを、ダウンロードして保存します。少なくとも %2 ギガバイトのデータが、このディレクトリに保存されます。そしてそれは時間と共に増加します。またウォレットもこのディレクトリに保存されます。</translation>
     </message>
     <message>
@@ -941,6 +877,57 @@
     <message numerus="yes">
         <source>(of %n GB needed)</source>
         <translation><numerusform>(%n GB必要)</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>フォーム</translation>
+    </message>
+    <message>
+        <source>Recent transactions may not yet be visible, and therefore your wallet's balance might be incorrect. This information will be correct once your wallet has finished synchronizing with the BZX network, as detailed below.</source>
+        <translation>確認できない最近のトランザクションがあるかもしれません。これによりウォレットの残高は不正確なものである可能性があります。この情報はウォレットが一度ビットコインネットワークへの同期が完了すると正確なものとなります。詳細は下記を参照してください。</translation>
+    </message>
+    <message>
+        <source>Attempting to spend BZXs that are affected by not-yet-displayed transactions will not be accepted by the network.</source>
+        <translation>まだ表示されていないトランザクションが影響するビットコインを使用しようとすると、ネットワークから認証がなされないでしょう。</translation>
+    </message>
+    <message>
+        <source>Number of blocks left</source>
+        <translation>残りのブロック数</translation>
+    </message>
+    <message>
+        <source>Unknown...</source>
+        <translation>未知...</translation>
+    </message>
+    <message>
+        <source>Last block time</source>
+        <translation>最終ブロックの日時</translation>
+    </message>
+    <message>
+        <source>Progress</source>
+        <translation>進捗</translation>
+    </message>
+    <message>
+        <source>Progress increase per hour</source>
+        <translation>進捗状況は一時間ごとに増加します</translation>
+    </message>
+    <message>
+        <source>calculating...</source>
+        <translation>計算しています...</translation>
+    </message>
+    <message>
+        <source>Estimated time left until synced</source>
+        <translation>同期完了までの推定残り時間</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>隠す</translation>
+    </message>
+    <message>
+        <source>Unknown. Syncing Headers (%1)...</source>
+        <translation>未知。ヘッダを同期しています (%1)...</translation>
     </message>
 </context>
 <context>
@@ -1061,16 +1048,16 @@
         <translation>未検証のおつりを使用する (&amp;S)</translation>
     </message>
     <message>
-        <source>Automatically open the BitcoinZero client port on the router. This only works when your router supports UPnP and it is enabled.</source>
-        <translation>自動的にルーター上の BitcoinZero クライアントのポートを開きます。あなたのルーターが UPnP に対応していて、それが有効になっている場合に作動します。</translation>
+        <source>Automatically open the BZX client port on the router. This only works when your router supports UPnP and it is enabled.</source>
+        <translation>自動的にルーター上の BZX クライアントのポートを開きます。あなたのルーターが UPnP に対応していて、それが有効になっている場合に作動します。</translation>
     </message>
     <message>
         <source>Map port using &amp;UPnP</source>
         <translation>UPnP を使ってポートを割り当てる (&amp;U)</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a SOCKS5 proxy.</source>
-        <translation>SOCKS5 プロキシ経由でBitcoinZeroネットワークに接続する</translation>
+        <source>Connect to the BZX network through a SOCKS5 proxy.</source>
+        <translation>SOCKS5 プロキシ経由でBZXネットワークに接続する</translation>
     </message>
     <message>
         <source>&amp;Connect through SOCKS5 proxy (default proxy):</source>
@@ -1109,8 +1096,8 @@
         <translation>Tor</translation>
     </message>
     <message>
-        <source>Connect to the BitcoinZero network through a separate SOCKS5 proxy for Tor hidden services.</source>
-        <translation>Tor秘匿サービスを利用するため、独立なSOCKS5プロキシ経由でBitcoinZeroネットワークに接続する</translation>
+        <source>Connect to the BZX network through a separate SOCKS5 proxy for Tor hidden services.</source>
+        <translation>Tor秘匿サービスを利用するため、独立なSOCKS5プロキシ経由でBZXネットワークに接続する</translation>
     </message>
     <message>
         <source>Use separate SOCKS5 proxy to reach peers via Tor hidden services:</source>
@@ -1208,8 +1195,8 @@
         <translation>フォーム</translation>
     </message>
     <message>
-        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BitcoinZero network after a connection is established, but this process has not completed yet.</source>
-        <translation>表示された情報は古いかもしれません。接続が確立されると、あなたのウォレットは BitcoinZero ネットワークと自動的に同期しますが、このプロセスはまだ完了していません。</translation>
+        <source>The displayed information may be out of date. Your wallet automatically synchronizes with the BZX network after a connection is established, but this process has not completed yet.</source>
+        <translation>表示された情報は古いかもしれません。接続が確立されると、あなたのウォレットは BZX ネットワークと自動的に同期しますが、このプロセスはまだ完了していません。</translation>
     </message>
     <message>
         <source>Watch-only:</source>
@@ -1283,8 +1270,8 @@
         <translation>支払いのリクエストのエラーです</translation>
     </message>
     <message>
-        <source>Cannot start BitcoinZero: click-to-pay handler</source>
-        <translation>BitcoinZero を起動できません: click-to-pay handler</translation>
+        <source>Cannot start BZX: click-to-pay handler</source>
+        <translation>BZX を起動できません: click-to-pay handler</translation>
     </message>
     <message>
         <source>URI handling</source>
@@ -1299,8 +1286,8 @@
         <translation>支払いのアドレス「%1」は無効です</translation>
     </message>
     <message>
-        <source>URI cannot be parsed! This can be caused by an invalid BitcoinZero address or malformed URI parameters.</source>
-        <translation>URI を解析できません! これは無効な BitcoinZero アドレスあるいや不正な形式の URI パラメーターによって引き起こされる場合があります。</translation>
+        <source>URI cannot be parsed! This can be caused by an invalid address or malformed URI parameters.</source>
+        <translation>URI を解析できません! これは無効な BZX アドレスあるいや不正な形式の URI パラメーターによって引き起こされる場合があります。</translation>
     </message>
     <message>
         <source>Payment request file handling</source>
@@ -1378,8 +1365,12 @@
         <translation>ノード・サービス</translation>
     </message>
     <message>
-        <source>Ping Time</source>
-        <translation>Ping時間</translation>
+        <source>NodeId</source>
+        <translation>ノードID</translation>
+    </message>
+    <message>
+        <source>Ping</source>
+        <translation>Ping</translation>
     </message>
 </context>
 <context>
@@ -1389,8 +1380,8 @@
         <translation>総額</translation>
     </message>
     <message>
-        <source>Enter a BitcoinZero address (e.g. %1)</source>
-        <translation>BitcoinZeroアドレスを入力してください (例 %1)</translation>
+        <source>Enter a address (e.g. %1)</source>
+        <translation>BZXアドレスを入力してください (例 %1)</translation>
     </message>
     <message>
         <source>%1 d</source>
@@ -1419,6 +1410,53 @@
     <message>
         <source>%1 ms</source>
         <translation>%1ミリ秒</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n second(s)</source>
+        <translation><numerusform>%n 秒</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n minute(s)</source>
+        <translation><numerusform>%n 分</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n hour(s)</source>
+        <translation><numerusform>%n 時間</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n day(s)</source>
+        <translation><numerusform>%n 日</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>%n week(s)</source>
+        <translation><numerusform>%n 週間</numerusform></translation>
+    </message>
+    <message>
+        <source>%1 and %2</source>
+        <translation>%1 と %2</translation>
+    </message>
+    <message numerus="yes">
+        <source>%n year(s)</source>
+        <translation><numerusform>%n 年</numerusform></translation>
+    </message>
+    <message>
+        <source>%1 didn't yet exit safely...</source>
+        <translation>%1 はまだ安全に終了していません...</translation>
+    </message>
+</context>
+<context>
+    <name>QObject::QObject</name>
+    <message>
+        <source>Error: Specified data directory "%1" does not exist.</source>
+        <translation>エラー: 指定のデータ ディレクトリ "%1" は存在しません。</translation>
+    </message>
+    <message>
+        <source>Error: Cannot parse configuration file: %1. Only use key=value syntax.</source>
+        <translation>エラー: 設定ファイルをパースできません: %1。key=value という記法のみを利用してください。</translation>
+    </message>
+    <message>
+        <source>Error: %1</source>
+        <translation>エラー: %1</translation>
     </message>
 </context>
 <context>
@@ -1599,6 +1637,10 @@
         <translation>Ping待ち</translation>
     </message>
     <message>
+        <source>Min Ping</source>
+        <translation>最小 Ping</translation>
+    </message>
+    <message>
         <source>Time Offset</source>
         <translation>時間オフセット</translation>
     </message>
@@ -1643,14 +1685,6 @@
         <translation>コンソールをクリア</translation>
     </message>
     <message>
-        <source>&amp;Disconnect Node</source>
-        <translation>ノードを切断する (&amp;D)</translation>
-    </message>
-    <message>
-        <source>Ban Node for</source>
-        <translation>ノードをbanする:</translation>
-    </message>
-    <message>
         <source>1 &amp;hour</source>
         <translation>1時間 (&amp;H)</translation>
     </message>
@@ -1667,8 +1701,16 @@
         <translation>1年 (&amp;Y)</translation>
     </message>
     <message>
-        <source>&amp;Unban Node</source>
-        <translation>ノードのbanを解除する (&amp;U)</translation>
+        <source>&amp;Disconnect</source>
+        <translation>切断 (&amp;D)</translation>
+    </message>
+    <message>
+        <source>Ban for</source>
+        <translation>Banする:</translation>
+    </message>
+    <message>
+        <source>&amp;Unban</source>
+        <translation>Banを解除する (&amp;U)</translation>
     </message>
     <message>
         <source>Welcome to the %1 RPC console.</source>
@@ -1681,6 +1723,14 @@
     <message>
         <source>Type &lt;b&gt;help&lt;/b&gt; for an overview of available commands.</source>
         <translation>使用可能なコマンドを見るには &lt;b&gt;help&lt;/b&gt; と入力します。</translation>
+    </message>
+    <message>
+        <source>WARNING: Scammers have been active, telling users to type commands here, stealing their wallet contents. Do not use this console without fully understanding the ramification of a command.</source>
+        <translation>警告: 詐欺師が活動しており、ユーザに対してここにコマンドを入力させることでウォレットの中身を盗もうとしています。コマンドの結果を完全に理解していない限り、このコンソールは利用しないでください。</translation>
+    </message>
+    <message>
+        <source>Network activity disabled</source>
+        <translation>ネットワーク活動は無効化されました</translation>
     </message>
     <message>
         <source>%1 B</source>
@@ -1754,8 +1804,8 @@
         <translation>既存の受取用アドレスを再利用する (非推奨) (&amp;E)</translation>
     </message>
     <message>
-        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BitcoinZero network.</source>
-        <translation>支払リクエストが開始された時に表示される、支払リクエストに添える任意のメッセージです。注意：メッセージはBitcoinZeroネットワークを通じて、支払と共に送られるわけではありません。</translation>
+        <source>An optional message to attach to the payment request, which will be displayed when the request is opened. Note: The message will not be sent with the payment over the BZX network.</source>
+        <translation>支払リクエストが開始された時に表示される、支払リクエストに添える任意のメッセージです。注意：メッセージはBZXネットワークを通じて、支払と共に送られるわけではありません。</translation>
     </message>
     <message>
         <source>An optional label to associate with the new receiving address.</source>
@@ -1800,6 +1850,10 @@
     <message>
         <source>Remove</source>
         <translation>削除</translation>
+    </message>
+    <message>
+        <source>Copy URI</source>
+        <translation>URI をコピーする</translation>
     </message>
     <message>
         <source>Copy label</source>
@@ -1935,10 +1989,6 @@
         <translation>総額:</translation>
     </message>
     <message>
-        <source>Priority:</source>
-        <translation>優先度:</translation>
-    </message>
-    <message>
         <source>Fee:</source>
         <translation>手数料:</translation>
     </message>
@@ -1987,8 +2037,8 @@
         <translation>最小手数料</translation>
     </message>
     <message>
-        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BitcoinZero transactions than the network can process.</source>
-        <translation>ブロックの容量に比べてトランザクション流量が少ないうちは最小手数料のみの支払で十分です。しかしながらネットワークが処理しきれないほどBitcoinZeroトランザクションの需要がひとたび生まれてしまった場合には、永遠に検証がされないトランザクションになってしまう可能性があることに注意してください。</translation>
+        <source>Paying only the minimum fee is just fine as long as there is less transaction volume than space in the blocks. But be aware that this can end up in a never confirming transaction once there is more demand for BZX transactions than the network can process.</source>
+        <translation>ブロックの容量に比べてトランザクション流量が少ないうちは最小手数料のみの支払で十分です。しかしながらネットワークが処理しきれないほどBZXトランザクションの需要がひとたび生まれてしまった場合には、永遠に検証がされないトランザクションになってしまう可能性があることに注意してください。</translation>
     </message>
     <message>
         <source>(read the tooltip)</source>
@@ -2005,10 +2055,6 @@
     <message>
         <source>(Smart fee not initialized yet. This usually takes a few blocks...)</source>
         <translation>（スマート手数料はまだ初期化されていません。これにはおおよそ数ブロックほどかかります……）</translation>
-    </message>
-    <message>
-        <source>Confirmation time:</source>
-        <translation>検証時間：</translation>
     </message>
     <message>
         <source>normal</source>
@@ -2033,6 +2079,10 @@
     <message>
         <source>Dust:</source>
         <translation>ダスト：</translation>
+    </message>
+    <message>
+        <source>Confirmation time target:</source>
+        <translation>検証時間のターゲット:</translation>
     </message>
     <message>
         <source>Clear &amp;All</source>
@@ -2069,10 +2119,6 @@
     <message>
         <source>Copy bytes</source>
         <translation>バイト数をコピーする</translation>
-    </message>
-    <message>
-        <source>Copy priority</source>
-        <translation>優先度をコピーする</translation>
     </message>
     <message>
         <source>Copy dust</source>
@@ -2131,8 +2177,8 @@
         <translation>トラザクションの作成に失敗しました!</translation>
     </message>
     <message>
-        <source>The transaction was rejected! This might happen if some of the coins in your wallet were already spent, such as if you used a copy of wallet.dat and coins were spent in the copy but not marked as spent here.</source>
-        <translation>トランザクションは拒否されました。wallet.dat のコピーを使い、そしてコピーしたウォレットからコインを使用したことがマークされなかったときなど、ウォレットのいくつかのコインがすでに使用されている場合に、このエラーは起こるかもしれません。</translation>
+        <source>The transaction was rejected with the following reason: %1</source>
+        <translation>トランザクションは以下の理由により拒絶されました: %1</translation>
     </message>
     <message>
         <source>A fee higher than %1 is considered an absurdly high fee.</source>
@@ -2142,17 +2188,33 @@
         <source>Payment request expired.</source>
         <translation>支払いリクエストの期限が切れました。</translation>
     </message>
+    <message numerus="yes">
+        <source>%n block(s)</source>
+        <translation><numerusform>%n ブロック</numerusform></translation>
+    </message>
     <message>
         <source>Pay only the required fee of %1</source>
         <translation>要求手数料 %1 のみを支払う</translation>
     </message>
+    <message numerus="yes">
+        <source>Estimated to begin confirmation within %n block(s).</source>
+        <translation><numerusform>%n ブロック以内に検証が開始されると予想されます。</numerusform></translation>
+    </message>
     <message>
-        <source>Warning: Invalid BitcoinZero address</source>
-        <translation>警告：無効なBitcoinZeroアドレスです</translation>
+        <source>Warning: Invalid address</source>
+        <translation>警告：無効なBZXアドレスです</translation>
     </message>
     <message>
         <source>Warning: Unknown change address</source>
         <translation>警告：未知のおつりアドレスです</translation>
+    </message>
+    <message>
+        <source>Confirm custom change address</source>
+        <translation>カスタムおつりアドレスを確認</translation>
+    </message>
+    <message>
+        <source>The address you selected for change is not part of this wallet. Any or all funds in your wallet may be sent to this address. Are you sure?</source>
+        <translation>おつりとして指定されたアドレスはこのウォレットに属さないもののようです。このウォレットの一部またはすべての資産がこのアドレスへ送金されます。よろしいですか？</translation>
     </message>
     <message>
         <source>(no label)</source>
@@ -2182,8 +2244,8 @@
         <translation>これは通常の支払です。</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to send the payment to</source>
-        <translation>支払の送金先BitcoinZeroアドレス</translation>
+        <source>The address to send the payment to</source>
+        <translation>支払の送金先BZXアドレス</translation>
     </message>
     <message>
         <source>Alt+A</source>
@@ -2202,7 +2264,7 @@
         <translation>この項目を削除する</translation>
     </message>
     <message>
-        <source>The fee will be deducted from the amount being sent. The recipient will receive less bitcoinzeros than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
+        <source>The fee will be deducted from the amount being sent. The recipient will receive less BZXs than you enter in the amount field. If multiple recipients are selected, the fee is split equally.</source>
         <translation>送金する金額から手数料が差し引かれます。受取人は数量フィールドで指定した量よりも少ないビットコインを受け取ります。受取人が複数いる場合には、手数料は均等割されます。</translation>
     </message>
     <message>
@@ -2226,8 +2288,8 @@
         <translation>このアドレスに対するラベルを入力することで、使用済みアドレスの一覧に追加することができます</translation>
     </message>
     <message>
-        <source>A message that was attached to the BitcoinZero: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BitcoinZero network.</source>
-        <translation>BitcoinZero: URIに添付されていたメッセージです。これは参照用としてトランザクションとともに保存されます。注意：このメッセージはBitcoinZeroネットワークを通して送信されるわけではありません。</translation>
+        <source>A message that was attached to the BZX: URI which will be stored with the transaction for your reference. Note: This message will not be sent over the BZX network.</source>
+        <translation>BZX: URIに添付されていたメッセージです。これは参照用としてトランザクションとともに保存されます。注意：このメッセージはBZXネットワークを通して送信されるわけではありません。</translation>
     </message>
     <message>
         <source>Pay To:</source>
@@ -2271,12 +2333,12 @@
         <translation>メッセージの署名 (&amp;S)</translation>
     </message>
     <message>
-        <source>You can sign messages/agreements with your addresses to prove you can receive bitcoinzeros sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
+        <source>You can sign messages/agreements with your addresses to prove you can receive BZXs sent to them. Be careful not to sign anything vague or random, as phishing attacks may try to trick you into signing your identity over to them. Only sign fully-detailed statements you agree to.</source>
         <translation>あなたの所有しているアドレスによりメッセージや合意書に署名をすることで、それらアドレスに対して送られたビットコインを受け取ることができることを証明できます。フィッシング攻撃により不正にあなたの識別情報を署名させられてしまうことを防ぐために、不明確なものやランダムなものに対して署名しないよう注意してください。合意することが可能な、よく詳細の記された文言にのみ署名するようにしてください。</translation>
     </message>
     <message>
-        <source>The BitcoinZero address to sign the message with</source>
-        <translation>メッセージを署名するBitcoinZeroアドレス</translation>
+        <source>The address to sign the message with</source>
+        <translation>メッセージを署名するBZXアドレス</translation>
     </message>
     <message>
         <source>Choose previously used address</source>
@@ -2307,8 +2369,8 @@
         <translation>現在の署名をシステムのクリップボードにコピーする</translation>
     </message>
     <message>
-        <source>Sign the message to prove you own this BitcoinZero address</source>
-        <translation>この BitcoinZero アドレスを所有していることを証明するためにメッセージに署名</translation>
+        <source>Sign the message to prove you own this address</source>
+        <translation>この BZX アドレスを所有していることを証明するためにメッセージに署名</translation>
     </message>
     <message>
         <source>Sign &amp;Message</source>
@@ -2331,12 +2393,12 @@
         <translation>受取人のアドレスとメッセージ（改行やスペース、タブなども完全に一致するよう注意してください）および署名を以下に入力し、メッセージの署名を検証してください。中間者攻撃により騙されるのを防ぐため、署名対象のメッセージに書かれていること以上の意味を署名から読み取ろうとしないよう注意してください。これは署名作成者がこのアドレスで受け取ったことを証明するだけであり、トランザクションの送信権限を証明するものではないことに注意してください！</translation>
     </message>
     <message>
-        <source>The BitcoinZero address the message was signed with</source>
-        <translation>メッセージの署名に使われたBitcoinZeroアドレス</translation>
+        <source>The address the message was signed with</source>
+        <translation>メッセージの署名に使われたBZXアドレス</translation>
     </message>
     <message>
-        <source>Verify the message to ensure it was signed with the specified BitcoinZero address</source>
-        <translation>指定された BitcoinZero アドレスで署名されたことを保証するメッセージを検証</translation>
+        <source>Verify the message to ensure it was signed with the specified address</source>
+        <translation>指定された BZX アドレスで署名されたことを保証するメッセージを検証</translation>
     </message>
     <message>
         <source>Verify &amp;Message</source>
@@ -2509,7 +2571,7 @@
     </message>
     <message numerus="yes">
         <source>matures in %n more block(s)</source>
-        <translation><numerusform>%n 以上のブロックが満期</numerusform></translation>
+        <translation><numerusform>あと %n ブロックで成熟します</numerusform></translation>
     </message>
     <message>
         <source>not accepted</source>
@@ -2546,6 +2608,10 @@
     <message>
         <source>Transaction ID</source>
         <translation>取引 ID</translation>
+    </message>
+    <message>
+        <source>Transaction total size</source>
+        <translation>トランザクションの全体サイズ</translation>
     </message>
     <message>
         <source>Output index</source>
@@ -2922,7 +2988,7 @@
     </message>
 </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>オプション:</translation>
@@ -2944,6 +3010,18 @@
         <translation>コマンドラインと JSON-RPC コマンドを許可</translation>
     </message>
     <message>
+        <source>Accept connections from outside (default: 1 if no -proxy or -connect/-noconnect)</source>
+        <translation>外部からの接続を許可 (初期値: -proxy または -connect/-noconnect を使用していない場合は1)</translation>
+    </message>
+    <message>
+        <source>Connect only to the specified node(s); -noconnect or -connect=0 alone to disable automatic connections</source>
+        <translation>指定されたノードにのみ接続を行う; -noconnect または -connect=0 だけを指定すると自動接続を無効化します</translation>
+    </message>
+    <message>
+        <source>Distributed under the MIT software license, see the accompanying file %s or %s</source>
+        <translation>MITソフトウェアライセンスのもとで配布されています。付属のファイル %s または %s を参照してください</translation>
+    </message>
+    <message>
         <source>If &lt;category&gt; is not supplied or if &lt;category&gt; = 1, output all debugging information.</source>
         <translation>&lt;category&gt; が与えられなかった場合や &lt;category&gt; = 1 の場合には、すべてのデバッグ情報が出力されます。</translation>
     </message>
@@ -2954,10 +3032,6 @@
     <message>
         <source>Prune: last wallet synchronisation goes beyond pruned data. You need to -reindex (download the whole blockchain again in case of pruned node)</source>
         <translation>剪定: 最後のウォレット同期ポイントは、選定されたデータよりも過去のものとなっています。-reindexをする必要があります (剪定されたノードの場合、ブロックチェイン全体をダウンロードします)</translation>
-    </message>
-    <message>
-        <source>Reduce storage requirements by pruning (deleting) old blocks. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, &gt;%u = target size in MiB to use for block files)</source>
-        <translation>古いブロックを剪定する (削除する) ことで記憶容量の必要量を削減する。このモードを有効にすると-txindexや-rescanと互換性がなくなります。警告: この設定の再有効化には全ブロックチェインの再ダウンロードが必要となります。(規定値: 0 = ブロックの剪定無効、&gt;%u = ブロックファイルに使用するMiB単位の目標サイズ)</translation>
     </message>
     <message>
         <source>Rescans are not possible in pruned mode. You will need to use -reindex which will download the whole blockchain again.</source>
@@ -2984,20 +3058,12 @@
         <translation>HTTPサーバを開始できませんでした。詳細はデバッグログをご確認ください。</translation>
     </message>
     <message>
-        <source>Accept connections from outside (default: 1 if no -proxy or -connect)</source>
-        <translation>外部からの接続を許可 (初期値:  -proxy または -connect を使用していない場合は1)</translation>
-    </message>
-    <message>
-        <source>BitcoinZero Core</source>
-        <translation>BitcoinZero のコア</translation>
+        <source>BZX Core</source>
+        <translation>BZX のコア</translation>
     </message>
     <message>
         <source>The %s developers</source>
         <translation>%s の開発者</translation>
-    </message>
-    <message>
-        <source>-fallbackfee is set very high! This is the transaction fee you may pay when fee estimates are not available.</source>
-        <translation>-fallbackfee が高すぎます！これは手数料の推定機能が利用できない場合に支払うトランザクション手数料です。</translation>
     </message>
     <message>
         <source>A fee rate (in %s/kB) that will be used when fee estimation has insufficient data (default: %s)</source>
@@ -3020,14 +3086,6 @@
         <translation>ウォレットの全トランザクションを削除し、これらを-rescanオプションを用いることで起動時にブロックチェインのデータのみからリカバリします。</translation>
     </message>
     <message>
-        <source>Distributed under the MIT software license, see the accompanying file COPYING or &lt;http://www.opensource.org/licenses/mit-license.php&gt;.</source>
-        <translation>MITソフトウェアライセンスのもとで配布されています。付属のCOPYINGファイルまたは&lt;http://www.opensource.org/licenses/mit-license.php&gt;を参照してください。</translation>
-    </message>
-    <message>
-        <source>Equivalent bytes per sigop in transactions for relay and mining (default: %u)</source>
-        <translation>中継や採掘を行う際のトランザクション内の、sigopあたりバイト数の相当量 (初期値: %u)</translation>
-    </message>
-    <message>
         <source>Error loading %s: You can't enable HD on a already existing non-HD wallet</source>
         <translation>%s の読み込みエラー: 非HDウォレットが既に存在するため、HDウォレットを有効化できません</translation>
     </message>
@@ -3038,6 +3096,14 @@
     <message>
         <source>Execute command when a wallet transaction changes (%s in cmd is replaced by TxID)</source>
         <translation>ウォレットの取引を変更する際にコマンドを実行 (cmd の %s は TxID に置換される)</translation>
+    </message>
+    <message>
+        <source>Extra transactions to keep in memory for compact block reconstructions (default: %u)</source>
+        <translation>コンパクトブロック再構成のために追加のトランザクションをメモリ内に保管しておく (デフォルト: %u)</translation>
+    </message>
+    <message>
+        <source>If this block is in the chain assume that it and its ancestors are valid and potentially skip their script verification (0 to verify all, default: %s, testnet: %s)</source>
+        <translation>このブロックがブロックチェーン内に含まれていた場合には、このブロックおよびそれ以前のすべてのブロックを有効であるとみなし、スクリプトの検証を省略する (0ならすべてを検証、デフォルト: %s、テストネット: %s)</translation>
     </message>
     <message>
         <source>Maximum allowed median peer time offset adjustment. Local perspective of time may be influenced by peers forward or backward by this amount. (default: %u seconds)</source>
@@ -3054,6 +3120,14 @@
     <message>
         <source>Please contribute if you find %s useful. Visit %s for further information about the software.</source>
         <translation>%s が有用だと感じられた方はぜひプロジェクトへの貢献をお願いします。ソフトウェアのより詳細な情報については %s をご覧ください。</translation>
+    </message>
+    <message>
+        <source>Reduce storage requirements by enabling pruning (deleting) of old blocks. This allows the pruneblockchain RPC to be called to delete specific blocks, and enables automatic pruning of old blocks if a target size in MiB is provided. This mode is incompatible with -txindex and -rescan. Warning: Reverting this setting requires re-downloading the entire blockchain. (default: 0 = disable pruning blocks, 1 = allow manual pruning via RPC, &gt;%u = automatically prune block files to stay under the specified target size in MiB)</source>
+        <translation>古いブロックの剪定 (削除) を有効にすることでストレージの必要量を削減する。これにより pruneblockchain RPC を呼び出すことで指定されたブロックを削除することができます。またターゲットサイズが MiB 単位で指定された場合には古いブロックの自動剪定が有効となります。このモードは -txindex および -rescan オプションと互換性がありません。警告: この設定を最有効化するにはすべてのブロックチェーンの再ダウンロードが必要となります。(デフォルト: 0 = ブロックの剪定を無効化する, 1 = RPC 経由での手動剪定を許可する, &gt;%u = MiB 単位で指定されたターゲットサイズを常に下回るようにブロックファイルを自動的に剪定する)</translation>
+    </message>
+    <message>
+        <source>Set lowest fee rate (in %s/kB) for transactions to be included in block creation. (default: %s)</source>
+        <translation>ブロック生成時に取り込まれるトランザクションの最低手数料率 (%s/kB 単位)。(デフォルト: %s)</translation>
     </message>
     <message>
         <source>Set the number of script verification threads (%u to %d, 0 = auto, &lt;0 = leave that many cores free, default: %d)</source>
@@ -3076,16 +3150,20 @@
         <translation>リスン ポートの割当に UPnP を使用 (初期値: リスン中および-proxyが指定されていない場合は1)</translation>
     </message>
     <message>
+        <source>Username and hashed password for JSON-RPC connections. The field &lt;userpw&gt; comes in the format: &lt;USERNAME&gt;:&lt;SALT&gt;$&lt;HASH&gt;. A canonical python script is included in share/rpcuser. The client then connects normally using the rpcuser=&lt;USERNAME&gt;/rpcpassword=&lt;PASSWORD&gt; pair of arguments. This option can be specified multiple times</source>
+        <translation>JSON-RPC 接続時のユーザ名とハッシュ化されたパスワード。&lt;userpw&gt; フィールドのフォーマットは &lt;USERNAME&gt;:&lt;SALT&gt;$&lt;HASH&gt;。標準的な Python スクリプトが share/rpcuser 内に含まれています。クライアントは通常の場合には rpcuser=&lt;USERNAME&gt;/rpcpassword=&lt;PASSWORD&gt; を利用して接続を行います。このオプションは複数回指定できます。</translation>
+    </message>
+    <message>
+        <source>Wallet will not create transactions that violate mempool chain limits (default: %u)</source>
+        <translation>ウォレットがmempoolチェーン制限数を超えてトランザクションを作らないようにする (初期値: %u)</translation>
+    </message>
+    <message>
         <source>Warning: The network does not appear to fully agree! Some miners appear to be experiencing issues.</source>
-        <translation>警告： ネットワークは完全に同意しないみたいです。マイナーは何かの問題を経験してるみたいなんです。</translation>
+        <translation>警告: ネットワークは完全に合意が取れていないようです。幾人かのマイナーに何らかの障害が発生しているようです。</translation>
     </message>
     <message>
         <source>Warning: We do not appear to fully agree with our peers! You may need to upgrade, or other nodes may need to upgrade.</source>
-        <translation>警告： ピアーと完全に同意しないみたいです！アップグレードは必要かもしれません、それとも他のノードはアップグレードは必要かもしれません。</translation>
-    </message>
-    <message>
-        <source>Whitelist peers connecting from the given netmask or IP address. Can be specified multiple times.</source>
-        <translation>与えられたネットマスクやIPアドレスから接続を行う、ホワイトリストのピア。複数回指定できます。</translation>
+        <translation>警告: ピアと完全に合意が取れていないようです！このノードまたは他のノードのアップグレードが必要なようです。</translation>
     </message>
     <message>
         <source>You need to rebuild the database using -reindex-chainstate to change -txindex</source>
@@ -3120,12 +3198,12 @@
         <translation>-%s アドレス '%s' を解決できません</translation>
     </message>
     <message>
-        <source>Change index out of range</source>
-        <translation>おつりのインデックスが範囲外です</translation>
+        <source>Chain selection options:</source>
+        <translation>チェイン選択オプション:</translation>
     </message>
     <message>
-        <source>Connect only to the specified node(s)</source>
-        <translation>指定したノードだけに接続</translation>
+        <source>Change index out of range</source>
+        <translation>おつりのインデックスが範囲外です</translation>
     </message>
     <message>
         <source>Connection options:</source>
@@ -3289,20 +3367,12 @@
         <translation>データベースのキャッシュサイズをメガバイトで設定 (%dから%d。初期値: %d)</translation>
     </message>
     <message>
-        <source>Set maximum BIP141 block weight (default: %d)</source>
-        <translation>BIP141ブロック重みの最大値を設定 (初期値: %d)</translation>
-    </message>
-    <message>
         <source>Set maximum block size in bytes (default: %d)</source>
         <translation>最大ブロックサイズをバイトで設定 (初期値: %d)</translation>
     </message>
     <message>
         <source>Specify wallet file (within data directory)</source>
         <translation>ウォレットのファイルを指定　(データ・ディレクトリの中に)</translation>
-    </message>
-    <message>
-        <source>Starting network threads...</source>
-        <translation>ネットワークのスレッドを起動しています...</translation>
     </message>
     <message>
         <source>The source code is available from %s.</source>
@@ -3327,6 +3397,10 @@
     <message>
         <source>Use UPnP to map the listening port (default: %u)</source>
         <translation>リッスンポートの割当に UPnP を使用 (初期値: %u)</translation>
+    </message>
+    <message>
+        <source>Use the test chain</source>
+        <translation>テストチェインを利用する</translation>
     </message>
     <message>
         <source>User Agent comment (%s) contains unsafe characters.</source>
@@ -3389,10 +3463,6 @@
         <translation>トランザクションの中継、採掘および作成の際には、この値未満の手数料 (%s/kB単位) はゼロであるとみなす (デフォルト: %s)</translation>
     </message>
     <message>
-        <source>Force relay of transactions from whitelisted peers even if they violate local relay policy (default: %d)</source>
-        <translation>ホワイトリストのピアから受け取ったトランザクションに関しては、たとえローカルの中継ポリシーに違反しているとしても中継を行うようにする (デフォルト: %d)</translation>
-    </message>
-    <message>
         <source>If paytxfee is not set, include enough fee so transactions begin confirmation on average within n blocks (default: %u)</source>
         <translation>paytxfee が設定されていなかった場合、平均して n ブロック以内にトランザクションが検証され始めるのに十分な手数料を含める (初期値: %u)</translation>
     </message>
@@ -3405,10 +3475,6 @@
         <translation>中継および採掘を行う際の、データ運送トランザクションの中のデータの最大サイズ (初期値: %u)</translation>
     </message>
     <message>
-        <source>Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect)</source>
-        <translation>保有するピアアドレスが少ない場合、DNS ルックアップによりピアアドレスを問い合わせる (-connect を使っていない場合の初期値: 1)</translation>
-    </message>
-    <message>
         <source>Randomize credentials for every proxy connection. This enables Tor stream isolation (default: %u)</source>
         <translation>認証情報をプロキシー接続ごとにランダム化する。これによりTorストリーム分離をすることができます (規定値: %u)</translation>
     </message>
@@ -3419,10 +3485,6 @@
     <message>
         <source>The transaction amount is too small to send after the fee has been deducted</source>
         <translation>手数料差引後のトランザクションの金額が小さすぎるため、送金できません。</translation>
-    </message>
-    <message>
-        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit &lt;https://www.openssl.org/&gt; and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
-        <translation>この製品はOpenSSLプロジェクトにより開発されたソフトウェアをOpenSSLツールキットとして利用しています &lt;https://www.openssl.org/&gt;。また、Eric Young氏により開発された暗号ソフトウェア、Thomas Bernard氏により書かれたUPnPソフトウェアを用いています。</translation>
     </message>
     <message>
         <source>Use hierarchical deterministic key generation (HD) after BIP32. Only has effect during wallet creation/first start</source>
@@ -3537,10 +3599,6 @@
         <translation>取引の額が小さ過ぎます</translation>
     </message>
     <message>
-        <source>Transaction amounts must be positive</source>
-        <translation>取引の額は0より大きくしてください</translation>
-    </message>
-    <message>
         <source>Transaction too large for fee policy</source>
         <translation>手数料ポリシーに対してトランザクションが大きすぎます</translation>
     </message>
@@ -3605,16 +3663,20 @@
         <translation>-maxtxfee が非常に高く設定されています！ひとつのトランザクションでこの量の手数料が支払われてしまうことがあります。</translation>
     </message>
     <message>
-        <source>-paytxfee is set very high! This is the transaction fee you will pay if you send a transaction.</source>
-        <translation>-paytxfee が非常に高く設定されています! これは取引を送信する場合に支払う取引手数料です。</translation>
-    </message>
-    <message>
         <source>Do not keep transactions in the mempool longer than &lt;n&gt; hours (default: %u)</source>
         <translation>mempool内でトランザクションを &lt;n&gt; 時間以上保持しない (初期値: %u)</translation>
     </message>
     <message>
+        <source>Equivalent bytes per sigop in transactions for relay and mining (default: %u)</source>
+        <translation>中継や採掘を行う際のトランザクション内の、sigopあたりバイト数の相当量 (初期値: %u)</translation>
+    </message>
+    <message>
         <source>Fees (in %s/kB) smaller than this are considered zero fee for transaction creation (default: %s)</source>
         <translation>トランザクション作成の際、この値未満の手数料 (%s/kB単位) はゼロであるとみなす (デフォルト: %s)</translation>
+    </message>
+    <message>
+        <source>Force relay of transactions from whitelisted peers even if they violate local relay policy (default: %d)</source>
+        <translation>ホワイトリストのピアから受け取ったトランザクションに関しては、たとえローカルの中継ポリシーに違反しているとしても中継を行うようにする (デフォルト: %d)</translation>
     </message>
     <message>
         <source>How thorough the block verification of -checkblocks is (0-4, default: %u)</source>
@@ -3633,8 +3695,24 @@
         <translation>デバッグ情報を出力する (初期値: %u, &lt;category&gt; の指定は任意です)</translation>
     </message>
     <message>
+        <source>Query for peer addresses via DNS lookup, if low on addresses (default: 1 unless -connect/-noconnect)</source>
+        <translation>保有するピアアドレスが少ない場合、DNS ルックアップによりピアアドレスを問い合わせる (-connect/-noconnect を使っていない場合の初期値: 1)</translation>
+    </message>
+    <message>
+        <source>Sets the serialization of raw transaction or block hex returned in non-verbose mode, non-segwit(0) or segwit(1) (default: %d)</source>
+        <translation>非冗長モードで返却する生トランザクションやブロックの16進数表現のシリアライゼーションフォーマットを非 segwit (0) または segwit (1) のものに設定する (デフォルト: %d)</translation>
+    </message>
+    <message>
         <source>Support filtering of blocks and transaction with bloom filters (default: %u)</source>
         <translation>Bloomフィルタによる、ブロックおよびトランザクションのフィルタリングを有効化する (初期値: %u)</translation>
+    </message>
+    <message>
+        <source>This is the transaction fee you may pay when fee estimates are not available.</source>
+        <translation>これは手数料の推定機能が利用できない場合に支払うトランザクション手数料です。</translation>
+    </message>
+    <message>
+        <source>This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit %s and cryptographic software written by Eric Young and UPnP software written by Thomas Bernard.</source>
+        <translation>この製品はOpenSSLプロジェクトにより開発されたソフトウェアをOpenSSLツールキット %s として利用しています &lt;https://www.openssl.org/&gt;。また、Eric Young氏により開発された暗号ソフトウェア、Thomas Bernard氏により書かれたUPnPソフトウェアを用いています。</translation>
     </message>
     <message>
         <source>Total length of network version string (%i) exceeds maximum length (%i). Reduce the number or size of uacomments.</source>
@@ -3657,16 +3735,20 @@
         <translation>Tor 秘匿サービスを通し、別々の SOCKS5 プロキシを用いることでピアに到達する (初期値: %s)</translation>
     </message>
     <message>
-        <source>Username and hashed password for JSON-RPC connections. The field &lt;userpw&gt; comes in the format: &lt;USERNAME&gt;:&lt;SALT&gt;$&lt;HASH&gt;. A canonical python script is included in share/rpcuser. This option can be specified multiple times</source>
-        <translation>JSON-RPC接続時のユーザ名とハッシュ化されたパスワード。&lt;userpw&gt; フィールドのフォーマットは &lt;USERNAME&gt;:&lt;SALT&gt;$&lt;HASH&gt;。標準的な Python スクリプトが share/rpcuser 内に含まれています。このオプションは複数回指定できます。</translation>
-    </message>
-    <message>
         <source>Warning: Unknown block versions being mined! It's possible unknown rules are in effect</source>
         <translation>警告: 未知のバージョンのブロックが採掘されました。未知のルールが導入された可能性があります</translation>
     </message>
     <message>
         <source>Warning: Wallet file corrupt, data salvaged! Original %s saved as %s in %s; if your balance or transactions are incorrect you should restore from a backup.</source>
         <translation>警告: ウォレットファイルが破損していましたのでデータを復旧しました！元の %s は %s として %s に保存されました; 残高やトランザクションが正しくない場合にはバックアップから復元してください。</translation>
+    </message>
+    <message>
+        <source>Whitelist peers connecting from the given IP address (e.g. 1.2.3.4) or CIDR notated network (e.g. 1.2.3.0/24). Can be specified multiple times.</source>
+        <translation>ホワイトリストとして登録するピアノ、接続元の IP アドレス (例: 1.2.3.4) または CIDR 表現のネットワーク (例: 1.2.3.0/24)。複数回指定することもできる</translation>
+    </message>
+    <message>
+        <source>%s is set very high!</source>
+        <translation>%s の設定値は高すぎます</translation>
     </message>
     <message>
         <source>(default: %s)</source>
@@ -3687,6 +3769,10 @@
     <message>
         <source>Invalid -proxy address: '%s'</source>
         <translation>無効な -proxy アドレス: '%s'</translation>
+    </message>
+    <message>
+        <source>Keypool ran out, please call keypoolrefill first</source>
+        <translation>鍵プールが枯渇しました。まずはじめに keypoolrefill を呼び出してください</translation>
     </message>
     <message>
         <source>Listen for JSON-RPC connections on &lt;port&gt; (default: %u or testnet: %u)</source>
@@ -3725,8 +3811,16 @@
         <translation>P2SHでないマルチシグトランザクションをリレーする (初期値: %u)</translation>
     </message>
     <message>
+        <source>Send transactions with full-RBF opt-in enabled (default: %u)</source>
+        <translation>full-RBF opt-in を利用してトランザクションを送信する (初期値: %u)</translation>
+    </message>
+    <message>
         <source>Set key pool size to &lt;n&gt; (default: %u)</source>
         <translation>key pool のサイズを &lt;n&gt; (初期値: %u) にセット</translation>
+    </message>
+    <message>
+        <source>Set maximum BIP141 block weight (default: %d)</source>
+        <translation>BIP141ブロック重みの最大値を設定 (初期値: %d)</translation>
     </message>
     <message>
         <source>Set the number of threads to service RPC calls (default: %d)</source>
@@ -3749,8 +3843,36 @@
         <translation>トランザクション送信時に未検証のおつりを使用する (デフォルト: %u)</translation>
     </message>
     <message>
+        <source>Starting network threads...</source>
+        <translation>ネットワークのスレッドを起動しています...</translation>
+    </message>
+    <message>
+        <source>The wallet will avoid paying less than the minimum relay fee.</source>
+        <translation>ウォレットは最小中継手数料を下回る額の支払を拒否します。</translation>
+    </message>
+    <message>
+        <source>This is the minimum transaction fee you pay on every transaction.</source>
+        <translation>これはすべてのトランザクションに対して最低限支払うべき手数料です。</translation>
+    </message>
+    <message>
+        <source>This is the transaction fee you will pay if you send a transaction.</source>
+        <translation>これは取引を送信する場合に支払う取引手数料です。</translation>
+    </message>
+    <message>
         <source>Threshold for disconnecting misbehaving peers (default: %u)</source>
         <translation>不正なピアを切断するためのしきい値 (初期値: %u)</translation>
+    </message>
+    <message>
+        <source>Transaction amounts must not be negative</source>
+        <translation>取引の額は負であってはいけません</translation>
+    </message>
+    <message>
+        <source>Transaction has too long of a mempool chain</source>
+        <translation>トランザクションのmempoolチェインが長過ぎます</translation>
+    </message>
+    <message>
+        <source>Transaction must have at least one recipient</source>
+        <translation>トランザクションは最低ひとつの受取先が必要です</translation>
     </message>
     <message>
         <source>Unknown network specified in -onlynet: '%s'</source>

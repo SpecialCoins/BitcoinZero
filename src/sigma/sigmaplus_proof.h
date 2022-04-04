@@ -1,5 +1,5 @@
-#ifndef SIGMA_SIGMAPLUS_PROOF_H
-#define SIGMA_SIGMAPLUS_PROOF_H
+#ifndef BZX_SIGMA_SIGMAPLUS_PROOF_H
+#define BZX_SIGMA_SIGMAPLUS_PROOF_H
 
 #include "params.h"
 #include "r1_proof.h"
@@ -9,8 +9,31 @@ namespace sigma {
 template<class Exponent, class GroupElement>
 class SigmaPlusProof {
 public:
+    int n;
+    int m;
+    GroupElement B_;
+    R1Proof<Exponent, GroupElement> r1Proof_;
+    std::vector<GroupElement> Gk_;
+    Exponent z_;
+
+public:
     SigmaPlusProof(int n, int m): n(n), m(m) {};
 
+public:
+    bool operator==(const SigmaPlusProof& other) const {
+        return n == other.n &&
+            m == other.m &&
+            B_ == other.B_ &&
+            r1Proof_ == other.r1Proof_ &&
+            Gk_ == other.Gk_ &&
+            z_ == other.z_;
+    }
+
+    bool operator!=(const SigmaPlusProof& other) const {
+        return !(*this == other);
+    }
+
+public:
     inline int memoryRequired() const {
         return B_.memoryRequired()
                + r1Proof_.memoryRequired(n, m)
@@ -37,22 +60,14 @@ public:
 
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+    inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(B_);
         READWRITE(r1Proof_);
         READWRITE(Gk_);
         READWRITE(z_);
     }
-
-public:
-    int n;
-    int m;
-    GroupElement B_;
-    R1Proof<Exponent, GroupElement> r1Proof_;
-    std::vector<GroupElement> Gk_;
-    Exponent z_;
 };
 
 } //namespace sigma
 
-#endif // SIGMA_SIGMAPLUS_PROOF_H
+#endif // BZX_SIGMA_SIGMAPLUS_PROOF_H

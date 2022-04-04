@@ -1,5 +1,5 @@
-#ifndef BITCOINZERO_SIGMA_R1_PROOF_GENERATOR_H
-#define BITCOINZERO_SIGMA_R1_PROOF_GENERATOR_H
+#ifndef BZX_SIGMA_R1_PROOF_GENERATOR_H
+#define BZX_SIGMA_R1_PROOF_GENERATOR_H
 
 #include "r1_proof.h"
 #include "sigma_primitives.h"
@@ -73,4 +73,4 @@ private:
 
 #include "r1_proof_generator.hpp"
 
-#endif // BITCOINZERO_SIGMA_R1_PROOF_GENERATOR_H
+#endif // BZX_SIGMA_R1_PROOF_GENERATOR_H

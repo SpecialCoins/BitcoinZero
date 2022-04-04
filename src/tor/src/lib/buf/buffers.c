@@ -1,7 +1,7 @@
 /* Copyright (c) 2001 Matej Pfajfar.
  * Copyright (c) 2001-2004, Roger Dingledine.
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -99,6 +99,7 @@
 #define DBG_S(s) (void)0
 #endif
 
+#ifndef COCCI
 #ifdef DISABLE_MEMORY_SENTINELS
 #define CHUNK_SET_SENTINEL(chunk, alloclen) STMT_NIL
 #else
@@ -109,6 +110,7 @@
     memset(a,0,SENTINEL_LEN);                                           \
   } while (0)
 #endif /* defined(DISABLE_MEMORY_SENTINELS) */
+#endif /* !defined(COCCI) */
 
 /** Move all bytes stored in <b>chunk</b> to the front of <b>chunk</b>->mem,
  * to free up space at the end. */
@@ -158,7 +160,7 @@ chunk_new_with_alloc_size(size_t alloc)
 static inline chunk_t *
 chunk_grow(chunk_t *chunk, size_t sz)
 {
-  off_t offset;
+  ptrdiff_t offset;
   const size_t memlen_orig = chunk->memlen;
   const size_t orig_alloc = CHUNK_ALLOC_SIZE(memlen_orig);
   const size_t new_alloc = CHUNK_ALLOC_SIZE(sz);
@@ -440,7 +442,7 @@ chunk_copy(const chunk_t *in_chunk)
 #endif
   newch->next = NULL;
   if (in_chunk->data) {
-    off_t offset = in_chunk->data - in_chunk->mem;
+    ptrdiff_t offset = in_chunk->data - in_chunk->mem;
     newch->data = newch->mem + offset;
   }
   return newch;
@@ -578,6 +580,7 @@ buf_add_vprintf(buf_t *buf, const char *format, va_list args)
   /* XXXX Faster implementations are easy enough, but let's optimize later */
   char *tmp;
   tor_vasprintf(&tmp, format, args);
+  tor_assert(tmp != NULL);
   buf_add(buf, tmp, strlen(tmp));
   tor_free(tmp);
 }
@@ -710,7 +713,8 @@ buf_move_all(buf_t *buf_out, buf_t *buf_in)
 /** Internal structure: represents a position in a buffer. */
 typedef struct buf_pos_t {
   const chunk_t *chunk; /**< Which chunk are we pointing to? */
-  int pos;/**< Which character inside the chunk's data are we pointing to? */
+  ptrdiff_t pos;/**< Which character inside the chunk's data are we pointing
+                 * to? */
   size_t chunk_pos; /**< Total length of all previous chunks. */
 } buf_pos_t;
 
@@ -726,15 +730,15 @@ buf_pos_init(const buf_t *buf, buf_pos_t *out)
 /** Advance <b>out</b> to the first appearance of <b>ch</b> at the current
  * position of <b>out</b>, or later.  Return -1 if no instances are found;
  * otherwise returns the absolute position of the character. */
-static off_t
+static ptrdiff_t
 buf_find_pos_of_char(char ch, buf_pos_t *out)
 {
   const chunk_t *chunk;
-  int pos;
+  ptrdiff_t pos;
   tor_assert(out);
   if (out->chunk) {
     if (out->chunk->datalen) {
-      tor_assert(out->pos < (off_t)out->chunk->datalen);
+      tor_assert(out->pos < (ptrdiff_t)out->chunk->datalen);
     } else {
       tor_assert(out->pos == 0);
     }
@@ -762,7 +766,7 @@ buf_pos_inc(buf_pos_t *pos)
 {
   tor_assert(pos->pos < INT_MAX - 1);
   ++pos->pos;
-  if (pos->pos == (off_t)pos->chunk->datalen) {
+  if (pos->pos == (ptrdiff_t)pos->chunk->datalen) {
     if (!pos->chunk->next)
       return -1;
     pos->chunk_pos += pos->chunk->datalen;
@@ -836,11 +840,11 @@ buf_peek_startswith(const buf_t *buf, const char *cmd)
 
 /** Return the index within <b>buf</b> at which <b>ch</b> first appears,
  * or -1 if <b>ch</b> does not appear on buf. */
-static off_t
+static ptrdiff_t
 buf_find_offset_of_char(buf_t *buf, char ch)
 {
   chunk_t *chunk;
-  off_t offset = 0;
+  ptrdiff_t offset = 0;
   tor_assert(buf->datalen < INT_MAX);
   for (chunk = buf->head; chunk; chunk = chunk->next) {
     char *cp = memchr(chunk->data, ch, chunk->datalen);
@@ -863,7 +867,7 @@ int
 buf_get_line(buf_t *buf, char *data_out, size_t *data_len)
 {
   size_t sz;
-  off_t offset;
+  ptrdiff_t offset;
 
   if (!buf->head)
     return 0;

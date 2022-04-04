@@ -36,7 +36,7 @@
     <name>BanTableModel</name>
     </context>
 <context>
-    <name>BitcoinZeroGUI</name>
+    <name>BitcoinGUI</name>
     <message>
         <source>Synchronizing with network...</source>
         <translation>नेटवर्क से समकालिक (मिल) रहा है ...</translation>
@@ -79,7 +79,7 @@
         <translation>पहचान शब्द/अक्षर जो वॉलेट एनक्रिपशन के लिए इस्तेमाल किया है उसे बदलिए!</translation>
     </message>
     <message>
-        <source>BitcoinZero</source>
+        <source>BZX</source>
         <translation>बीटकोइन</translation>
     </message>
     <message>
@@ -138,7 +138,7 @@
         <source>Wallet is &lt;b&gt;encrypted&lt;/b&gt; and currently &lt;b&gt;locked&lt;/b&gt;</source>
         <translation>वॉलेट एन्क्रिप्टेड है तथा अभी लॉक्ड है</translation>
     </message>
-</context>
+    </context>
 <context>
     <name>CoinControlDialog</name>
     <message>
@@ -195,6 +195,13 @@
     </message>
     </context>
 <context>
+    <name>ModalOverlay</name>
+    <message>
+        <source>Form</source>
+        <translation>फार्म</translation>
+    </message>
+    </context>
+<context>
     <name>OpenURIDialog</name>
     </context>
 <context>
@@ -240,6 +247,9 @@
         <translation>लागू नही
 </translation>
     </message>
+    </context>
+<context>
+    <name>QObject::QObject</name>
     </context>
 <context>
     <name>QRImageWidget</name>
@@ -395,7 +405,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>BitcoinZero-Core</name>
+    <name>BZX-core</name>
     <message>
         <source>Options:</source>
         <translation>विकल्प:</translation>

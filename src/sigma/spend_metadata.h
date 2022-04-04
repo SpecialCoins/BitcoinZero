@@ -34,20 +34,20 @@ public:
     uint256 blockHash;
 
 	/** Contains the hash of the rest of transaction
-	 * spending a zerocoin (excluding the coinspend proof)
+	 * spending a privcoin (excluding the coinspend proof)
 	 */
     uint256 txHash; // The Hash of the rest of the transaction the spend proof is n.
 
 	// Allows us to sign the transaction.
 	ADD_SERIALIZE_METHODS;
 	template <typename Stream, typename Operation>
-	inline void SerializationOp(Stream& s, Operation ser_action, int nType, int nVersion) {
+	inline void SerializationOp(Stream& s, Operation ser_action) {
 		READWRITE(accumulatorId);
 		READWRITE(blockHash);
 		READWRITE(txHash);
 	}
 };
 
-} // namespace libzerocoin
+} // namespace libprivcoin
 
 #endif // SPENDMETADATA_V3_H_

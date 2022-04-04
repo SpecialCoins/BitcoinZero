@@ -25,7 +25,18 @@ Scalar::Scalar()
 
 Scalar::Scalar(uint64_t value)
    : value_(new secp256k1_scalar()) {
-    secp256k1_scalar_set_int(reinterpret_cast<secp256k1_scalar *>(value_), value);
+    unsigned char b32[32];
+    for(int i = 0; i < 24; i++)
+        b32[i] = 0;
+    b32[24] = value >> 56;
+    b32[25] = value >> 48;
+    b32[26] = value >> 40;
+    b32[27] = value >> 32;
+    b32[28] = value >> 24;
+    b32[29] = value >> 16;
+    b32[30] = value >> 8;
+    b32[31] = value;
+    secp256k1_scalar_set_b32(reinterpret_cast<secp256k1_scalar *>(value_), b32, 0);
 }
 
 Scalar::Scalar(const unsigned char* str)
@@ -181,7 +192,11 @@ bool Scalar::isMember() const {
     return *this == temp;
 }
 
-Scalar& Scalar::memberFromSeed(unsigned char* seed){
+bool Scalar::isZero() const {
+    return secp256k1_scalar_is_zero(reinterpret_cast<const secp256k1_scalar *>(value_));
+}
+
+Scalar& Scalar::memberFromSeed(unsigned char* seed) {
     // buffer -> object
     deserialize(seed);
     do {
@@ -202,7 +217,7 @@ Scalar& Scalar::randomize() {
             throw "Unable to generate random Scalar";
         }
         generate(temp);
-    } while (!this->isMember());
+    } while (!this->isMember() || this->isZero()); // we need to ensure, generated value is valid and non 0
 
     return *this;
 }
@@ -248,6 +263,10 @@ Scalar Scalar::hash(const unsigned char* data, size_t len) {
     return result_;
 }
 
+std::size_t Scalar::get_hash() const {
+    auto scalar = reinterpret_cast<const secp256k1_scalar *>(value_);
+    return scalar->d[0] ^ (scalar->d[1] << 8);
+}
 
 std::string Scalar::tostring() const {
     unsigned char buffer[32];
@@ -260,10 +279,6 @@ std::string Scalar::tostring() const {
     }
 
     return ss.str();
-}
-
-size_t Scalar::memoryRequired() const {
-    return 32;
 }
 
 unsigned char* Scalar::serialize(unsigned char* buffer) const {

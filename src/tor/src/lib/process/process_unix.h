@@ -1,6 +1,6 @@
 /* Copyright (c) 2003-2004, Roger Dingledine
  * Copyright (c) 2004-2006, Roger Dingledine, Nick Mathewson.
- * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ * Copyright (c) 2007-2020, The Tor Project, Inc. */
 /* See LICENSE for licensing information */
 
 /**
@@ -61,8 +61,8 @@ STATIC int process_unix_read_handle(process_t *,
                                     process_unix_handle_t *,
                                     buf_t *);
 STATIC bool process_unix_close_file_descriptors(process_unix_t *);
-#endif /* defined(PROCESS_UNIX_PRIVATE). */
+#endif /* defined(PROCESS_UNIX_PRIVATE) */
 
-#endif /* defined(_WIN32). */
+#endif /* !defined(_WIN32) */
 
-#endif /* defined(TOR_PROCESS_UNIX_H). */
+#endif /* !defined(TOR_PROCESS_UNIX_H) */
