@@ -56,6 +56,7 @@
     ./autogen.sh
     CONFIG_SITE=$PWD/depends/x86_64-pc-linux-gnu/share/config.site ./configure --disable-option-checking --prefix=$PWD/depends/x86_64-pc-linux-gnu --disable-dependency-tracking --enable-zmq --with-gui=no --enable-glibc-back-compat --enable-reduce-exports --disable-shared --with-pic --enable-module-recovery --disable-jni
     cd src/bls-signatures/build && make chiabls_la && cd -
+    cd src/bls-signatures/build && make cd -
     make -j4   (-j is optional, number of your cores, -j4)
 
     for qt:
@@ -65,6 +66,7 @@
     ./autogen.sh
     CONFIG_SITE=$PWD/depends/x86_64-pc-linux-gnu/share/config.site ./configure --disable-option-checking --prefix=$PWD/depends/x86_64-pc-linux-gnu --disable-dependency-tracking --enable-zmq --with-gui --enable-glibc-back-compat --enable-reduce-exports --disable-shared --with-pic --enable-module-recovery --disable-jni
     cd src/bls-signatures/build && make chiabls_la && cd -
+    cd src/bls-signatures/build && make cd -
     make -j4   (-j is optional, number of your cores, -j4)
 
     cd src
