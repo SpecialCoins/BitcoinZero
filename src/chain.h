@@ -439,13 +439,6 @@ public:
 
         const auto &params = Params().GetConsensus();
 
-        if (!(s.GetType() & SER_GETHASH)) {
-            READWRITE(mintedPubCoins);
-            READWRITE(spentSerials);
-            READWRITE(sigmaMintedPubCoins);
-            READWRITE(sigmaSpentSerials);
-        }
-
         if (!(s.GetType() & SER_GETHASH)
                 && nHeight >= params.nLelantusStartBlock
                 && nVersion >= LELANTUS_PROTOCOL_ENABLEMENT_VERSION) {
@@ -458,10 +451,15 @@ public:
                         lelantusMintedPubCoins[itr.first].push_back(std::make_pair(coin, uint256()));
                     }
                 }
-            } else
-                READWRITE(lelantusMintedPubCoins);
-                READWRITE(lelantusSpentSerials);
-                READWRITE(anonymitySetHash);
+            }
+        }
+
+        if (!(s.GetType() & SER_GETHASH) && nHeight >= params.nLelantusStartBlock) {
+            READWRITE(sigmaMintedPubCoins);
+            READWRITE(sigmaSpentSerials);
+            READWRITE(lelantusMintedPubCoins);
+            READWRITE(lelantusSpentSerials);
+            READWRITE(anonymitySetHash);
         }
 
         if (!(s.GetType() & SER_GETHASH) && nHeight >= params.nEvoSporkStartBlock && nHeight < params.nEvoSporkStopBlock)

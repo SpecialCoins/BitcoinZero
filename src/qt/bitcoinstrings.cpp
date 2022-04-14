@@ -174,9 +174,6 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 "Please contribute if you find %s useful. Visit %s for further information "
 "about the software."),
 QT_TRANSLATE_NOOP("BZX-core", ""
-"PrivateSend uses exact denominated amounts to send funds, you might simply "
-"need to anonymize some more coins."),
-QT_TRANSLATE_NOOP("BZX-core", ""
 "Prune configured below the minimum of %d MiB.  Please use a higher number."),
 QT_TRANSLATE_NOOP("BZX-core", ""
 "Prune: last wallet synchronisation goes beyond pruned data. You need to -"
@@ -240,11 +237,6 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 QT_TRANSLATE_NOOP("BZX-core", ""
 "Tries to keep outbound traffic under the given target (in MiB per 24h), 0 = "
 "no limit (default: %d)"),
-QT_TRANSLATE_NOOP("BZX-core", ""
-"Unable to locate enough PrivateSend denominated funds for this transaction."),
-QT_TRANSLATE_NOOP("BZX-core", ""
-"Unable to locate enough PrivateSend non-denominated funds for this "
-"transaction that are not equal 1000 BZX."),
 QT_TRANSLATE_NOOP("BZX-core", ""
 "Unable to locate enough funds for this transaction that are not equal 1000 "
 "BZX."),
@@ -445,8 +437,6 @@ QT_TRANSLATE_NOOP("BZX-core", "Invalid script detected."),
 QT_TRANSLATE_NOOP("BZX-core", "Keep at most <n> unconnectable transactions in memory (default: %u)"),
 QT_TRANSLATE_NOOP("BZX-core", "Keep the transaction memory pool below <n> megabytes (default: %u)"),
 QT_TRANSLATE_NOOP("BZX-core", "Keypool ran out, please call keypoolrefill first"),
-QT_TRANSLATE_NOOP("BZX-core", "Last PrivateSend was too recent."),
-QT_TRANSLATE_NOOP("BZX-core", "Last successful PrivateSend action was too recent."),
 QT_TRANSLATE_NOOP("BZX-core", "Line: %d"),
 QT_TRANSLATE_NOOP("BZX-core", "List commands"),
 QT_TRANSLATE_NOOP("BZX-core", "Listen for JSON-RPC connections on <port> (default: %u or testnet: %u)"),
@@ -490,9 +480,6 @@ QT_TRANSLATE_NOOP("BZX-core", "Port: %d"),
 QT_TRANSLATE_NOOP("BZX-core", "Prepend debug output with timestamp (default: %u)"),
 QT_TRANSLATE_NOOP("BZX-core", "Print this help message and exit"),
 QT_TRANSLATE_NOOP("BZX-core", "Print version and exit"),
-QT_TRANSLATE_NOOP("BZX-core", "PrivateSend is idle."),
-QT_TRANSLATE_NOOP("BZX-core", "PrivateSend request complete:"),
-QT_TRANSLATE_NOOP("BZX-core", "PrivateSend request incomplete:"),
 QT_TRANSLATE_NOOP("BZX-core", "Problem with coin selection for re-mint while spending."),
 QT_TRANSLATE_NOOP("BZX-core", "Problem with coin selection for spend."),
 QT_TRANSLATE_NOOP("BZX-core", "Prune cannot be configured with a negative value."),
@@ -594,7 +581,6 @@ QT_TRANSLATE_NOOP("BZX-core", "Use UPnP to map the listening port (default: %u)"
 QT_TRANSLATE_NOOP("BZX-core", "Use the test chain"),
 QT_TRANSLATE_NOOP("BZX-core", "User Agent comment (%s) contains unsafe characters."),
 QT_TRANSLATE_NOOP("BZX-core", "Username for JSON-RPC connections"),
-QT_TRANSLATE_NOOP("BZX-core", "Value more than PrivateSend pool maximum allows."),
 QT_TRANSLATE_NOOP("BZX-core", "Verifying blocks..."),
 QT_TRANSLATE_NOOP("BZX-core", "Verifying wallet..."),
 QT_TRANSLATE_NOOP("BZX-core", "Very low number of keys left: %d"),

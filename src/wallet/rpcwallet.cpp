@@ -568,7 +568,7 @@ UniValue listaddressbalances(const JSONRPCRequest& request)
             "1. minamount               (numeric, optional, default=0) Minimum balance in " + CURRENCY_UNIT + " an address should have to be shown in the list\n"
             "\nResult:\n"
             "{\n"
-            "  \"address\": amount,       (string) The dash address and the amount in " + CURRENCY_UNIT + "\n"
+            "  \"address\": amount,       (string) The address and the amount in " + CURRENCY_UNIT + "\n"
             "  ,...\n"
             "}\n"
             "\nExamples:\n"
@@ -1949,7 +1949,7 @@ UniValue gettransaction(const JSONRPCRequest& request)
     UniValue details(UniValue::VARR);
     ListTransactions(pwallet, wtx, "*", 0, false, details, filter);
     entry.push_back(Pair("details", details));
-    std::string strHex = EncodeHexTx(static_cast<CTransaction>(wtx), RPCSerializationFlags());
+    std::string strHex = EncodeHexTx(static_cast<CTransaction>(wtx));
     entry.push_back(Pair("hex", strHex));
 
     return entry;
@@ -3095,18 +3095,10 @@ UniValue joinsplit(const JSONRPCRequest& request) {
 
 
     UniValue sendTo = request.params[0].get_obj();
-    UniValue mintAmounts;
-    if(request.params.size() >= 3) {
-        try {
-                mintAmounts = request.params[2].get_obj();
-        } catch (std::runtime_error const &) {
-            //may be empty
-        }
-    }
 
     std::unordered_set<std::string> subtractFeeFromAmountSet;
     UniValue subtractFeeFromAmount(UniValue::VARR);
-    if (request.params.size() > 2) {
+    if (request.params.size() > 1) {
         try {
             subtractFeeFromAmount = request.params[1].get_array();
         }  catch (std::runtime_error const &) {
@@ -3116,6 +3108,15 @@ UniValue joinsplit(const JSONRPCRequest& request) {
             subtractFeeFromAmountSet.insert(subtractFeeFromAmount[i].get_str());
         }
     }
+
+    UniValue mintAmounts;
+     if(request.params.size() > 2) {
+         try {
+                 mintAmounts = request.params[2].get_obj();
+         } catch (std::runtime_error const &) {
+             //may be empty
+         }
+     }
 
     std::set<CBitcoinAddress> setAddress;
     std::vector<CRecipient> vecSend;

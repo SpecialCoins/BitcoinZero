@@ -6,9 +6,6 @@
 
 #include "init.h"
 #include "masternode-sync.h"
-#ifdef ENABLE_WALLET
-//#include "privatesend-client.h"
-#endif
 #include "validation.h"
 
 struct CompareScoreMN
@@ -64,34 +61,6 @@ bool CMasternodeUtils::GetMasternodeRank(const COutPoint& outpoint, int& nRankRe
     return false;
 }
 
-
-void CMasternodeUtils::ProcessMasternodeConnections(CConnman& connman)
-{
-    /*
-    std::vector<CDeterministicMNCPtr> vecDmns; // will be empty when no wallet
-#ifdef ENABLE_WALLET
-    privateSendClient.GetMixingMasternodesInfo(vecDmns);
-#endif // ENABLE_WALLET
-
-    connman.ForEachNode(CConnman::AllNodes, [&](CNode* pnode) {
-        if (pnode->fMasternode && !connman.IsMasternodeQuorumNode(pnode)) {
-#ifdef ENABLE_WALLET
-            bool fFound = false;
-            for (const auto& dmn : vecDmns) {
-                if (pnode->addr == dmn->pdmnState->addr) {
-                    fFound = true;
-                    break;
-                }
-            }
-            if (fFound) return; // do NOT disconnect mixing masternodes
-#endif // ENABLE_WALLET
-            LogPrintf("Closing Masternode connection: peer=%d, addr=%s\n", pnode->id, pnode->addr.ToString());
-            pnode->fDisconnect = true;
-        }
-    });
-    */
-}
-
 void CMasternodeUtils::DoMaintenance(CConnman& connman)
 {
     if(fLiteMode) return; // disable all Dash specific functionality
@@ -102,9 +71,5 @@ void CMasternodeUtils::DoMaintenance(CConnman& connman)
     static unsigned int nTick = 0;
 
     nTick++;
-
-    if(nTick % 60 == 0) {
-        ProcessMasternodeConnections(connman);
-    }
 }
 

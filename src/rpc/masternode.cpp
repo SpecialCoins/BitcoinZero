@@ -534,6 +534,8 @@ static const CRPCCommand commands[] =
     { "BZX",               "masternodelist",             &masternodelist,         true,  {} },
     { "BZX",               "evomasternode",              &masternode,             true,  {} },
     { "BZX",               "evomasternodelist",          &masternodelist,         true,  {} },
+    { "BZX",               "masternodelist",             &masternodelist,         true,  {} },
+    { "BZX",               "masternodelists",            &masternodelist,         true,  {} },
 };
 
 void RegisterMasternodeRPCCommands(CRPCTable &t)

@@ -56,7 +56,7 @@ std::string GetHelpString(int nParamNum, std::string strParamName)
         },
         {"ipAndPort",
             "%d. \"ipAndPort\"                (string, required) IP and port in the form \"IP:PORT\".\n"
-            "                              Must be unique on the network. Can be set to \"\", which will require a ProUpServTx afterwards.\n"
+            "                              Must be unique on the network. Can be set to 0, which will require a ProUpServTx afterwards.\n"
         },
         {"operatorKey",
             "%d. \"operatorKey\"              (string, required) The operator private key belonging to the\n"
@@ -103,7 +103,7 @@ std::string GetHelpString(int nParamNum, std::string strParamName)
     return strprintf(it->second, nParamNum);
 }
 
-// Allows to specify Dash address or priv key. In case of Dash address, the priv key is taken from the wallet
+// Allows to specify address or priv key. In case of address, the priv key is taken from the wallet
 static CKey ParsePrivKey(CWallet* pwallet, const std::string &strKeyOrAddress, bool allowAddresses = true) {
     CBitcoinAddress address;
     if (allowAddresses && address.SetString(strKeyOrAddress) && address.IsValid()) {
@@ -412,7 +412,6 @@ UniValue protx_register(const JSONRPCRequest& request)
     }
 
     size_t paramIdx = 1;
-
 
     CMutableTransaction tx;
     tx.nVersion = 3;
@@ -1332,7 +1331,7 @@ UniValue spork(const JSONRPCRequest& request)
                 enableAction.nEnableAtHeight = 0;
                 enableAction.parameter = 0;
                 enableAction.feature = feature.getValStr();
-                sporkTx.actions.push_back(enableAction);                
+                sporkTx.actions.push_back(enableAction);
             }
         }
 
@@ -1384,7 +1383,7 @@ UniValue spork(const JSONRPCRequest& request)
                     }
                     else {
                         spork_help();
-                    }                    
+                    }
                 }
                 sporkTx.actions.push_back(limitAction);
             }

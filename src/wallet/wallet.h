@@ -90,7 +90,7 @@ static const bool DEFAULT_UPGRADE_CHAIN = false;
 static const bool DEFAULT_USE_HD_WALLET = true;
 
 //! if set, all keys will be derived by using BIP39
-static const bool DEFAULT_USE_MNEMONIC = false;
+static const bool DEFAULT_USE_MNEMONIC = true;
 
 extern const char * DEFAULT_WALLET_DAT;
 
