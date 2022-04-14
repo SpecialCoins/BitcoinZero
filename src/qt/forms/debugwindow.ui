@@ -433,11 +433,11 @@
              <height>24</height>
             </size>
            </property>
-           <property name="text">
-            <string/>
-           </property>
            <property name="toolTip">
             <string>Decrease font size</string>
+           </property>
+           <property name="text">
+            <string/>
            </property>
            <property name="icon">
             <iconset resource="../bitcoin.qrc">
@@ -1686,6 +1686,64 @@
        </property>
        <property name="text">
         <string>Wallet Path</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_resync">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>400</y>
+         <width>301</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Delete blockchain</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_delete_blockchain">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>390</y>
+         <width>411</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>-resync: Deletes all local blockchain folders so the wallet synchronizes from scratch.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_reset">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>450</y>
+         <width>301</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Reset invalidblock</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_reset_invalid">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>440</y>
+         <width>411</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>-reset: Deletes invalidated flags to allow chain to download.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>

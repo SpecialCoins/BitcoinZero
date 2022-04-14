@@ -242,15 +242,15 @@ void Shutdown()
         return;
 
 #ifdef ENABLE_WALLET
-    boost::filesystem::path backupDir = GetDataDir() / "backups";
+    fs::path backupDir = GetDataDir() / "backups";
     if (true)
     {
-        if (!boost::filesystem::exists(backupDir))
+        if (!fs::exists(backupDir))
         {
             // Always create backup folder to not confuse the operating system's file browser
-            boost::filesystem::create_directories(backupDir);
+            fs::create_directories(backupDir);
         }
-            if (boost::filesystem::exists(backupDir))
+            if (fs::exists(backupDir))
 
             {   std::string strWalletFile = GetArg("-wallet", "wallet.dat");
                 // Create backup of the wallet
@@ -259,33 +259,33 @@ void Shutdown()
                 backupPathStr += "/" + strWalletFile;
                 std::string sourcePathStr = GetDataDir().string();
                 sourcePathStr += "/" + strWalletFile;
-                boost::filesystem::path sourceFile = sourcePathStr;
-                boost::filesystem::path backupFile = backupPathStr + dateTimeStr;
+                fs::path sourceFile = sourcePathStr;
+                fs::path backupFile = backupPathStr + dateTimeStr;
                 sourceFile.make_preferred();
                 backupFile.make_preferred();
-                if (boost::filesystem::exists(sourceFile))
+                if (fs::exists(sourceFile))
                 {
                     try
                     {
-                        boost::filesystem::copy_file(sourceFile, backupFile);
+                        fs::copy_file(sourceFile, backupFile);
                         LogPrintf("Creating backup of %s -> %s\n", sourceFile, backupFile);
-                    } catch (boost::filesystem::filesystem_error& error)
+                    } catch (fs::filesystem_error& error)
                     {
                         LogPrintf("Failed to create backup %s\n", error.what());
                     }
                 }
 
                 // Keep only the last 25 backups, including the new one of course
-                typedef std::multimap<std::time_t, boost::filesystem::path> folder_set_t;
+                typedef std::multimap<std::time_t, fs::path> folder_set_t;
                 folder_set_t folder_set;
-                boost::filesystem::directory_iterator end_iter;
-                boost::filesystem::path backupFolder = backupDir.string();
+                fs::directory_iterator end_iter;
+                fs::path backupFolder = backupDir.string();
                 backupFolder.make_preferred();
                 // Build map of backup files for current(!) wallet sorted by last write time
-                boost::filesystem::path currentFile;
-                for (boost::filesystem::directory_iterator dir_iter(backupFolder); dir_iter != end_iter; ++dir_iter) {
+                fs::path currentFile;
+                for (fs::directory_iterator dir_iter(backupFolder); dir_iter != end_iter; ++dir_iter) {
                     // Only check regular files
-                    if (boost::filesystem::is_regular_file(dir_iter->status())) {
+                    if (fs::is_regular_file(dir_iter->status())) {
                         currentFile = dir_iter->path().filename();
                         // Only add the backups for the current wallet, e.g. wallet.dat.*
                         if (dir_iter->path().stem().string() == strWalletFile) {
@@ -295,14 +295,14 @@ void Shutdown()
                 }
                 // Loop backward through backup files and keep the N newest ones (1 <= N <= 10)
                 int counter = 0;
-                BOOST_REVERSE_FOREACH (PAIRTYPE(const std::time_t, boost::filesystem::path) file, folder_set) {
+                BOOST_REVERSE_FOREACH (PAIRTYPE(const std::time_t, fs::path) file, folder_set) {
                     counter++;
                     if (counter > 25) {
                         // More than nBackups backups: delete oldest one(s)
                         try {
-                            boost::filesystem::remove(file.second);
+                            fs::remove(file.second);
                             LogPrintf("Old backup deleted: %s\n", file.second);
-                        } catch (boost::filesystem::filesystem_error& error) {
+                        } catch (fs::filesystem_error& error) {
                             LogPrintf("Failed to delete backup %s\n", error.what());
                         }
                     }
@@ -516,8 +516,10 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-prune=<n>", strprintf(_("Reduce storage requirements by enabling pruning (deleting) of old blocks. This allows the pruneblockchain RPC to be called to delete specific blocks, and enables automatic pruning of old blocks if a target size in MiB is provided. This mode is incompatible with -txindex and -rescan. "
             "Warning: Reverting this setting requires re-downloading the entire blockchain. "
             "(default: 0 = disable pruning blocks, 1 = allow manual pruning via RPC, >%u = automatically prune block files to stay under the specified target size in MiB)"), MIN_DISK_SPACE_FOR_BLOCK_FILES / 1024 / 1024));
-    strUsage += HelpMessageOpt("-reindex-chainstate", _("Rebuild chain state from the currently indexed blocks"));
-    strUsage += HelpMessageOpt("-reindex", _("Rebuild chain state and block index from the blk*.dat files on disk"));
+    strUsage += HelpMessageOpt("-reindex-chainstate", "Rebuild chain state from the currently indexed blocks");
+    strUsage += HelpMessageOpt("-reindex", "Rebuild chain state and block index from the blk*.dat files on disk");
+    strUsage += HelpMessageOpt("-resync", "Delete blockchain folders and resync from scratch on startup");
+    strUsage += HelpMessageOpt("-reset", "Deletes invalidated flags on startup");
 #ifndef WIN32
     strUsage += HelpMessageOpt("-sysperms", _("Create new files with system default permissions, instead of umask 077 (only effective with disabled wallet functionality)"));
 #endif
@@ -950,6 +952,54 @@ bool AppInitServers(boost::thread_group& threadGroup)
 // Parameter interaction based on rules
 void InitParameterInteraction()
 {
+    if (GetBoolArg("-resync", false)) {
+        uiInterface.InitMessage(_("Preparing for resync..."));
+        // Delete the local blockchain folders to force a resync from scratch to get a consitent blockchain-state
+        fs::path blocksDir = GetDataDir() / "blocks";
+        fs::path chainstateDir = GetDataDir() / "chainstate";
+        fs::path databaseDir = GetDataDir() / "database";
+        fs::path evodbDir = GetDataDir() / "evodb";
+        fs::path llmqDir = GetDataDir() / "llmq";
+        fs::path torDir = GetDataDir() / "tor";
+
+        LogPrintf("Deleting blockchain folders blocks, chainstate, sporks\n");
+        // We delete in individual steps in case one of the folder is missing already
+        try {
+            if (fs::exists(blocksDir)){
+                fs::remove_all(blocksDir);
+                LogPrintf("-resync: folder deleted: %s\n", blocksDir.string().c_str());
+            }
+
+            if (fs::exists(chainstateDir)){
+                fs::remove_all(chainstateDir);
+                LogPrintf("-resync: folder deleted: %s\n", chainstateDir.string().c_str());
+            }
+
+            if (fs::exists(databaseDir)){
+                fs::remove_all(databaseDir);
+                LogPrintf("-resync: folder deleted: %s\n", databaseDir.string().c_str());
+            }
+
+            if (fs::exists(evodbDir)){
+                fs::remove_all(evodbDir);
+                LogPrintf("-resync: folder deleted: %s\n", evodbDir.string().c_str());
+            }
+
+            if (fs::exists(llmqDir)){
+                fs::remove_all(llmqDir);
+                LogPrintf("-resync: folder deleted: %s\n", llmqDir.string().c_str());
+            }
+
+            if (fs::exists(torDir)){
+                fs::remove_all(torDir);
+                LogPrintf("-resync: folder deleted: %s\n", torDir.string().c_str());
+            }
+
+        } catch (const fs::filesystem_error& error) {
+            LogPrintf("Failed to delete blockchain folders %s\n", error.what());
+        }
+    }
+
     // when specifying an explicit binding address, you want to listen on it
     // even when -connect or -proxy is specified
     if (IsArgSet("-bind")) {
@@ -1009,6 +1059,8 @@ void InitParameterInteraction()
         if (SoftSetBoolArg("-discover", false))
             LogPrintf("%s: parameter interaction: -externalip set -> setting -discover=0\n", __func__);
     }
+
+
 
     if (GetBoolArg("-salvagewallet", false)) {
         // Rewrite just private keys: rescan to find transactions

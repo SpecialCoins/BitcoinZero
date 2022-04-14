@@ -14,7 +14,7 @@
 #include "guiutil.h"
 #include "platformstyle.h"
 #include "bantablemodel.h"
-
+#include "validation.h"
 #include "chainparams.h"
 #include "netbase.h"
 #include "rpc/server.h"
@@ -60,6 +60,8 @@ const QString ZAPTXES1("-zapwallettxes=1");
 const QString ZAPTXES2("-zapwallettxes=2");
 const QString UPGRADEWALLET("-upgradewallet");
 const QString REINDEX("-reindex");
+const QString RESYNC("-resync");
+const QString RESET("-reset");
 
 const struct {
     const char *url;
@@ -458,6 +460,8 @@ RPCConsole::RPCConsole(const PlatformStyle *_platformStyle, QWidget *parent) :
     connect(ui->btn_zapwallettxes2, SIGNAL(clicked()), this, SLOT(walletZaptxes2()));
     connect(ui->btn_upgradewallet, SIGNAL(clicked()), this, SLOT(walletUpgrade()));
     connect(ui->btn_reindex, SIGNAL(clicked()), this, SLOT(walletReindex()));
+    connect(ui->btn_resync, SIGNAL(clicked()), this, SLOT(walletResync()));
+    connect(ui->btn_reset, SIGNAL(clicked()), this, SLOT(walletReset()));
 
     // set library version labels
 #ifdef ENABLE_WALLET
@@ -711,6 +715,38 @@ void RPCConsole::walletReindex()
     buildParameterlist(REINDEX);
 }
 
+/** Restart wallet with "-resync" */
+void RPCConsole::walletResync()
+{
+    QString resyncWarning = tr("This will delete your local blockchain folders and the wallet will synchronize the complete Blockchain from scratch.<br /><br />");
+    resyncWarning +=   tr("This needs quite some time and downloads a lot of data.<br /><br />");
+    resyncWarning +=   tr("Your transactions and funds will be visible again after the download has completed.<br /><br />");
+    resyncWarning +=   tr("Do you want to continue?.<br />");
+    QMessageBox::StandardButton retval = QMessageBox::question(this, tr("Confirm resync Blockchain"),
+                                                               resyncWarning,
+                                                               QMessageBox::Yes | QMessageBox::Cancel,
+                                                               QMessageBox::Cancel);
+
+    if (retval != QMessageBox::Yes) {
+        // Resync canceled
+        return;
+    }
+
+    // Restart and resync
+    buildParameterlist(RESYNC);
+}
+
+/** Reset flags "-reset" */
+void RPCConsole::walletReset()
+{
+    CBlockIndex* const pindexPrev = chainActive.Tip();
+    uint256 Hash = pindexPrev->GetBlockHash();
+    LogPrintf ("Reseted invalid flags since:  %s \n", Hash.ToString());
+    ResetBlockFailureFlags(pindexPrev);
+    CValidationState state;
+    ActivateBestChain(state, Params());
+}
+
 /** Build command-line parameter list for restart */
 void RPCConsole::buildParameterlist(QString arg)
 {
@@ -725,6 +761,7 @@ void RPCConsole::buildParameterlist(QString arg)
     args.removeAll(ZAPTXES2);
     args.removeAll(UPGRADEWALLET);
     args.removeAll(REINDEX);
+    args.removeAll(RESYNC);
 
     // Append repair parameter to command line.
     args.append(arg);

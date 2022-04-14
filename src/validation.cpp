@@ -1734,7 +1734,7 @@ CAmount GetBlockSubsidy(int nHeight)
     return 2 * COIN;
     }
 /*
-UTXO insertion, estimated 30M coins, not included in total created calculation
+UTXO insertion, 31239304.13807115 coins, not included in total created calculation
 until 1 week,   2/2 coins, adds 2016 blocks,   around 15332   coins
 until 2 weeks,  4/4 coins, adds 4032 blocks,   around 32256   coins, total created 47588   coins
 until 3 weeks,  6/6 coins, adds 4032 blocks,   around 48384   coins, total created 95973   coins
