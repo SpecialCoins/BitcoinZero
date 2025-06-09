@@ -3694,10 +3694,6 @@
         <translation>Query voor peer-adressen via DNS-lookup , indien laag aan adressen  (default: 1 unless -connect/-noconnect)</translation>
     </message>
     <message>
-        <source>Support filtering of blocks and transaction with bloom filters (default: %u)</source>
-        <translation>Ondersteun filtering van blokken en transacties met bloomfilters (standaard: %u)</translation>
-    </message>
-    <message>
         <source>This is the transaction fee you may pay when fee estimates are not available.</source>
         <translation>Dit is de transactiekost die je mogelijk betaald indien geschatte tarief niet beschikbaar is</translation>
     </message>
