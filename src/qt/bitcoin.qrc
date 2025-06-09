@@ -152,9 +152,6 @@
     <qresource prefix="/css">
         <file alias="BZXTheme">res/css/BZX.css</file>
     </qresource>
-    <qresource prefix="/css">
-        <file alias="BZXLowTheme">res/css/BZX_low.css</file>
-    </qresource>
     <qresource prefix="/fonts">
         <file alias="Saira_SemiCondensed-Bold">res/fonts/Saira_SemiCondensed-Bold.ttf</file>
         <file alias="SourceSansPro-Regular">res/fonts/SourceSansPro-Regular.ttf</file>

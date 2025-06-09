@@ -5,7 +5,6 @@
 #ifndef BITCOIN_QT_WALLETMODEL_H
 #define BITCOIN_QT_WALLETMODEL_H
 
-#include "paymentrequestplus.h"
 #include "walletmodeltransaction.h"
 
 #include "support/allocators/secure.h"
@@ -58,9 +57,9 @@ public:
     CAmount amount;
     // If from a payment request, this is used for storing the memo
     QString message;
-
-    // If from a payment request, paymentRequest.IsInitialized() will be true
-    PaymentRequestPlus paymentRequest;
+    // If building with BIP70 is disabled, keep the payment request around as
+      // serialized string to ensure load/store is lossless
+      std::string sPaymentRequest;
     // Empty if no authentication or invalid signature/cert/etc.
     QString authenticatedMerchant;
 
@@ -76,9 +75,6 @@ public:
         std::string sAddress = address.toStdString();
         std::string sLabel = label.toStdString();
         std::string sMessage = message.toStdString();
-        std::string sPaymentRequest;
-        if (!ser_action.ForRead() && paymentRequest.IsInitialized())
-            paymentRequest.SerializeToString(&sPaymentRequest);
         std::string sAuthenticatedMerchant = authenticatedMerchant.toStdString();
 
         READWRITE(this->nVersion);
@@ -94,8 +90,6 @@ public:
             address = QString::fromStdString(sAddress);
             label = QString::fromStdString(sLabel);
             message = QString::fromStdString(sMessage);
-            if (!sPaymentRequest.empty())
-                paymentRequest.parse(QByteArray::fromRawData(sPaymentRequest.data(), sPaymentRequest.size()));
             authenticatedMerchant = QString::fromStdString(sAuthenticatedMerchant);
         }
     }
@@ -118,7 +112,6 @@ public:
         AmountExceedsBalance,
         AmountWithFeeExceedsBalance,
         DuplicateAddress,
-        SigmaDisabled,
         TransactionCreationFailed, // Error returned when wallet is still locked
         TransactionCommitFailed,
         AbsurdFee,
@@ -263,22 +256,6 @@ public:
     bool transactionCanBeRebroadcast(uint256 hash) const;
     bool rebroadcastTransaction(uint256 hash, CValidationState &state);
 
-    // Sigma
-    SendCoinsReturn prepareSigmaSpendTransaction(WalletModelTransaction &transaction,
-        std::vector<CSigmaEntry>& coins, std::vector<CHDMint>& changes,
-        bool& fChangeAddedToFee,
-        const CCoinControl *coinControl = NULL);
-
-    // Send coins to a list of recipients
-    SendCoinsReturn sendSigma(WalletModelTransaction &transaction,
-        std::vector<CSigmaEntry>& coins, std::vector<CHDMint>& changes);
-
-    // Mint sigma
-    void sigmaMint(const CAmount& n, const CCoinControl *coinControl = NULL);
-    void checkSigmaAmount(bool forced);
-
-    std::vector<CSigmaEntry> GetUnsafeCoins(const CCoinControl* coinControl = NULL);
-
     CAmount GetJMintCredit(const CTxOut& txout) const;
 
 private:
@@ -310,13 +287,7 @@ private:
     CAmount cachedUnconfirmedPrivateBalance;
     EncryptionStatus cachedEncryptionStatus;
     int cachedNumBlocks;
-
-    // Sigma
-    bool cachedHavePendingCoin = true;
-    int lastBlockCheckSigma = 0;
-
     QTimer *pollTimer;
-
     int cachedNumISLocks;
 
     void subscribeToCoreSignals();
@@ -354,8 +325,6 @@ Q_SIGNALS:
     // Watch-only address added
     void notifyWatchonlyChanged(bool fHaveWatchonly);
 
-    // Update sigma changed
-    void notifySigmaChanged(const std::vector<CMintMeta>& spendable, const std::vector<CMintMeta>& pending);
 public Q_SLOTS:
     /* Wallet status might have changed */
     void updateStatus();

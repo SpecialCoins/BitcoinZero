@@ -39,6 +39,11 @@ class QProgressBar;
 class QProgressDialog;
 QT_END_NAMESPACE
 
+namespace GUIUtil {
+    class ClickableLabel;
+    class ClickableProgressBar;
+}
+
 /**
   Bitcoin GUI main class. This class represents the main window of the Bitcoin UI. It communicates with both the client and
   wallet models to give the user an up-to-date view of the current core state.
@@ -85,20 +90,16 @@ private:
     UnitDisplayStatusBarControl *unitDisplayControl;
     QLabel *labelWalletEncryptionIcon;
     QLabel *labelWalletHDStatusIcon;
-    QLabel *connectionsControl;
-    QLabel *labelBlocksIcon;
+    GUIUtil::ClickableLabel *connectionsControl;
+    GUIUtil::ClickableLabel *labelBlocksIcon;
     QLabel *labelElysiumPendingIcon;
     QLabel *labelElysiumPendingText;
     QLabel *progressBarLabel;
-    QProgressBar *progressBar;
+    GUIUtil::ClickableProgressBar *progressBar;
     QProgressDialog *progressDialog;
 
     QMenuBar *appMenuBar;
     QAction *overviewAction;
-#ifdef ENABLE_ELYSIUM
-    QAction *elyAssetsAction;
-    QAction *toolboxAction;
-#endif
     QAction *historyAction;
     QAction *quitAction;
     QAction *sendCoinsAction;
@@ -108,6 +109,7 @@ private:
     QAction *signMessageAction;
     QAction *verifyMessageAction;
     QAction *aboutAction;
+    QAction *openRepairAction;
     QAction *receiveCoinsAction;
     QAction *receiveCoinsMenuAction;
     QAction *optionsAction;
@@ -123,7 +125,6 @@ private:
     QAction *masternodeAction;
     QAction *createPcodeAction;
     QAction *logoAction;
-    QAction *openRepairAction;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
@@ -214,18 +215,10 @@ public Q_SLOTS:
     void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address, const QString& label);
 #endif // ENABLE_WALLET
 
-private Q_SLOTS:
+public Q_SLOTS:
 #ifdef ENABLE_WALLET
     /** Switch to overview (home) page */
     void gotoOverviewPage();
-#ifdef ENABLE_ELYSIUM
-    /** Switch to ElyAssets page */
-    void gotoElyAssetsPage();
-    /** Switch to utility page */
-    void gotoToolboxPage();
-    /** Switch directly to Elysium history tab */
-    void gotoElysiumHistoryTab();
-#endif
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
     /** Switch directly to BZX history tab */
@@ -266,7 +259,9 @@ private Q_SLOTS:
 #endif
 
     /** Show window if hidden, unminimize when minimized, rise when obscured or show if hidden and fToggleHidden is true */
-    void showNormalIfMinimized(bool fToggleHidden = false);
+    void showNormalIfMinimized() { showNormalIfMinimized(false); }
+    void showNormalIfMinimized(bool fToggleHidden);
+
     /** Simply calls showNormalIfMinimized(true) for use in SLOT() macro */
     void toggleHidden();
 
@@ -289,6 +284,9 @@ private Q_SLOTS:
 
     /** Update Lelantus page visibility */
     void updateLelantusPage();
+
+    /** Update RAP Addresses page visibility */
+    void setRapAddressesVisible(bool);
 };
 
 class UnitDisplayStatusBarControl : public QLabel

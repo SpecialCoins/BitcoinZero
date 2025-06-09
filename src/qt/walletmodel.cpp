@@ -64,7 +64,7 @@ WalletModel::WalletModel(const PlatformStyle *platformStyle, CWallet *_wallet, O
 
     // This timer will be fired repeatedly to update the balance
     pollTimer = new QTimer(this);
-    connect(pollTimer, SIGNAL(timeout()), this, SLOT(pollBalanceChanged()));
+    connect(pollTimer, &QTimer::timeout, this, &WalletModel::pollBalanceChanged);
     pollTimer->start(MODEL_UPDATE_DELAY);
 
     subscribeToCoreSignals();
@@ -215,44 +215,6 @@ void WalletModel::checkBalanceChanged()
     }
 }
 
-void WalletModel::checkSigmaAmount(bool forced)
-{
-    auto currentBlock = chainActive.Height();
-    if ((cachedHavePendingCoin && currentBlock > lastBlockCheckSigma)
-        || currentBlock < lastBlockCheckSigma // reorg
-        || forced) {
-
-        auto coins = wallet->zwallet->GetTracker().ListMints(true, false, false);
-
-        std::vector<CMintMeta> spendable, pending;
-
-        std::vector<sigma::PublicCoin> anonimity_set;
-        uint256 blockHash;
-
-        cachedHavePendingCoin = false;
-
-        for (const auto& coin : coins) {
-
-            // ignore spent coin
-            if (coin.isUsed)
-                continue;
-
-            int coinHeight = coin.nHeight;
-
-            if (coinHeight > 0
-                && coinHeight + (ZC_MINT_CONFIRMATIONS-1) <= chainActive.Height())  {
-                spendable.push_back(coin);
-            } else {
-                cachedHavePendingCoin = true;
-                pending.push_back(coin);
-            }
-        }
-
-        lastBlockCheckSigma = currentBlock;
-        Q_EMIT notifySigmaChanged(spendable, pending);
-    }
-}
-
 void WalletModel::updateTransaction()
 {
     // Balance and number of transactions might have changed
@@ -318,29 +280,6 @@ WalletModel::SendCoinsReturn WalletModel::prepareTransaction(WalletModelTransact
     {
         if (rcp.fSubtractFeeFromAmount)
             fSubtractFeeFromAmount = true;
-
-        if (rcp.paymentRequest.IsInitialized())
-        {   // PaymentRequest...
-            CAmount subtotal = 0;
-            const payments::PaymentDetails& details = rcp.paymentRequest.getDetails();
-            for (int i = 0; i < details.outputs_size(); i++)
-            {
-                const payments::Output& out = details.outputs(i);
-                if (out.amount() <= 0) continue;
-                subtotal += out.amount();
-                const unsigned char* scriptStr = (const unsigned char*)out.script().data();
-                CScript scriptPubKey(scriptStr, scriptStr+out.script().size());
-                CAmount nAmount = out.amount();
-                CRecipient recipient = {scriptPubKey, nAmount, rcp.fSubtractFeeFromAmount};
-                vecSend.push_back(recipient);
-            }
-            if (subtotal <= 0)
-            {
-                return InvalidAmount;
-            }
-            total += subtotal;
-        }
-        else
         {   // User-entered address / amount:
             if(!validateAddress(rcp.address))
             {
@@ -432,29 +371,6 @@ WalletModel::SendCoinsReturn WalletModel::prepareJoinSplitTransaction(
         if (rcp.fSubtractFeeFromAmount)
             fSubtractFeeFromAmount = true;
 
-        if (rcp.paymentRequest.IsInitialized())
-        {
-            // PaymentRequest...
-            CAmount subtotal = 0;
-            const payments::PaymentDetails& details = rcp.paymentRequest.getDetails();
-            for (int i = 0; i < details.outputs_size(); i++)
-            {
-                const payments::Output& out = details.outputs(i);
-                if (out.amount() <= 0) continue;
-                subtotal += out.amount();
-                const unsigned char* scriptStr = (const unsigned char*)out.script().data();
-                CScript scriptPubKey(scriptStr, scriptStr+out.script().size());
-                CAmount nAmount = out.amount();
-                CRecipient recipient = {scriptPubKey, nAmount, rcp.fSubtractFeeFromAmount};
-                vecSend.push_back(recipient);
-            }
-            if (subtotal <= 0)
-            {
-                return InvalidAmount;
-            }
-            total += subtotal;
-        }
-        else
         {
             // User-entered address / amount:
             if(!validateAddress(rcp.address))
@@ -637,20 +553,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
 
         Q_FOREACH(const SendCoinsRecipient &rcp, transaction.getRecipients())
         {
-            if (rcp.paymentRequest.IsInitialized())
-            {
-                // Make sure any payment requests involved are still valid.
-                if (PaymentServer::verifyExpired(rcp.paymentRequest.getDetails())) {
-                    return PaymentRequestExpired;
-                }
-
-                // Store PaymentRequests in wtx.vOrderForm in wallet.
-                std::string key("PaymentRequest");
-                std::string value;
-                rcp.paymentRequest.SerializeToString(&value);
-                newTx->vOrderForm.push_back(make_pair(key, value));
-            }
-            else if (!rcp.message.isEmpty()) // Message from normal BZX:URI (BZX:123...?message=example)
+            if (!rcp.message.isEmpty()) // Message from normal BZX:URI (BZX:123...?message=example)
                 newTx->vOrderForm.push_back(make_pair("Message", rcp.message.toStdString()));
         }
 
@@ -668,8 +571,6 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(WalletModelTransaction &tran
     // and emit coinsSent signal for each recipient
     Q_FOREACH(const SendCoinsRecipient &rcp, transaction.getRecipients())
     {
-        // Don't touch the address book when we have a payment request
-        if (!rcp.paymentRequest.IsInitialized())
         {
             std::string strAddress = rcp.address.toStdString();
             CTxDestination dest = CBitcoinAddress(strAddress).Get();
@@ -707,20 +608,7 @@ WalletModel::SendCoinsReturn WalletModel::sendPrivateCoins(WalletModelTransactio
 
         Q_FOREACH(const SendCoinsRecipient &rcp, transaction.getRecipients())
         {
-            if (rcp.paymentRequest.IsInitialized())
-            {
-                // Make sure any payment requests involved are still valid.
-                if (PaymentServer::verifyExpired(rcp.paymentRequest.getDetails())) {
-                    return PaymentRequestExpired;
-                }
-
-                // Store PaymentRequests in wtx.vOrderForm in wallet.
-                std::string key("PaymentRequest");
-                std::string value;
-                rcp.paymentRequest.SerializeToString(&value);
-                newTx->vOrderForm.push_back(make_pair(key, value));
-            }
-            else if (!rcp.message.isEmpty()) // Message from normal BZX:URI (BZX:123...?message=example)
+            if (!rcp.message.isEmpty()) // Message from normal BZX:URI (BZX:123...?message=example)
                 newTx->vOrderForm.push_back(make_pair("Message", rcp.message.toStdString()));
         }
 
@@ -740,8 +628,6 @@ WalletModel::SendCoinsReturn WalletModel::sendPrivateCoins(WalletModelTransactio
     // and emit coinsSent signal for each recipient
     Q_FOREACH(const SendCoinsRecipient &rcp, transaction.getRecipients())
     {
-        // Don't touch the address book when we have a payment request
-        if (!rcp.paymentRequest.IsInitialized())
         {
             std::string strAddress = rcp.address.toStdString();
             CTxDestination dest = CBitcoinAddress(strAddress).Get();
@@ -882,7 +768,7 @@ bool WalletModel::lockWallet()
 
 void WalletModel::lockWalletDelayed(int seconds)
 {
-    QTimer::singleShot(seconds * 1000, this, SLOT(lockWallet()));
+    QTimer::singleShot(seconds * 1000, this, &WalletModel::lockWallet);
 }
 
 bool WalletModel::changePassphrase(const SecureString &oldPass, const SecureString &newPass)
@@ -1289,176 +1175,6 @@ bool WalletModel::rebroadcastTransaction(uint256 hash, CValidationState &state)
 
     g_connman->RelayTransaction(*wtx->tx);
     return true;
-}
-
-// Sigma
-WalletModel::SendCoinsReturn WalletModel::prepareSigmaSpendTransaction(
-    WalletModelTransaction &transaction,
-    std::vector<CSigmaEntry> &selectedCoins,
-    std::vector<CHDMint> &changes,
-    bool& fChangeAddedToFee,
-    const CCoinControl *coinControl)
-{
-    QList<SendCoinsRecipient> recipients = transaction.getRecipients();
-    std::vector<CRecipient> sendRecipients;
-
-    if (recipients.empty()) {
-        return OK;
-    }
-
-    QSet<QString> addresses; // Used to detect duplicates
-
-    for (const auto& rcp : recipients) {
-        if (!validateAddress(rcp.address)) {
-            return InvalidAmount;
-        }
-        addresses.insert(rcp.address);
-
-        CScript scriptPubKey = GetScriptForDestination(CBitcoinAddress(rcp.address.toStdString()).Get());
-        CRecipient recipient = {scriptPubKey, rcp.amount, rcp.fSubtractFeeFromAmount};
-        sendRecipients.push_back(recipient);
-    }
-
-    if (addresses.size() != recipients.size()) {
-        return DuplicateAddress;
-    }
-
-    // create transaction
-    CAmount fee;
-
-    CWalletTx *newTx = transaction.getTransaction();
-    try {
-        *newTx = wallet->CreateSigmaSpendTransaction(sendRecipients, fee, selectedCoins, changes, fChangeAddedToFee, coinControl);
-    } catch (const InsufficientFunds& err) {
-        return AmountExceedsBalance;
-    } catch (const std::runtime_error& err) {
-        if (_("Can not choose coins within limit.") == err.what())
-            return ExceedLimit;
-        if (_("Sigma is disabled at this period.") == err.what())
-            return SigmaDisabled;
-        throw err;
-    } catch (const std::invalid_argument& err) {
-        return ExceedLimit;
-    }
-
-    transaction.setTransactionFee(fee);
-
-    return SendCoinsReturn(OK);
-}
-
-WalletModel::SendCoinsReturn WalletModel::sendSigma(WalletModelTransaction &transaction,
-    std::vector<CSigmaEntry>& coins, std::vector<CHDMint>& changes)
-{
-    QByteArray transaction_array; /* store serialized transaction */
-
-    {
-        LOCK2(cs_main, wallet->cs_wallet);
-        CWalletTx *newTx = transaction.getTransaction();
-
-        for (const auto& rcp : transaction.getRecipients()) {
-            if (rcp.paymentRequest.IsInitialized())
-            {
-                // Make sure any payment requests involved are still valid.
-                if (PaymentServer::verifyExpired(rcp.paymentRequest.getDetails())) {
-                    return PaymentRequestExpired;
-                }
-
-                // Store PaymentRequests in wtx.vOrderForm in wallet.
-                std::string key("PaymentRequest");
-                std::string value;
-                rcp.paymentRequest.SerializeToString(&value);
-                newTx->vOrderForm.push_back(std::make_pair(key, value));
-            } else if (!rcp.message.isEmpty()) {
-                // Message from normal BZX:URI (BZX:123...?message=example)
-                newTx->vOrderForm.push_back(std::make_pair("Message", rcp.message.toStdString()));
-            }
-        }
-
-        try {
-            wallet->CommitSigmaTransaction(*newTx, coins, changes);
-        } catch (...) {
-            return TransactionCommitFailed;
-        }
-
-        CTransactionRef t = newTx->tx;
-        CDataStream ssTx(SER_NETWORK, PROTOCOL_VERSION);
-        ssTx << t;
-        transaction_array.append(&(ssTx[0]), ssTx.size());
-    }
-
-    // Add addresses / update labels that we've sent to to the address book,
-    // and emit coinsSent signal for each recipient
-    for (const auto& rcp : transaction.getRecipients()) {
-        // Don't touch the address book when we have a payment request
-        if (!rcp.paymentRequest.IsInitialized()) {
-            std::string address = rcp.address.toStdString();
-            CTxDestination dest = CBitcoinAddress(address).Get();
-            std::string label = rcp.label.toStdString();
-            {
-                LOCK(wallet->cs_wallet);
-
-                auto mi = wallet->mapAddressBook.find(dest);
-
-                // Check if we have a new address or an updated label
-                if (mi == wallet->mapAddressBook.end()) {
-                    wallet->SetAddressBook(dest, label, "send");
-                }
-                else if (mi->second.name != label) {
-                    wallet->SetAddressBook(dest, label, ""); // "" means don't change purpose
-                }
-            }
-        }
-        Q_EMIT coinsSent(wallet, rcp, transaction_array);
-    }
-    checkBalanceChanged();
-
-    return SendCoinsReturn(OK);
-}
-
-void WalletModel::sigmaMint(const CAmount& n, const CCoinControl *coinControl)
-{
-    std::vector<sigma::CoinDenomination> denominations;
-    sigma::GetAllDenoms(denominations);
-
-    std::vector<sigma::CoinDenomination> mints;
-    if (CWallet::SelectMintCoinsForAmount(n, denominations, mints) != n) {
-        throw std::runtime_error("Problem with coin selection.\n");
-    }
-
-    std::vector<sigma::PrivateCoin> privCoins;
-
-    const sigma::Params* sigmaParams = sigma::Params::get_default();
-    std::transform(mints.begin(), mints.end(), std::back_inserter(privCoins),
-        [sigmaParams](const sigma::CoinDenomination& denom) -> sigma::PrivateCoin {
-            return sigma::PrivateCoin(sigmaParams, denom);
-        });
-
-    std::vector<CHDMint> vDMints;
-    auto recipients = CWallet::CreateSigmaMintRecipients(privCoins, vDMints);
-
-    CWalletTx wtx;
-    std::string strError = pwalletMain->MintAndStoreSigma(recipients, privCoins, vDMints, wtx, false, coinControl);
-
-    if (strError != "") {
-        throw std::range_error(strError);
-    }
-}
-
-std::vector<CSigmaEntry> WalletModel::GetUnsafeCoins(const CCoinControl* coinControl)
-{
-    auto allCoins = wallet->GetAvailableCoins(coinControl, true);
-    auto spendableCoins = wallet->GetAvailableCoins(coinControl);
-    std::vector<CSigmaEntry> unsafeCoins;
-    for (auto& coin : allCoins) {
-        if (spendableCoins.end() == std::find_if(spendableCoins.begin(), spendableCoins.end(),
-            [coin](const CSigmaEntry& spendalbe) {
-                return coin.value == spendalbe.value;
-            }
-        )) {
-            unsafeCoins.push_back(coin);
-        }
-    }
-    return unsafeCoins;
 }
 
 CAmount WalletModel::GetJMintCredit(const CTxOut& txout) const {
