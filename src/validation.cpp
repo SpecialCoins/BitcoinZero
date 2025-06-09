@@ -54,10 +54,6 @@
 #include "sigma/coinspend.h"
 #include "warnings.h"
 
-#ifdef ENABLE_ELYSIUM
-#include "elysium/elysium.h"
-#endif
-
 #include "masternode-payments.h"
 
 #include "evo/specialtx.h"
@@ -602,8 +598,7 @@ bool CheckTransaction(const CTransaction &tx, CValidationState &state, bool fChe
     }
 
     // Check for duplicate inputs - note that this check is slow so we skip it in CheckBlock
-    bool const check_di = true;
-    if (fCheckDuplicateInputs || check_di) {
+    {
         std::set<COutPoint> vInOutPoints;
         if (tx.IsSigmaSpend() || tx.IsLelantusJoinSplit()) {
             std::set<CScript> spendScripts;
@@ -767,8 +762,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
             }
     }
 
-    bool startLelantusRejectSigma = true;
-    if (startLelantusRejectSigma) {
+    {
         if(tx.IsSigmaMint() || tx.IsSigmaSpend()) {
             return state.DoS(100, error("Sigma transactions no more allowed in mempool"),
                              REJECT_INVALID, "bad-txns-privcoin");
@@ -897,7 +891,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
     if (tx.IsCoinBase())
         return state.DoS(100, false, REJECT_INVALID, "coinbase");
 
-    // Rather not work on nonstandard transactions (unless -testnet/-regtest)
+    // Rather not work on nonstandard transactions
     std::string reason;
     if (fRequireStandard && !IsStandardTx(tx, reason))
         return state.DoS(0, false, REJECT_NONSTANDARD, reason);
@@ -1786,6 +1780,7 @@ CAmount GetMasternodePayment(int nHeight)
 }
 
 bool IsInitialBlockDownload() {
+    const CChainParams &chainParams = Params();
     // Once this function has returned false, it must remain false.
     static std::atomic<bool> latchToFalse{false};
     // Optimization: pre-test latch before taking the lock.
@@ -1797,6 +1792,8 @@ bool IsInitialBlockDownload() {
     if (fImporting || fReindex)
         return true;
     if (chainActive.Tip() == NULL)
+        return true;
+    if (chainActive.Tip()->nChainWork < UintToArith256(chainParams.GetConsensus().nMinimumChainWork))
         return true;
     if (chainActive.Tip()->GetBlockTime() < (GetTime() - nMaxTipAge))
         return true;
@@ -2663,7 +2660,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
 
         // * legacy (always)
         // * p2sh (when P2SH enabled in flags and excludes coinbase)
-           nSigOpsCost += GetTransactionSigOpCost(tx, view, flags);
+        nSigOpsCost += GetTransactionSigOpCost(tx, view, flags);
         if (nSigOpsCost > MAX_BLOCK_SIGOPS_COST)
             return state.DoS(100, error("ConnectBlock(): too many sigops"),
                              REJECT_INVALID, "bad-blk-sigops");
@@ -2758,7 +2755,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
                 // TODO: relay instantsend data/proof.
                 LOCK(cs_main);
                 mapRejectedBlocks.insert(std::make_pair(block.GetHash(), GetTime()));
-                return state.DoS(10, error("ConnectBlock(DASH): transaction %s conflicts with transaction lock %s", tx->GetHash().ToString(), conflictLock->txid.ToString()),
+                return state.DoS(10, error("ConnectBlock(BZX): transaction %s conflicts with transaction lock %s", tx->GetHash().ToString(), conflictLock->txid.ToString()),
                                  REJECT_INVALID, "conflict-tx-lock");
             }
         }
@@ -3295,29 +3292,11 @@ bool static DisconnectTip(CValidationState& state, const CChainParams& chainpara
     }
 #endif
 
-#ifdef ENABLE_ELYSIUM
-    //! Elysium: begin block disconnect notification
-    auto fElysium = isElysiumEnabled();
-
-    if (fElysium) {
-        LogPrint("handler", "Elysium handler: block disconnect begin [height: %d, reindex: %d]\n", GetHeight(), (int)fReindex);
-        elysium_handler_disc_begin(GetHeight(), pindexDelete);
-    }
-#endif
-
     // Let wallets know transactions went from 1-confirmed to
     // 0-confirmed or conflicted:
     for (const auto& tx : block.vtx) {
         GetMainSignals().SyncTransaction(*tx, pindexDelete->pprev, CMainSignals::SYNC_TRANSACTION_NOT_IN_BLOCK);
     }
-
-#ifdef ENABLE_ELYSIUM
-    //! Elysium: end of block disconnect notification
-    if (fElysium) {
-        LogPrint("handler", "Elysium handler: block disconnect end [height: %d, reindex: %d]\n", GetHeight(), (int)fReindex);
-        elysium_handler_disc_end(GetHeight(), pindexDelete);
-    }
-#endif
 
     return true;
 }
@@ -3390,36 +3369,11 @@ bool static ConnectTip(CValidationState& state, const CChainParams& chainparams,
     int64_t nTime5 = GetTimeMicros(); nTimeChainState += nTime5 - nTime4;
     LogPrint("bench", "  - Writing chainstate: %.2fms [%.2fs]\n", (nTime5 - nTime4) * 0.001, nTimeChainState * 0.000001);
 
-#ifdef ENABLE_ELYSIUM
-    bool fElysium = isElysiumEnabled();
-
-    //! Elysium: transaction position within the block
-    unsigned int nTxIdx = 0;
-    //! Elysium: number of meta transactions found
-    unsigned int nNumMetaTxs = 0;
-
-    //! Elysium: begin block connect notification
-    if (fElysium) {
-        LogPrint("handler", "Elysium handler: block connect begin [height: %d]\n", GetHeight());
-        elysium_handler_block_begin(GetHeight(), pindexNew);
-    }
-#endif
-
     // Remove conflicting transactions from the mempool.;
     txpools.removeForBlock(blockConnecting.vtx, pindexNew->nHeight);
 
     // Update chainActive & related variables.
     UpdateTip(pindexNew, chainparams);
-
-#ifdef ENABLE_ELYSIUM
-        //! Elysium: new confirmed transaction notification
-    if (fElysium) {
-        BOOST_FOREACH(CTransactionRef tx, blockConnecting.vtx) {
-                LogPrint("handler", "Elysium handler: new confirmed transaction [height: %d, idx: %u]\n", GetHeight(), nTxIdx);
-                if (elysium_handler_tx(*tx, GetHeight(), nTxIdx++, pindexNew)) ++nNumMetaTxs;
-            }
-    }
-#endif
 
 #ifdef ENABLE_WALLET
     // Sync with HDMint wallet
@@ -3444,14 +3398,6 @@ bool static ConnectTip(CValidationState& state, const CChainParams& chainparams,
             LogPrintf("HDmint: UpdateSpendStateFromBlock. [height: %d]\n", GetHeight());
             pwalletMain->zwallet->GetTracker().UpdateMintStateFromBlock(blockConnecting.lelantusTxInfo->mints);
         }
-    }
-#endif
-
-#ifdef ENABLE_ELYSIUM
-    //! Elysium: end of block connect notification
-    if (fElysium) {
-        LogPrint("handler", "Elysium handler: block connect end [new height: %d, found: %u txs]\n", GetHeight(), nNumMetaTxs);
-        elysium_handler_block_end(GetHeight(), pindexNew, nNumMetaTxs);
     }
 #endif
 
@@ -4428,7 +4374,7 @@ static bool AcceptBlock(const std::shared_ptr<const CBlock>& pblock, CValidation
         return error("%s: %s", __func__, FormatStateMessage(state));
     }
 
-    // Header is valid/has work, merkle tree and is good...RELAY NOW
+    // Header is valid/has work, merkle tree is good...RELAY NOW
     // (but if it does not build on our best tip, let the SendMessages loop relay it)
     if (!IsInitialBlockDownload() && chainActive.Tip() == pindex->pprev)
         GetMainSignals().NewPoWValidBlock(pindex, pblock);

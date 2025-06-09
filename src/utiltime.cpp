@@ -13,11 +13,26 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread.hpp>
 
+static int64_t nMockTime = 0; //!< For unit testing
+
 int64_t GetTime()
 {
+    if (nMockTime) return nMockTime;
+
     time_t now = time(NULL);
     assert(now > 0);
     return now;
+}
+
+int64_t GetMockableTimeMicros()
+{
+    if (nMockTime) return nMockTime * 1000000;
+    return GetTimeMicros();
+}
+
+void SetMockTime(int64_t nMockTimeIn)
+{
+    nMockTime = nMockTimeIn;
 }
 
 int64_t GetTimeMillis()
@@ -44,6 +59,8 @@ int64_t GetSystemTimeInSeconds()
 /** Return a time useful for the debug log */
 int64_t GetLogTimeMicros()
 {
+    if (nMockTime) return nMockTime*1000000;
+
     return GetTimeMicros();
 }
 

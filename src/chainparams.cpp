@@ -127,11 +127,11 @@ public:
         consensus.nRuleChangeActivationThreshold = 1916; // 95% of 2016
         consensus.nMinerConfirmationWindow = 2016; //
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
-        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1475020800; // January 1, 2008
-        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000000043d640ee04132");
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000007d13353b29bf1");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0xd1e22bc4bdc42e4d9208cd8839725cee736f2bf75cfbe1839bbe6eb01aa2b659");
@@ -210,6 +210,7 @@ public:
                 { 11897, uint256S("0xa80d7942d6bc33d66bf971c7169f6900a91b597a6a703b024be0c1e845a580e7")},
                 { 44297, uint256S("0x4cade50721b2c6a20ac60d61dc88aeef8e1a3d73f43a01b9325f9c65427b8e05")},
                 {125169, uint256S("0xd1e22bc4bdc42e4d9208cd8839725cee736f2bf75cfbe1839bbe6eb01aa2b659")},
+                {346205, uint256S("0x76535a50d32976d5ff67ec7ca82d42a83415ce865398a403c0fc73cbef06ef38")},
 
             }
         };

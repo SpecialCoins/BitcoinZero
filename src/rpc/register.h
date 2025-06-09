@@ -11,10 +11,6 @@
 
 #include "util.h"
 
-#ifdef ENABLE_ELYSIUM
-#include "../elysium/elysium.h"
-#endif
-
 /** These are in one header file to avoid creating tons of single-function
  * headers for everything under src/rpc/ */
 class CRPCTable;
@@ -55,21 +51,8 @@ static inline void RegisterAllCoreRPCCommands(CRPCTable &tableRPC)
     RegisterMiningRPCCommands(tableRPC);
     RegisterRawTransactionRPCCommands(tableRPC);
     RegisterMasternodeRPCCommands(tableRPC);
-
     RegisterEvoRPCCommands(tableRPC);
     RegisterQuorumsRPCCommands(tableRPC);
-
-#ifdef ENABLE_ELYSIUM
-    if (isElysiumEnabled()) {
-        RegisterElysiumDataRetrievalRPCCommands(tableRPC);
-        RegisterElysiumPayloadCreationRPCCommands(tableRPC);
-        RegisterElysiumRawTransactionRPCCommands(tableRPC);
-
-#ifdef ENABLE_WALLET
-        RegisterElysiumTransactionCreationRPCCommands(tableRPC);
-#endif
-    }
-#endif
 }
 
 #endif

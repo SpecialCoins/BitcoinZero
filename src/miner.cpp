@@ -826,6 +826,7 @@ bool fGenerate = false;
 void static BZXMiner(const CChainParams &chainparams) {
 
     LogPrintf("BZXMiner Started\n");
+    fGenerate = true;
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("BZX-miner");
 
@@ -957,10 +958,12 @@ void static BZXMiner(const CChainParams &chainparams) {
         }
     }
     catch (const boost::thread_interrupted &) {
+        fGenerate = false;
         LogPrintf("BZXMiner terminated\n");
         throw;
     }
     catch (const std::runtime_error &e) {
+        fGenerate = false;
         LogPrintf("BZXMiner runtime error: %s\n", e.what());
         return;
     }

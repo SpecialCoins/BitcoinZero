@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DASH_QUORUMS_SIGNING_H
-#define DASH_QUORUMS_SIGNING_H
+#ifndef BZX_QUORUMS_SIGNING_H
+#define BZX_QUORUMS_SIGNING_H
 
 #include "llmq/quorums.h"
 
@@ -188,4 +188,4 @@ extern CSigningManager* quorumSigningManager;
 
 }
 
-#endif //DASH_QUORUMS_SIGNING_H
+#endif //BZX_QUORUMS_SIGNING_H
