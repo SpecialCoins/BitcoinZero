@@ -1,6 +1,4 @@
-# Bitcoinzero [BZX] (Lelantus) Core 2024
-
-[![Build Status](https://travis-ci.org/BitcoinZeroOfficial/bitcoinzero.svg?branch=master)](https://travis-ci.org/BitcoinZeroOfficial/bitcoinzero)
+# Bitcoinzero [BZX] (Lelantus) Core 2025
 
 ## Bitcoinzero
 
