@@ -1,11 +1,9 @@
 package=native_ds_store
-$(package)_version=1.1.0
-$(package)_download_path=https://github.com/al45tair/ds_store/archive
-$(package)_download_file=v$($(package)_version).tar.gz
-$(package)_file_name=$(package)-$($(package)_version).tar.gz
-$(package)_sha256_hash=a9f4c0755c6be7224ff7029e188dd262e830bb81e801424841db9eb0780ec8ed
-$(package)_install_libdir=$(build_prefix)/lib/python/dist-packages
-$(package)_dependencies=native_biplist
+$(package)_version=1.3.0
+$(package)_download_path=https://github.com/al45tair/ds_store/archive/
+$(package)_file_name=v$($(package)_version).tar.gz
+$(package)_sha256_hash=76b3280cd4e19e5179defa23fb594a9dd32643b0c80d774bd3108361d94fb46d
+$(package)_install_libdir=$(build_prefix)/lib/python3/dist-packages
 
 define $(package)_build_cmds
     python3 setup.py build
