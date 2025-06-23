@@ -261,12 +261,9 @@ public:
         nBits          = 0;
         nNonce         = 0;
 
-        sigmaMintedPubCoins.clear();
         lelantusMintedPubCoins.clear();
         anonymitySetHash.clear();
-        sigmaSpentSerials.clear();
         lelantusSpentSerials.clear();
-        activeDisablingSporks.clear();
     }
 
     CBlockIndex()
@@ -435,13 +432,8 @@ public:
         READWRITE(nBits);
         READWRITE(nNonce);
 
-        const auto &params = Params().GetConsensus();
-
-        if (!(s.GetType() & SER_GETHASH)
-                && nHeight >= params.nLelantusStartBlock
-                && nVersion >= LELANTUS_PROTOCOL_ENABLEMENT_VERSION) {
-            if(nVersion == LELANTUS_PROTOCOL_ENABLEMENT_VERSION) {
-                std::map<int, std::vector<lelantus::PublicCoin>>  lelantusPubCoins;
+        if (!(s.GetType() & SER_GETHASH)) {
+            std::map<int, std::vector<lelantus::PublicCoin>>  lelantusPubCoins;
                 READWRITE(lelantusPubCoins);
                 for(auto& itr : lelantusPubCoins) {
                     if(!itr.second.empty()) {
@@ -449,19 +441,10 @@ public:
                         lelantusMintedPubCoins[itr.first].push_back(std::make_pair(coin, uint256()));
                     }
                 }
-            }
-        }
-
-        if (!(s.GetType() & SER_GETHASH) && nHeight >= params.nLelantusStartBlock) {
-            READWRITE(sigmaMintedPubCoins);
-            READWRITE(sigmaSpentSerials);
             READWRITE(lelantusMintedPubCoins);
             READWRITE(lelantusSpentSerials);
             READWRITE(anonymitySetHash);
         }
-
-        if (!(s.GetType() & SER_GETHASH) && nHeight >= params.nEvoSporkStartBlock && nHeight < params.nEvoSporkStopBlock)
-            READWRITE(activeDisablingSporks);
 
         nDiskBlockVersion = nVersion;
     }

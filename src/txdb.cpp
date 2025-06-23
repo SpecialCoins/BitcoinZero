@@ -375,12 +375,9 @@ bool CBlockTreeDB::LoadBlockIndexGuts(boost::function<CBlockIndex*(const uint256
                 pindexNew->nNonce                   = diskindex.nNonce;
                 pindexNew->nStatus                  = diskindex.nStatus;
                 pindexNew->nTx                      = diskindex.nTx;
-                pindexNew->sigmaMintedPubCoins      = diskindex.sigmaMintedPubCoins;
-                pindexNew->sigmaSpentSerials        = diskindex.sigmaSpentSerials;
                 pindexNew->lelantusMintedPubCoins   = diskindex.lelantusMintedPubCoins;
                 pindexNew->lelantusSpentSerials     = diskindex.lelantusSpentSerials;
                 pindexNew->anonymitySetHash         = diskindex.anonymitySetHash;
-                pindexNew->activeDisablingSporks    = diskindex.activeDisablingSporks;
                 pcursor->Next();
             } else {
                 return error("LoadBlockIndex() : failed to read value");
