@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DASH_QUORUMS_DKGSESSION_H
-#define DASH_QUORUMS_DKGSESSION_H
+#ifndef BZX_QUORUMS_DKGSESSION_H
+#define BZX_QUORUMS_DKGSESSION_H
 
 #include "consensus/params.h"
 #include "net.h"
@@ -344,4 +344,4 @@ void SetSimulatedDKGErrorRate(const std::string& type, double rate);
 
 }
 
-#endif //DASH_QUORUMS_DKGSESSION_H
+#endif //BZX_QUORUMS_DKGSESSION_H

@@ -3686,10 +3686,6 @@
         <translation>보유한 피어 주소가 적은 경우 DNS 조회를 통해 피어 주소를 요청합니다. (-connect / -noconnect가 아니라면 기본값은 1)</translation>
     </message>
     <message>
-        <source>Support filtering of blocks and transaction with bloom filters (default: %u)</source>
-        <translation>블룸필터를 통해 블록과 거래 필터링 지원 (기본값: %u)</translation>
-    </message>
-    <message>
         <source>This is the transaction fee you may pay when fee estimates are not available.</source>
         <translation>이것은 수수료 견적을 이용할 수 없을 때 지불 할 수 있는 거래 수수료입니다.</translation>
     </message>

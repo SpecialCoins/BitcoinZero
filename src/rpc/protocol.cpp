@@ -1,6 +1,5 @@
 // Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2015 The Bitcoin Core developers
-// Copyright (c) 2014-2017 The Dash Core developers
+// Copyright (c) 2009-2016 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -70,7 +69,7 @@ static const std::string COOKIEAUTH_FILE = ".cookie";
 boost::filesystem::path GetAuthCookieFile()
 {
     boost::filesystem::path path(GetArg("-rpccookiefile", COOKIEAUTH_FILE));
-    if (!path.is_complete()) path = GetDataDir() / path;
+    if (!path.is_absolute()) path = GetDataDir() / path;
     return path;
 }
 
@@ -79,7 +78,6 @@ bool GenerateAuthCookie(std::string *cookie_out)
     const size_t COOKIE_SIZE = 32;
     unsigned char rand_pwd[COOKIE_SIZE];
     GetRandBytes(rand_pwd, COOKIE_SIZE);
-
     std::string cookie = COOKIEAUTH_USER + ":" + HexStr(rand_pwd, rand_pwd+COOKIE_SIZE);
 
     /** the umask determines what permissions are used to create this file -

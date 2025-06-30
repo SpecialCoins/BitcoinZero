@@ -1,7 +1,7 @@
 #ifndef BZX_QT_AUTOMINTNOTIFICATION_H
 #define BZX_QT_AUTOMINTNOTIFICATION_H
 
-#include "lelantusmodel.h"
+#include "sparkmodel.h"
 #include "walletmodel.h"
 
 #include <QDialog>
@@ -10,19 +10,20 @@ namespace Ui {
     class AutomintNotification;
 }
 
-class AutomintNotification : public QDialog
+
+class AutomintSparkNotification : public QDialog
 {
     Q_OBJECT;
 
 public:
-    explicit AutomintNotification(QWidget *parent = 0);
-    ~AutomintNotification();
+    explicit AutomintSparkNotification(QWidget *parent = 0);
+    ~AutomintSparkNotification();
 
 public:
     void setModel(WalletModel *model);
 
 Q_SIGNALS:
-    void ackMintAll(AutoMintAck, CAmount, QString);
+    void ackMintSparkAll(AutoMintSparkAck, CAmount, QString);
 
 public Q_SLOTS:
     bool close();
@@ -33,7 +34,7 @@ private Q_SLOTS:
 
 private:
     Ui::AutomintNotification *ui;
-    LelantusModel *lelantusModel;
+    SparkModel *sparkModel;
 };
 
 #endif // BZX_QT_AUTOMINTNOTIFICATION_H

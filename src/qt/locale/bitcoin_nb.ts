@@ -2306,10 +2306,6 @@
         <translation>Ta ut feilsøkingsinformasjon (standardverdi: %u, bruk av &lt;category&gt; er valgfritt)</translation>
     </message>
     <message>
-        <source>Support filtering of blocks and transaction with bloom filters (default: %u)</source>
-        <translation>Støtte filtrering av blokker og transaksjoner med bloomfiltre (standardverdi: %u)</translation>
-    </message>
-    <message>
         <source>Total length of network version string (%i) exceeds maximum length (%i). Reduce the number or size of uacomments.</source>
         <translation>Total lengde av nettverks-versionstreng (%i) er over maks lengde (%i). Reduser tallet eller størrelsen av uacomments.</translation>
     </message>

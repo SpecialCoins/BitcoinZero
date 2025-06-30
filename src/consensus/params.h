@@ -172,6 +172,13 @@ struct Params {
     // The block number after which lelantus is accepted.
     int nLelantusStartBlock;
 
+    int nSparkStartBlock;
+
+    int nSparkNamesStartBlock;
+    std::array<int,21> nSparkNamesFee;
+
+    int nLelantusGracefulPeriod;
+
     // Lelantus Blacklist
     std::unordered_set<secp_primitives::GroupElement> lelantusBlacklist;
 
@@ -204,6 +211,20 @@ struct Params {
 
     // Value of maximum lelantus mint.
     int64_t nMaxValueLelantusMint;
+
+    // Value of maximum spark spend per transaction
+    int64_t nMaxValueSparkSpendPerTransaction;
+
+    // Value of maximum spark spend per block.
+    int64_t nMaxValueSparkSpendPerBlock;
+
+    unsigned nMaxSparkOutLimitPerTx;
+
+    // Number of block that introduces ability to specify super-transparent addresses
+    int nExchangeAddressStartBlock;
+
+    /** P2PKH or P2SH address for developer funds */
+    std::string stage3DevelopmentFundAddress;
 
     /** block to start accepting pro reg txs for evo masternodes */
     int DIP0003Height;

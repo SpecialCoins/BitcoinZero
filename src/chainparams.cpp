@@ -106,6 +106,13 @@ static Consensus::LLMQParams llmq400_85 = {
         .keepOldConnections = 5,
 };
 
+static std::array<int,21> standardSparkNamesFee = {
+    -1,
+    1000,
+    100,
+    10, 10, 10,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+};
 
 /**
  * Main network
@@ -127,11 +134,11 @@ public:
         consensus.nRuleChangeActivationThreshold = 1916; // 95% of 2016
         consensus.nMinerConfirmationWindow = 2016; //
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
-        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1475020800; // January 1, 2008
-        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601;
+        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999;
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000000043d640ee04132");
+        consensus.nMinimumChainWork = uint256S("0x0000000000000000000000000000000000000000000000000007d13353b29bf1");
 
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0xd1e22bc4bdc42e4d9208cd8839725cee736f2bf75cfbe1839bbe6eb01aa2b659");
@@ -145,11 +152,23 @@ public:
         consensus.nEvoSporkStartBlock = 91;
         consensus.nLelantusStartBlock = 100;
         consensus.no_zero_payee = 20000;
-        consensus.DIP0008Height = INT_MAX;
-        consensus.nEvoSporkStopBlock = INT_MAX;
+        consensus.DIP0008Height = 9999999999;
+        consensus.nEvoSporkStopBlock = consensus.nSparkStartBlock;
         consensus.nEvoMasternodeMinimumConfirmations = 35;
         consensus.evoSporkKeyID = "XFWzf2xwwARUY3fLhY83P4TDh2pSybUQ8y";
-        consensus.new_version = INT_MAX;
+        consensus.new_version = consensus.nSparkStartBlock;
+
+        consensus.stage3DevelopmentFundAddress = "XFWzf2xwwARUY3fLhY83P4TDh2pSybUQ8y";
+
+        // exchange address
+        consensus.nExchangeAddressStartBlock = consensus.nSparkStartBlock;
+
+        // spark names
+        consensus.nSparkNamesStartBlock = consensus.nSparkStartBlock;
+        consensus.nSparkNamesFee = standardSparkNamesFee;
+
+        consensus.nSparkStartBlock = 9999999999;
+        consensus.nLelantusGracefulPeriod = 9999999999;
 
         // reorg
         consensus.nMaxReorgDepth = 5;
@@ -189,11 +208,12 @@ public:
         consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256S("0x000004d916d2e66f820fc0ba0b2554b6491a9c5bfc026ea515df5df2ceafcd53"));
         assert(genesis.hashMerkleRoot == uint256S("0xfede7817612c884cc527b1598013f6ef1feceea08bb80e1ffb0765dd74ba6a53"));
-        vSeeds.push_back(CDNSSeedData("51.91.156.251", "51.91.156.251", false));
-        vSeeds.push_back(CDNSSeedData("51.91.156.249", "51.91.156.249", false));
-        vSeeds.push_back(CDNSSeedData("bzx.pool4u.net:29149","bzx.pool4u.net:29149", false));
+        vSeeds.push_back(CDNSSeedData("51.195.91.123:29301", "51.195.91.123:19:29301"));
+        vSeeds.push_back(CDNSSeedData("167.86.189.91:19:29301", "167.86.189.91:19:29301"));
+        vSeeds.push_back(CDNSSeedData("176.57.189.38:29:29301", "176.57.189.38:29:29301"));
         base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 75);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector < unsigned char > (1, 34);
+        base58Prefixes[EXCHANGE_PUBKEY_ADDRESS] = {0x01, 0xb9, 0xbb};   // EXX prefix for the address
         base58Prefixes[SECRET_KEY] = std::vector < unsigned char > (1, 210);
         base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container < std::vector < unsigned char > > ();
         base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container < std::vector < unsigned char > > ();
@@ -210,6 +230,7 @@ public:
                 { 11897, uint256S("0xa80d7942d6bc33d66bf971c7169f6900a91b597a6a703b024be0c1e845a580e7")},
                 { 44297, uint256S("0x4cade50721b2c6a20ac60d61dc88aeef8e1a3d73f43a01b9325f9c65427b8e05")},
                 {125169, uint256S("0xd1e22bc4bdc42e4d9208cd8839725cee736f2bf75cfbe1839bbe6eb01aa2b659")},
+                {346205, uint256S("0x76535a50d32976d5ff67ec7ca82d42a83415ce865398a403c0fc73cbef06ef38")},
 
             }
         };
@@ -227,11 +248,15 @@ public:
         consensus.nMaxValueLelantusSpendPerTransaction = 100100 * COIN;
         consensus.nMaxValueLelantusMint = 100100 * COIN;
 
+        consensus.nMaxValueSparkSpendPerTransaction = 100100 * COIN;
+        consensus.nMaxValueSparkSpendPerBlock = 120000 * COIN;
+        consensus.nMaxSparkOutLimitPerTx = 100;
+
         for (const auto& str : lelantus::lelantus_blacklist) {
             GroupElement coin;
             try {
                 coin.deserialize(ParseHex(str).data());
-            } catch (...) {
+            } catch (const std::exception &) {
                 continue;
             }
             consensus.lelantusBlacklist.insert(coin);
@@ -241,7 +266,7 @@ public:
             GroupElement coin;
             try {
                 coin.deserialize(ParseHex(str).data());
-            } catch (...) {
+            } catch (const std::exception &) {
                 continue;
             }
             consensus.sigmaBlacklist.insert(coin);

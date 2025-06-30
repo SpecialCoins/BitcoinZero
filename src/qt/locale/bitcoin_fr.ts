@@ -3694,10 +3694,6 @@
         <translation>Requête d'adresses de paires par recherche DNS, si il y a peu d'adresses (par défaut : 1 sauf si -connect/-noconnect)</translation>
     </message>
     <message>
-        <source>Support filtering of blocks and transaction with bloom filters (default: %u)</source>
-        <translation>Prendre en charge le filtrage des blocs et des transactions avec les filtres bloom (par défaut : %u)</translation>
-    </message>
-    <message>
         <source>This is the transaction fee you may pay when fee estimates are not available.</source>
         <translation>Il s'agit des frais de transaction que vous pourriez payer si aucune estimation de frais n'est proposée.</translation>
     </message>

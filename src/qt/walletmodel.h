@@ -5,13 +5,13 @@
 #ifndef BITCOIN_QT_WALLETMODEL_H
 #define BITCOIN_QT_WALLETMODEL_H
 
-#include "paymentrequestplus.h"
 #include "walletmodeltransaction.h"
 
 #include "support/allocators/secure.h"
-
+#ifdef ENABLE_WALLET
 #include "wallet/walletdb.h"
 #include "wallet/wallet.h"
+#endif // ENABLE_WALLET
 #include "wallet/coincontrol.h"
 
 #include <map>
@@ -21,13 +21,12 @@
 
 class AddressTableModel;
 class PcodeAddressTableModel;
-class LelantusModel;
+class SparkModel;
 class OptionsModel;
 class PlatformStyle;
 class RecentRequestsTableModel;
 class TransactionTableModel;
 class WalletModelTransaction;
-class PcodeModel;
 
 class CCoinControl;
 class CKeyID;
@@ -45,7 +44,7 @@ class SendCoinsRecipient
 {
 public:
     explicit SendCoinsRecipient() : amount(0), fSubtractFeeFromAmount(false), nVersion(SendCoinsRecipient::CURRENT_VERSION) { }
-    explicit SendCoinsRecipient(const QString &addr, const QString &_label, const CAmount& _amount, const QString &_message):
+    explicit SendCoinsRecipient(const QString &addr, const QString &addrType, const QString &_label, const CAmount& _amount, const QString &_message):
         address(addr), label(_label), amount(_amount), message(_message), fSubtractFeeFromAmount(false), nVersion(SendCoinsRecipient::CURRENT_VERSION) {}
 
     // If from an unauthenticated payment request, this is used for storing
@@ -58,9 +57,9 @@ public:
     CAmount amount;
     // If from a payment request, this is used for storing the memo
     QString message;
-
-    // If from a payment request, paymentRequest.IsInitialized() will be true
-    PaymentRequestPlus paymentRequest;
+    // If building with BIP70 is disabled, keep the payment request around as
+    // serialized string to ensure load/store is lossless
+    std::string sPaymentRequest;
     // Empty if no authentication or invalid signature/cert/etc.
     QString authenticatedMerchant;
 
@@ -76,9 +75,6 @@ public:
         std::string sAddress = address.toStdString();
         std::string sLabel = label.toStdString();
         std::string sMessage = message.toStdString();
-        std::string sPaymentRequest;
-        if (!ser_action.ForRead() && paymentRequest.IsInitialized())
-            paymentRequest.SerializeToString(&sPaymentRequest);
         std::string sAuthenticatedMerchant = authenticatedMerchant.toStdString();
 
         READWRITE(this->nVersion);
@@ -94,8 +90,6 @@ public:
             address = QString::fromStdString(sAddress);
             label = QString::fromStdString(sLabel);
             message = QString::fromStdString(sMessage);
-            if (!sPaymentRequest.empty())
-                paymentRequest.parse(QByteArray::fromRawData(sPaymentRequest.data(), sPaymentRequest.size()));
             authenticatedMerchant = QString::fromStdString(sAuthenticatedMerchant);
         }
     }
@@ -118,7 +112,6 @@ public:
         AmountExceedsBalance,
         AmountWithFeeExceedsBalance,
         DuplicateAddress,
-        SigmaDisabled,
         TransactionCreationFailed, // Error returned when wallet is still locked
         TransactionCommitFailed,
         AbsurdFee,
@@ -137,10 +130,9 @@ public:
     OptionsModel *getOptionsModel();
     AddressTableModel *getAddressTableModel();
     PcodeAddressTableModel *getPcodeAddressTableModel();
-    LelantusModel *getLelantusModel();
+    SparkModel *getSparkModel();
     TransactionTableModel *getTransactionTableModel();
     RecentRequestsTableModel *getRecentRequestsTableModel();
-    PcodeModel *getPcodeModel();
 
     CWallet *getWallet() const { return wallet; }
 
@@ -157,6 +149,12 @@ public:
 
     // Check address for validity
     bool validateAddress(const QString &address);
+    bool validateExchangeAddress(const QString &address);
+    bool validateSparkAddress(const QString &address);
+    std::pair<CAmount, CAmount> getSparkBalance();
+
+    // Generate spark address
+    QString generateSparkAddress();
 
     // Return status record for SendCoins, contains error id + information
     struct SendCoinsReturn
@@ -173,29 +171,48 @@ public:
     // prepare transaction for getting txfee before sending coins
     SendCoinsReturn prepareTransaction(WalletModelTransaction &transaction, const CCoinControl *coinControl = NULL);
 
-    // prepare transaction for getting txfee before sending coins in anonymous mode
-    SendCoinsReturn prepareJoinSplitTransaction(WalletModelTransaction &transaction, const CCoinControl *coinControl = NULL);
-
-    // prepare transaction for getting txfee before anonymizing coins
-    SendCoinsReturn prepareMintTransactions(
-        CAmount amount,
+    SendCoinsReturn prepareMintSparkTransaction(
         std::vector<WalletModelTransaction> &transactions,
+        QList<SendCoinsRecipient> recipients,
+        std::vector<std::pair<CWalletTx, CAmount>>& wtxAndFees,
         std::list<CReserveKey> &reserveKeys,
-        std::vector<CHDMint> &mints,
         const CCoinControl *coinControl);
+
+    SendCoinsReturn prepareSpendSparkTransaction(
+        WalletModelTransaction &transaction,
+        const CCoinControl *coinControl);
+
+    SendCoinsReturn spendSparkCoins(
+        WalletModelTransaction &transaction);
+
+    bool sparkNamesAllowed() const;
+
+    bool GetSparkNameByAddress(const QString& sparkAddress, QString& name);
+
+    bool validateSparkNameData(const QString &name, const QString &sparkAddress, const QString &additionalData, QString &strError);
+
+    WalletModelTransaction initSparkNameTransaction(CAmount sparkNameFee);
+
+    QString getSparkNameAddress(const QString &sparkName);
+
+    SendCoinsReturn prepareSparkNameTransaction(
+        WalletModelTransaction &transaction,
+        CSparkNameTxData &sparkNameData,
+        CAmount sparkNameFee,
+        const CCoinControl *coinControl);
+        
+    SendCoinsReturn mintSparkCoins(
+        std::vector<WalletModelTransaction> &transactions,
+        std::vector<std::pair<CWalletTx, CAmount>>& wtxAndFee,
+        std::list<CReserveKey> &reserveKeys
+        );
+    
+    bool migrateLelantusToSpark();
+
+    bool getAvailableLelantusCoins();
 
     // Send coins to a list of recipients
     SendCoinsReturn sendCoins(WalletModelTransaction &transaction);
-
-    // Send private coins to a list of recipients
-    SendCoinsReturn sendPrivateCoins(WalletModelTransaction &transaction);
-
-    // Anonymize coins.
-    SendCoinsReturn sendAnonymizingCoins(
-        std::vector<WalletModelTransaction> &transactions,
-        std::list<CReserveKey> &reservekeys,
-        std::vector<CHDMint> &mints);
-
     // Wallet encryption
     bool setWalletEncrypted(bool encrypted, const SecureString &passphrase);
     // Passphrase only needed when unlocking
@@ -263,22 +280,6 @@ public:
     bool transactionCanBeRebroadcast(uint256 hash) const;
     bool rebroadcastTransaction(uint256 hash, CValidationState &state);
 
-    // Sigma
-    SendCoinsReturn prepareSigmaSpendTransaction(WalletModelTransaction &transaction,
-        std::vector<CSigmaEntry>& coins, std::vector<CHDMint>& changes,
-        bool& fChangeAddedToFee,
-        const CCoinControl *coinControl = NULL);
-
-    // Send coins to a list of recipients
-    SendCoinsReturn sendSigma(WalletModelTransaction &transaction,
-        std::vector<CSigmaEntry>& coins, std::vector<CHDMint>& changes);
-
-    // Mint sigma
-    void sigmaMint(const CAmount& n, const CCoinControl *coinControl = NULL);
-    void checkSigmaAmount(bool forced);
-
-    std::vector<CSigmaEntry> GetUnsafeCoins(const CCoinControl* coinControl = NULL);
-
     CAmount GetJMintCredit(const CTxOut& txout) const;
 
 private:
@@ -293,10 +294,9 @@ private:
 
     AddressTableModel *addressTableModel;
     PcodeAddressTableModel *pcodeAddressTableModel;
-    LelantusModel *lelantusModel;
+    SparkModel *sparkModel;
     TransactionTableModel *transactionTableModel;
     RecentRequestsTableModel *recentRequestsTableModel;
-    PcodeModel *pcodeModel;
 
     // Cache some values to be able to detect changes
     CAmount cachedBalance;
@@ -310,10 +310,6 @@ private:
     CAmount cachedUnconfirmedPrivateBalance;
     EncryptionStatus cachedEncryptionStatus;
     int cachedNumBlocks;
-
-    // Sigma
-    bool cachedHavePendingCoin = true;
-    int lastBlockCheckSigma = 0;
 
     QTimer *pollTimer;
 
@@ -354,8 +350,6 @@ Q_SIGNALS:
     // Watch-only address added
     void notifyWatchonlyChanged(bool fHaveWatchonly);
 
-    // Update sigma changed
-    void notifySigmaChanged(const std::vector<CMintMeta>& spendable, const std::vector<CMintMeta>& pending);
 public Q_SLOTS:
     /* Wallet status might have changed */
     void updateStatus();

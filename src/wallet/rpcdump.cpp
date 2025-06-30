@@ -4,6 +4,7 @@
 
 #include "base58.h"
 #include "chain.h"
+#include "libspark/keys.h"
 #include "rpc/server.h"
 #include "init.h"
 #include "validation.h"
@@ -585,6 +586,18 @@ UniValue importwallet(const JSONRPCRequest& request)
     return NullUniValue;
 }
 
+UniValue dumpsparkviewkey(const JSONRPCRequest& request) {
+    CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
+    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
+        throw std::runtime_error("wallet not available");
+    }
+
+    if (request.fHelp || request.params.size() != 0)
+        throw std::runtime_error("dumpviewkey\n\nDisplay our Spark View Key.\n");
+
+  return {pwallet->GetSparkViewKeyStr()};
+}
+
 UniValue dumpprivkey(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
@@ -797,6 +810,19 @@ UniValue dumpwallet(const JSONRPCRequest& request)
             }
             file << strprintf(" # addr=%s\n", strAddr);
         }
+    }
+
+    if (pwallet->sparkWallet) {
+        file << "\n";
+        CKey key;
+        uint32_t nCount;
+        {
+            LOCK(pwalletMain->cs_wallet);
+            nCount = GetArg("-sparkncount", 1);
+            pwalletMain->GetKeyFromKeypath(BIP44_SPARK_INDEX, nCount, key);
+        }
+
+        file << strprintf("# Spark key secret %s\n", CBitcoinSecret(key).ToString());
     }
 
     file << "\n";

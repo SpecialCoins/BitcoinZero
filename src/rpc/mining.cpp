@@ -298,7 +298,14 @@ UniValue getgenerate(const JSONRPCRequest& request)
         );
 
     LOCK(cs_main);
-    return GetBoolArg("-gen", DEFAULT_GENERATE);
+    if (fGenerate)
+    {
+    return true;
+    }
+    else
+    {
+    return false;
+    }
 }
 
 UniValue getmininginfo(const JSONRPCRequest& request)
@@ -614,7 +621,6 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
         // TODO: Maybe recheck connections/IBD and (if something wrong) send an expires-immediately template to stop miners?
     }
 
-
     // Update block
     static CBlockIndex* pindexPrev;
     static int64_t nStart;
@@ -875,6 +881,7 @@ UniValue submitblock(const JSONRPCRequest& request)
         }
     }
 
+    // Process block
     submitblock_StateCatcher sc(block.GetHash());
     RegisterValidationInterface(&sc);
     bool fAccepted = ProcessNewBlock(Params(), blockptr, true, NULL);

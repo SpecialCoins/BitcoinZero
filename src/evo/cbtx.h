@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DASH_CBTX_H
-#define DASH_CBTX_H
+#ifndef BZX_CBTX_H
+#define BZX_CBTX_H
 
 #include "consensus/validation.h"
 #include "primitives/transaction.h"
@@ -51,4 +51,4 @@ bool CalcCbTxMerkleRootQuorums(const CBlock& block, const CBlockIndex* pindexPre
 
 bool CbtxToJson(const CTransaction& tx, UniValue& obj);
 
-#endif //DASH_CBTX_H
+#endif //BZX_CBTX_H

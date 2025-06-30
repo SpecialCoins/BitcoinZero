@@ -39,6 +39,13 @@ static const int64_t nMaxBlockDBAndTxIndexCache = 1024;
 //! Max memory allocated to coin DB specific cache (MiB)
 static const int64_t nMaxCoinsDBCache = 8;
 
+//! By default don't check block index PoW on client startup
+static const bool DEFAULT_FULL_BLOCKINDEX_CHECK = false;
+//! If not doing full check of block index, check only N of the latest blocks
+static const int DEFAULT_BLOCKINDEX_NUMBER_OF_BLOCKS_TO_CHECK = 10000;
+//! Check fewer blocks if low on memory
+static const int DEFAULT_BLOCKINDEX_LOWMEM_NUMBER_OF_BLOCKS_TO_CHECK = 50;
+
 struct CDiskTxPos : public CDiskBlockPos
 {
     unsigned int nTxOffset; // after header
@@ -131,6 +138,7 @@ public:
     bool ReadAddressIndex(uint160 addressHash, AddressType type,
                           std::vector<std::pair<CAddressIndexKey, CAmount> > &addressIndex,
                           int start = 0, int end = 0);
+    size_t findAddressNumWBalance();
 
     bool WriteTimestampIndex(const CTimestampIndexKey &timestampIndex);
     bool ReadTimestampIndex(const unsigned int &high, const unsigned int &low, std::vector<uint256> &vect);

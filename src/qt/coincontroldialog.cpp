@@ -71,13 +71,13 @@ CoinControlDialog::CoinControlDialog(bool anonymousMode, const PlatformStyle *_p
     contextMenu->addAction(unlockAction);
 
     // context menu signals
-    connect(ui->treeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showMenu(QPoint)));
-    connect(copyAddressAction, SIGNAL(triggered()), this, SLOT(copyAddress()));
-    connect(copyLabelAction, SIGNAL(triggered()), this, SLOT(copyLabel()));
-    connect(copyAmountAction, SIGNAL(triggered()), this, SLOT(copyAmount()));
-    connect(copyTransactionHashAction, SIGNAL(triggered()), this, SLOT(copyTransactionHash()));
-    connect(lockAction, SIGNAL(triggered()), this, SLOT(lockCoin()));
-    connect(unlockAction, SIGNAL(triggered()), this, SLOT(unlockCoin()));
+    connect(ui->treeWidget, &QWidget::customContextMenuRequested, this, &CoinControlDialog::showMenu);
+    connect(copyAddressAction, &QAction::triggered, this, &CoinControlDialog::copyAddress);
+    connect(copyLabelAction, &QAction::triggered, this, &CoinControlDialog::copyLabel);
+    connect(copyAmountAction, &QAction::triggered, this, &CoinControlDialog::copyAmount);
+    connect(copyTransactionHashAction, &QAction::triggered, this, &CoinControlDialog::copyTransactionHash);
+    connect(lockAction, &QAction::triggered, this, &CoinControlDialog::lockCoin);
+    connect(unlockAction, &QAction::triggered, this, &CoinControlDialog::unlockCoin);
 
     // clipboard actions
     QAction *clipboardQuantityAction = new QAction(tr("Copy quantity"), this);
@@ -88,13 +88,13 @@ CoinControlDialog::CoinControlDialog(bool anonymousMode, const PlatformStyle *_p
     QAction *clipboardLowOutputAction = new QAction(tr("Copy dust"), this);
     QAction *clipboardChangeAction = new QAction(tr("Copy change"), this);
 
-    connect(clipboardQuantityAction, SIGNAL(triggered()), this, SLOT(clipboardQuantity()));
-    connect(clipboardAmountAction, SIGNAL(triggered()), this, SLOT(clipboardAmount()));
-    connect(clipboardFeeAction, SIGNAL(triggered()), this, SLOT(clipboardFee()));
-    connect(clipboardAfterFeeAction, SIGNAL(triggered()), this, SLOT(clipboardAfterFee()));
-    connect(clipboardBytesAction, SIGNAL(triggered()), this, SLOT(clipboardBytes()));
-    connect(clipboardLowOutputAction, SIGNAL(triggered()), this, SLOT(clipboardLowOutput()));
-    connect(clipboardChangeAction, SIGNAL(triggered()), this, SLOT(clipboardChange()));
+    connect(clipboardQuantityAction, &QAction::triggered, this, &CoinControlDialog::clipboardQuantity);
+    connect(clipboardAmountAction, &QAction::triggered, this, &CoinControlDialog::clipboardAmount);
+    connect(clipboardFeeAction, &QAction::triggered, this, &CoinControlDialog::clipboardFee);
+    connect(clipboardAfterFeeAction, &QAction::triggered, this, &CoinControlDialog::clipboardAfterFee);
+    connect(clipboardBytesAction, &QAction::triggered, this, &CoinControlDialog::clipboardBytes);
+    connect(clipboardLowOutputAction, &QAction::triggered, this, &CoinControlDialog::clipboardLowOutput);
+    connect(clipboardChangeAction, &QAction::triggered, this, &CoinControlDialog::clipboardChange);
 
     ui->labelCoinControlQuantity->addAction(clipboardQuantityAction);
     ui->labelCoinControlAmount->addAction(clipboardAmountAction);
@@ -105,11 +105,11 @@ CoinControlDialog::CoinControlDialog(bool anonymousMode, const PlatformStyle *_p
     ui->labelCoinControlChange->addAction(clipboardChangeAction);
 
     // toggle tree/list mode
-    connect(ui->radioTreeMode, SIGNAL(toggled(bool)), this, SLOT(radioTreeMode(bool)));
-    connect(ui->radioListMode, SIGNAL(toggled(bool)), this, SLOT(radioListMode(bool)));
+    connect(ui->radioTreeMode, &QRadioButton::toggled, this, &CoinControlDialog::radioTreeMode);
+    connect(ui->radioListMode, &QRadioButton::toggled, this, &CoinControlDialog::radioListMode);
 
     // click on checkbox
-    connect(ui->treeWidget, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this, SLOT(viewItemChanged(QTreeWidgetItem*, int)));
+    connect(ui->treeWidget, &QTreeWidget::itemChanged, this, &CoinControlDialog::viewItemChanged);
 
     // click on header
 #if QT_VERSION < 0x050000
@@ -117,13 +117,13 @@ CoinControlDialog::CoinControlDialog(bool anonymousMode, const PlatformStyle *_p
 #else
     ui->treeWidget->header()->setSectionsClickable(true);
 #endif
-    connect(ui->treeWidget->header(), SIGNAL(sectionClicked(int)), this, SLOT(headerSectionClicked(int)));
+    connect(ui->treeWidget->header(), &QHeaderView::sectionClicked, this, &CoinControlDialog::headerSectionClicked);
 
     // ok button
-    connect(ui->buttonBox, SIGNAL(clicked( QAbstractButton*)), this, SLOT(buttonBoxClicked(QAbstractButton*)));
+    connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &CoinControlDialog::buttonBoxClicked);
 
     // (un)select all
-    connect(ui->pushButtonSelectAll, SIGNAL(clicked()), this, SLOT(buttonSelectAllClicked()));
+    connect(ui->pushButtonSelectAll, &QPushButton::clicked, this, &CoinControlDialog::buttonSelectAllClicked);
 
     // change coin control first column label due Qt4 bug.
     // see https://github.com/bitcoin/bitcoin/issues/5716
@@ -426,7 +426,7 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog, bool a
     CAmount nPayAmount = 0;
     bool fDust = false;
     CMutableTransaction txDummy;
-    Q_FOREACH(const CAmount &amount, CoinControlDialog::payAmounts)
+    for (const CAmount &amount : CoinControlDialog::payAmounts)
     {
         nPayAmount += amount;
 
@@ -464,7 +464,9 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog, bool a
                         || script.IsSigmaMint()
                         || script.IsPrivcoinRemint()
                         || script.IsLelantusMint()
-                        || script.IsLelantusJMint();
+                        || script.IsLelantusJMint()
+                        || script.IsSparkMint()
+                        || script.IsSparkSMint();
 
             if (isMint != anonymousMode) {
                 continue;
@@ -485,7 +487,7 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog, bool a
         nQuantity++;
 
         // Amount
-        if(out.tx->tx->vout[out.i].scriptPubKey.IsLelantusJMint()) {
+        if(out.tx->tx->vout[out.i].scriptPubKey.IsLelantusJMint() || out.tx->tx->vout[out.i].scriptPubKey.IsSparkSMint()) {
             nAmount += model->GetJMintCredit(out.tx->tx->vout[out.i]);
         } else {
             nAmount += out.tx->tx->vout[out.i].nValue;
@@ -516,9 +518,15 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog, bool a
     if (nQuantity > 0)
     {
         if (anonymousMode) {
-            // 1054 is constant part, mainly Schnorr and Range proofs, 2560 is for each sigma/aux data
-            // 83 assuming 1 jmint, 34 is the size of each normal vout,  10 is the size of empty transaction, 52 other constant parts
-            nBytes = 1054 + 2560 * vOutputs.size() + 83 + CoinControlDialog::payAmounts.size()  * 34  + 10 + 52;
+            if(spark::IsSparkAllowed()) {
+                // 924 is constant part, mainly Schnorr and Range proofs, 1803 is for each grootle proof/aux data
+                // 213 for each private output,
+                nBytes = 924 + 1803 * (vOutputs.size()) + 322 * CoinControlDialog::payAmounts.size();
+            } else {
+                // 1054 is constant part, mainly Schnorr and Range proofs, 2560 is for each sigma/aux data
+                // 83 assuming 1 jmint, 34 is the size of each normal vout,  10 is the size of empty transaction, 52 other constant parts
+                nBytes = 1054 + 2560 * vOutputs.size() + 83 + CoinControlDialog::payAmounts.size()  * 34  + 10 + 52;
+            }
             nPayFee = CWallet::GetMinimumFee(nBytes, nTxConfirmTarget, mempool);
             if (nPayAmount > 0) {
                 nChange = nAmount - nPayAmount;
@@ -688,12 +696,13 @@ void CoinControlDialog::updateView()
         int nChildren = 0;
         BOOST_FOREACH(const COutput& out, coins.second) {
             CAmount amount;
-            if(out.tx->tx->vout[out.i].scriptPubKey.IsLelantusJMint()) {
+            if(out.tx->tx->vout[out.i].scriptPubKey.IsLelantusJMint() || out.tx->tx->vout[out.i].scriptPubKey.IsSparkSMint()) {
                 amount = model->GetJMintCredit(out.tx->tx->vout[out.i]);
             } else {
                 amount = out.tx->tx->vout[out.i].nValue;
             }
 
+            if(amount == 0) continue;
             nSum += amount;
             nChildren++;
 
@@ -713,6 +722,12 @@ void CoinControlDialog::updateView()
                 // if listMode or change => show address. In tree mode, address is not shown again for direct wallet address outputs
                 if (!treeMode || (!(sAddress == sWalletAddress)))
                     itemOutput->setText(COLUMN_ADDRESS, sAddress);
+            } else if (out.tx->tx->IsSparkMint() || out.tx->tx->IsSparkSpend()) {
+                sAddress = "spark";
+
+                // if listMode or change => show address. In tree mode, address is not shown again for direct wallet address outputs
+                if (!treeMode || (!(sAddress == sWalletAddress)))
+                    itemOutput->setText(COLUMN_ADDRESS, sAddress);
             }
 
             // label
@@ -722,7 +737,7 @@ void CoinControlDialog::updateView()
                 itemOutput->setToolTip(COLUMN_LABEL, tr("change from %1 (%2)").arg(sWalletLabel).arg(sWalletAddress));
                 if(out.tx->tx->IsSigmaMint()) {
                     itemOutput->setText(COLUMN_LABEL, tr("(sigma mint)"));
-                } else if(out.tx->tx->IsLelantusMint()) {
+                } else if(out.tx->tx->IsLelantusMint() || out.tx->tx->IsSparkMint()) {
                     itemOutput->setText(COLUMN_LABEL, tr("(mint)"));
                 } else {
                     itemOutput->setText(COLUMN_LABEL, tr("(change)"));

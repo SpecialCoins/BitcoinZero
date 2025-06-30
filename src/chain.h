@@ -15,12 +15,14 @@
 #include <secp256k1/include/Scalar.h>
 #include <secp256k1/include/GroupElement.h>
 #include "sigma/coin.h"
+#include "libspark/coin.h"
 #include "evo/spork.h"
 #include "priv_params.h"
 #include "util.h"
 #include "chainparams.h"
 #include "coin_containers.h"
 #include "streams.h"
+#include "sparkname.h"
 
 #include <vector>
 #include <unordered_set>
@@ -228,16 +230,33 @@ public:
     std::map<std::pair<sigma::CoinDenomination, int>, std::vector<sigma::PublicCoin>> sigmaMintedPubCoins;
     //! Map id to <public coin, tag>
     std::map<int, std::vector<std::pair<lelantus::PublicCoin, uint256>>>  lelantusMintedPubCoins;
+
+    std::unordered_map<GroupElement, lelantus::MintValueData> lelantusMintData;
+
     //! Map id to <hash of the set>
     std::map<int, std::vector<unsigned char>> anonymitySetHash;
+    //! Map id to spark coin
+    std::map<int, std::vector<spark::Coin>> sparkMintedCoins;
+    //! Map id to <hash of the set>
+    std::map<int, std::vector<unsigned char>> sparkSetHash;
+    //! map spark coin S to tx hash, this is used when you run with -mobile
+    std::unordered_map<GroupElement, std::pair<uint256, std::vector<unsigned char>>> sparkTxHashContext;
 
     //! Values of coin serials spent in this block
     sigma::spend_info_container sigmaSpentSerials;
     std::unordered_map<Scalar, int> lelantusSpentSerials;
+    std::unordered_map<GroupElement, int> spentLTags;
+    // linking tag hash mapped to tx hash
+    std::unordered_map<uint256, uint256> ltagTxhash;
 
     //! list of disabling sporks active at this block height
     //! std::map {feature name} -> {block number when feature is re-enabled again, parameter}
     ActiveSporkMap activeDisablingSporks;
+
+    //! List of spark names that were created or extended in this block. Map of spark name to <address, expiration block height, additional info>
+    std::map<std::string, CSparkNameBlockIndexData> addedSparkNames;
+    //! List of spark names that were removed in this block because of expiration
+    std::map<std::string, CSparkNameBlockIndexData> removedSparkNames;
 
     void SetNull()
     {
@@ -261,12 +280,17 @@ public:
         nBits          = 0;
         nNonce         = 0;
 
-        sigmaMintedPubCoins.clear();
         lelantusMintedPubCoins.clear();
+        lelantusMintData.clear();
         anonymitySetHash.clear();
-        sigmaSpentSerials.clear();
+        sparkMintedCoins.clear();
+        sparkSetHash.clear();
+        spentLTags.clear();
+        ltagTxhash.clear();
+        sparkTxHashContext.clear();
         lelantusSpentSerials.clear();
-        activeDisablingSporks.clear();
+        addedSparkNames.clear();
+        removedSparkNames.clear();
     }
 
     CBlockIndex()
@@ -320,6 +344,11 @@ public:
     uint256 GetBlockHash() const
     {
         return *phashBlock;
+    }
+
+    uint256 GetBlockPoWHash() const
+    {
+        return GetBlockHeader().GetPoWHash(nHeight);
     }
 
     int64_t GetBlockTime() const
@@ -435,13 +464,8 @@ public:
         READWRITE(nBits);
         READWRITE(nNonce);
 
-        const auto &params = Params().GetConsensus();
-
-        if (!(s.GetType() & SER_GETHASH)
-                && nHeight >= params.nLelantusStartBlock
-                && nVersion >= LELANTUS_PROTOCOL_ENABLEMENT_VERSION) {
-            if(nVersion == LELANTUS_PROTOCOL_ENABLEMENT_VERSION) {
-                std::map<int, std::vector<lelantus::PublicCoin>>  lelantusPubCoins;
+        if (!(s.GetType() & SER_GETHASH)) {
+            std::map<int, std::vector<lelantus::PublicCoin>>  lelantusPubCoins;
                 READWRITE(lelantusPubCoins);
                 for(auto& itr : lelantusPubCoins) {
                     if(!itr.second.empty()) {
@@ -449,19 +473,21 @@ public:
                         lelantusMintedPubCoins[itr.first].push_back(std::make_pair(coin, uint256()));
                     }
                 }
-            }
-        }
-
-        if (!(s.GetType() & SER_GETHASH) && nHeight >= params.nLelantusStartBlock) {
-            READWRITE(sigmaMintedPubCoins);
-            READWRITE(sigmaSpentSerials);
             READWRITE(lelantusMintedPubCoins);
             READWRITE(lelantusSpentSerials);
             READWRITE(anonymitySetHash);
+            READWRITE(sparkMintedCoins);
+            READWRITE(sparkSetHash);
+            READWRITE(spentLTags);
+            READWRITE(addedSparkNames);
+            READWRITE(removedSparkNames);
         }
 
-        if (!(s.GetType() & SER_GETHASH) && nHeight >= params.nEvoSporkStartBlock && nHeight < params.nEvoSporkStopBlock)
-            READWRITE(activeDisablingSporks);
+        if (GetBoolArg("-mobile", false)) {
+            READWRITE(lelantusMintData);
+            READWRITE(sparkTxHashContext);
+            READWRITE(ltagTxhash);
+        }
 
         nDiskBlockVersion = nVersion;
     }

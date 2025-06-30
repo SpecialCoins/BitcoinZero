@@ -106,13 +106,6 @@ void CActiveMasternodeManager::Init()
         SOCKET hSocket;
         bool fConnected = ConnectSocket(activeMasternodeInfo.service, hSocket, nConnectTimeout) && IsSelectableSocket(hSocket);
         CloseSocket(hSocket);
-
-        if (false) {
-            state = MASTERNODE_ERROR;
-            strError = "Could not connect to " + activeMasternodeInfo.service.ToString();
-            LogPrintf("CActiveDeterministicMasternodeManager::Init -- ERROR: %s\n", strError);
-            return;
-        }
     }
 
     activeMasternodeInfo.proTxHash = dmn->proTxHash;

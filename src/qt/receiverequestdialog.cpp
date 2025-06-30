@@ -34,23 +34,21 @@ QRImageWidget::QRImageWidget(QWidget *parent):
 {
     contextMenu = new QMenu(this);
     QAction *saveImageAction = new QAction(tr("&Save Image..."), this);
-    connect(saveImageAction, SIGNAL(triggered()), this, SLOT(saveImage()));
+    connect(saveImageAction, &QAction::triggered, this, &QRImageWidget::saveImage);
     contextMenu->addAction(saveImageAction);
     QAction *copyImageAction = new QAction(tr("&Copy Image"), this);
-    connect(copyImageAction, SIGNAL(triggered()), this, SLOT(copyImage()));
+    connect(copyImageAction, &QAction::triggered, this, &QRImageWidget::copyImage);
     contextMenu->addAction(copyImageAction);
 }
 
 QImage QRImageWidget::exportImage()
 {
-    if(!pixmap())
-        return QImage();
-    return pixmap()->toImage();
+    return GUIUtil::GetImage(this);
 }
 
 void QRImageWidget::mousePressEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::LeftButton && pixmap())
+    if(event->button() == Qt::LeftButton && GUIUtil::HasPixmap(this))
     {
         event->accept();
         QMimeData *mimeData = new QMimeData;
@@ -66,7 +64,7 @@ void QRImageWidget::mousePressEvent(QMouseEvent *event)
 
 void QRImageWidget::saveImage()
 {
-    if(!pixmap())
+    if(!GUIUtil::HasPixmap(this))
         return;
     QString fn = GUIUtil::getSaveFileName(this, tr("Save QR Code"), QString(), tr("PNG Image (*.png)"), NULL);
     if (!fn.isEmpty())
@@ -77,14 +75,14 @@ void QRImageWidget::saveImage()
 
 void QRImageWidget::copyImage()
 {
-    if(!pixmap())
+    if(!GUIUtil::HasPixmap(this))
         return;
     QApplication::clipboard()->setImage(exportImage());
 }
 
 void QRImageWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-    if(!pixmap())
+    if(!GUIUtil::HasPixmap(this))
         return;
     contextMenu->exec(event->globalPos());
 }
@@ -101,7 +99,7 @@ ReceiveRequestDialog::ReceiveRequestDialog(QWidget *parent) :
     ui->lblQRCode->setVisible(false);
 #endif
 
-    connect(ui->btnSaveAs, SIGNAL(clicked()), ui->lblQRCode, SLOT(saveImage()));
+    connect(ui->btnSaveAs, &QPushButton::clicked, ui->lblQRCode, &QRImageWidget::saveImage);
 }
 
 ReceiveRequestDialog::~ReceiveRequestDialog()
@@ -114,7 +112,7 @@ void ReceiveRequestDialog::setModel(OptionsModel *_model)
     this->model = _model;
 
     if (_model)
-        connect(_model, SIGNAL(displayUnitChanged(int)), this, SLOT(update()));
+        connect(_model, &OptionsModel::displayUnitChanged, this, &ReceiveRequestDialog::update);
 
     // update the display unit if necessary
     update();
@@ -130,6 +128,7 @@ void ReceiveRequestDialog::update()
 {
     if(!model)
         return;
+    resize(width(), 600);
     QString target = info.label;
     if(target.isEmpty())
         target = info.address;
@@ -147,6 +146,14 @@ void ReceiveRequestDialog::update()
         html += "<b>"+tr("Amount")+"</b>: " + BitcoinUnits::formatHtmlWithUnit(model->getDisplayUnit(), info.amount) + "<br>";
     if(!info.label.isEmpty())
         html += "<b>"+tr("Label")+"</b>: " + GUIUtil::HtmlEscape(info.label) + "<br>";
+    if(walletModel->validateAddress(info.address))
+    {
+        html += "<b>"+tr("Address Type")+"</b>: " + tr("transparent") + "<br>";
+    }
+    else if(walletModel->validateSparkAddress(info.address))
+    {
+        html += "<b>"+tr("Address Type")+"</b>: " + tr("spark") + "<br>";
+    }
     if(!info.message.isEmpty())
         html += "<b>"+tr("Message")+"</b>: " + GUIUtil::HtmlEscape(info.message) + "<br>";
     ui->outUri->setText(html);
@@ -188,7 +195,11 @@ void ReceiveRequestDialog::update()
             painter.setFont(font);
             QRect paddedRect = qrAddrImage.rect();
             paddedRect.setHeight(QR_IMAGE_SIZE+12);
-            painter.drawText(paddedRect, Qt::AlignBottom|Qt::AlignCenter, info.address);
+            if (info.address.length() > 34) {
+                painter.drawText(paddedRect, Qt::AlignBottom|Qt::AlignCenter, info.address.left(16) + "..." + info.address.right(16));
+            } else {
+                painter.drawText(paddedRect, Qt::AlignBottom|Qt::AlignCenter, info.address);
+            }
             painter.end();
 
             ui->lblQRCode->setPixmap(QPixmap::fromImage(qrAddrImage));
