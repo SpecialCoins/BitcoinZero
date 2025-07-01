@@ -612,9 +612,9 @@ void ReadConfigFile(const std::string& confPath)
            if (configFile != NULL)
            {
                std::string strHeader =
-                       "addnode=51.195.91.123:29301\n"
-                       "addnode=176.57.189.38:29:29301\n"
-                       "addnode=167.86.189.91:19:29301\n"
+                       "addnode=51.195.91.123\n"
+                       "addnode=176.57.189.38:29\n"
+                       "addnode=167.86.189.91:19\n"
                        "#reindex=1\n"
                        "#rescan=1\n"
                        "#zapwallettxes=2\n"

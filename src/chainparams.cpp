@@ -208,9 +208,9 @@ public:
         consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256S("0x000004d916d2e66f820fc0ba0b2554b6491a9c5bfc026ea515df5df2ceafcd53"));
         assert(genesis.hashMerkleRoot == uint256S("0xfede7817612c884cc527b1598013f6ef1feceea08bb80e1ffb0765dd74ba6a53"));
-        vSeeds.push_back(CDNSSeedData("51.195.91.123:29301", "51.195.91.123:19:29301"));
-        vSeeds.push_back(CDNSSeedData("167.86.189.91:19:29301", "167.86.189.91:19:29301"));
-        vSeeds.push_back(CDNSSeedData("176.57.189.38:29:29301", "176.57.189.38:29:29301"));
+        vSeeds.push_back(CDNSSeedData("51.195.91.123", "51.195.91.123", false));
+        vSeeds.push_back(CDNSSeedData("167.86.189.91:19", "167.86.189.91:19", false));
+        vSeeds.push_back(CDNSSeedData("176.57.189.38:29", "176.57.189.38:29", false));
         base58Prefixes[PUBKEY_ADDRESS] = std::vector < unsigned char > (1, 75);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector < unsigned char > (1, 34);
         base58Prefixes[EXCHANGE_PUBKEY_ADDRESS] = {0x01, 0xb9, 0xbb};   // EXX prefix for the address
