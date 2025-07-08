@@ -5,10 +5,10 @@
 
 #include <QPushButton>
 
-AutomintNotification::AutomintNotification(QWidget *parent) :
+AutomintSparkNotification::AutomintSparkNotification(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AutomintNotification),
-    lelantusModel(nullptr)
+    sparkModel(nullptr)
 {
     ui->setupUi(this);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Anonymize"));
@@ -17,44 +17,43 @@ AutomintNotification::AutomintNotification(QWidget *parent) :
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 }
 
-AutomintNotification::~AutomintNotification()
+AutomintSparkNotification::~AutomintSparkNotification()
 {
     delete ui;
 }
 
-void AutomintNotification::setModel(WalletModel *model)
+void AutomintSparkNotification::setModel(WalletModel *model)
 {
     if (model) {
-        lelantusModel = model->getLelantusModel();
+        sparkModel = model->getSparkModel();
 
-        if (!lelantusModel) {
+        if (!sparkModel) {
             return;
         }
 
-        auto automintModel = lelantusModel->getAutoMintModel();
+        auto automintModel = sparkModel->getAutoMintSparkModel();
         if (!automintModel) {
             return;
         }
 
-        connect(this, SIGNAL(ackMintAll(AutoMintAck, CAmount, QString)),
-            automintModel, SLOT(ackMintAll(AutoMintAck, CAmount, QString)));
+        connect(this, &AutomintSparkNotification::ackMintSparkAll, automintModel, &AutoMintSparkModel::ackMintSparkAll);
     }
 }
 
-bool AutomintNotification::close()
+bool AutomintSparkNotification::close()
 {
-    Q_EMIT ackMintAll(AutoMintAck::NotEnoughFund, 0, QString());
+    Q_EMIT ackMintSparkAll(AutoMintSparkAck::NotEnoughFund, 0, QString());
     return QDialog::close();
 }
 
-void AutomintNotification::accept()
+void AutomintSparkNotification::accept()
 {
-    Q_EMIT ackMintAll(AutoMintAck::AskToMint, 0, QString());
+    Q_EMIT ackMintSparkAll(AutoMintSparkAck::AskToMint, 0, QString());
     QDialog::accept();
 }
 
-void AutomintNotification::reject()
+void AutomintSparkNotification::reject()
 {
-    Q_EMIT ackMintAll(AutoMintAck::UserReject, 0, QString());
+    Q_EMIT ackMintSparkAll(AutoMintSparkAck::UserReject, 0, QString());
     QDialog::reject();
 }

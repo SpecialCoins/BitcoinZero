@@ -45,6 +45,8 @@ public:
     void setAddress(const QString &address);
     void pasteEntry(const SendCoinsRecipient &rv);
     bool handlePaymentRequest(const SendCoinsRecipient &recipient);
+    
+    SendCoinsEntry *entry;
 
 public Q_SLOTS:
     void clear();
@@ -65,6 +67,8 @@ private:
     bool fFeeMinimized;
     bool fAnonymousMode;
     const PlatformStyle *platformStyle;
+    void resizeEvent(QResizeEvent* event) override;
+    void adjustTextSize(int width, int height);
 
     // Process WalletModel::SendCoinsReturn and generate a pair consisting
     // of a message and message flags for use in Q_EMIT message().
@@ -123,6 +127,7 @@ private:
     QAbstractButton *yesButton;
     QTimer countDownTimer;
     int secDelay;
+    
 };
 
 #endif // BITCOIN_QT_SENDCOINSDIALOG_H

@@ -1,4 +1,4 @@
-# Bitcoinzero [BZX] (Lelantus) Core 2023
+# Bitcoinzero [BZX] (Lelantus) Core 2024
 
 [![Build Status](https://travis-ci.org/BitcoinZeroOfficial/bitcoinzero.svg?branch=master)](https://travis-ci.org/BitcoinZeroOfficial/bitcoinzero)
 
@@ -18,7 +18,7 @@
 
 - P2P Port=29301
 - RPC Port=29201
-- Client core= based on Firo 14.1X.X
+- Client core= based on Firo 14.12.X
 - Client name=bitcoinzero.qt
 - Conf file=bitcoinzero.conf
 

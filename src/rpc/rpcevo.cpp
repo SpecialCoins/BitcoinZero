@@ -12,11 +12,11 @@
 #include "validation.h"
 
 #ifdef ENABLE_WALLET
-#include "wallet/coincontrol.h"
 #include "wallet/wallet.h"
 #include "wallet/rpcwallet.h"
 #endif//ENABLE_WALLET
 
+#include "wallet/coincontrol.h"
 #include "netbase.h"
 
 #include "evo/specialtx.h"

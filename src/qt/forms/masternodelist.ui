@@ -136,42 +136,42 @@
          </column>
          <column>
           <property name="text">
-           <string>PoSe</string>
+           <string>PoSe Score</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Registered</string>
+           <string>Registered (Block)</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Last</string>
+           <string>Last Paid (Block)</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Next</string>
+           <string>Next Payment (Block)</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Payout</string>
+           <string>Payout Address</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Operator</string>
+           <string>Operator Reward</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Collateral</string>
+           <string>Collateral Address</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Owner</string>
+           <string>Owner Address</string>
           </property>
          </column>
         </widget>

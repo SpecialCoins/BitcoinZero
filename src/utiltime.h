@@ -14,6 +14,7 @@ int64_t GetTimeMillis();
 int64_t GetTimeMicros();
 int64_t GetSystemTimeInSeconds(); // Like GetTime(), but not mockable
 int64_t GetLogTimeMicros();
+int64_t GetMockableTimeMicros();
 void MilliSleep(int64_t n);
 
 std::string DateTimeStrFormat(const char* pszFormat, int64_t nTime);

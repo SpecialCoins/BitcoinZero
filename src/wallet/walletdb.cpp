@@ -13,6 +13,8 @@
 #include "util.h"
 #include "utiltime.h"
 #include "wallet/wallet.h"
+#include "spark/sparkwallet.h"
+
 #include "bip47/account.h"
 
 #include <atomic>
@@ -579,13 +581,27 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         {
             std::string strAddress;
             ssKey >> strAddress;
-            ssValue >> pwallet->mapAddressBook[CBitcoinAddress(strAddress).Get()].name;
+            CBitcoinAddress addressParsed(strAddress);
+            if(addressParsed.IsValid()){
+                ssValue >> pwallet->mapAddressBook[CBitcoinAddress(strAddress).Get()].name;
+            } else if (bip47::CPaymentCode::validate(strAddress)) {
+                ssValue >> pwallet->mapRAPAddressBook[strAddress].name;
+            } else {
+                ssValue >> pwallet->mapSparkAddressBook[strAddress].name;
+            }
         }
         else if (strType == "purpose")
         {
             std::string strAddress;
             ssKey >> strAddress;
-            ssValue >> pwallet->mapAddressBook[CBitcoinAddress(strAddress).Get()].purpose;
+            CBitcoinAddress addressParsed(strAddress);
+            if(addressParsed.IsValid()){
+                ssValue >> pwallet->mapAddressBook[CBitcoinAddress(strAddress).Get()].purpose;
+            } else if (bip47::CPaymentCode::validate(strAddress)) {
+                ssValue >> pwallet->mapRAPAddressBook[strAddress].purpose;
+            } else {
+                ssValue >> pwallet->mapSparkAddressBook[strAddress].purpose;
+            }
         }
         else if (strType == "tx")
         {
@@ -811,7 +827,7 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
             ssKey >> strAddress;
             ssKey >> strKey;
             ssValue >> strValue;
-            if (!pwallet->LoadDestData(CBitcoinAddress(strAddress).Get(), strKey, strValue))
+            if (!pwallet->LoadDestData(strAddress, strKey, strValue))
             {
                 strErr = "Error reading wallet database: LoadDestData failed";
                 return false;
@@ -1103,6 +1119,20 @@ DBErrors CWalletDB::ZapLelantusMints(CWallet *pwallet) {
     return DB_LOAD_OK;
 }
 
+DBErrors CWalletDB::ZapSparkMints(CWallet *pwallet) {
+    // get list of spark Mints
+    std::unordered_map<uint256, CSparkMintMeta> sparkMints = ListSparkMints();
+
+    // erase each Mint
+    BOOST_FOREACH(auto & mint, sparkMints)
+    {
+        if (!EraseSparkMint(mint.first))
+            return DB_CORRUPT;
+    }
+
+    return DB_LOAD_OK;
+}
+
 DBErrors CWalletDB::ZapWalletTx(CWallet* pwallet, std::vector<CWalletTx>& vWtx)
 {
     // build list of wallet TXs
@@ -1181,6 +1211,125 @@ void ThreadFlushWalletDB()
             }
         }
     }
+}
+
+// This should be called carefully:
+// either supply "wallet" (if already loaded) or "strWalletFile" (if wallet wasn't loaded yet)
+bool AutoBackupWallet (CWallet* wallet, std::string strWalletFile, std::string& strBackupWarning, std::string& strBackupError)
+{
+    namespace fs = boost::filesystem;
+
+    strBackupWarning = strBackupError = "";
+
+    if(nWalletBackups > 0)
+    {
+        fs::path backupsDir = GetBackupsDir();
+
+        if (!fs::exists(backupsDir))
+        {
+            // Always create backup folder to not confuse the operating system's file browser
+            LogPrintf("Creating backup folder %s\n", backupsDir.string());
+            if(!fs::create_directories(backupsDir)) {
+                // smth is wrong, we shouldn't continue until it's resolved
+                strBackupError = strprintf(_("Wasn't able to create wallet backup folder %s!"), backupsDir.string());
+                LogPrintf("%s\n", strBackupError);
+                nWalletBackups = -1;
+                return false;
+            }
+        }
+
+        // Create backup of the ...
+        std::string dateTimeStr = DateTimeStrFormat(".%Y-%m-%d-%H-%M", GetTime());
+        if (wallet)
+        {
+            // ... opened wallet
+            LOCK2(cs_main, wallet->cs_wallet);
+            strWalletFile = wallet->strWalletFile;
+            fs::path backupFile = backupsDir / (strWalletFile + dateTimeStr);
+//            if(!BackupWallet(*wallet, backupFile.std::string())) {
+//                strBackupWarning = strprintf(_("Failed to create backup %s!"), backupFile.std::string());
+//                LogPrintf("%s\n", strBackupWarning);
+//                nWalletBackups = -1;
+//                return false;
+//            }
+            // Update nKeysLeftSinceAutoBackup using current pool size
+            wallet->nKeysLeftSinceAutoBackup = wallet->GetKeyPoolSize();
+            LogPrintf("nKeysLeftSinceAutoBackup: %d\n", wallet->nKeysLeftSinceAutoBackup);
+            if(wallet->IsLocked()) {
+                strBackupWarning = _("Wallet is locked, can't replenish keypool! Automatic backups and mixing are disabled, please unlock your wallet to replenish keypool.");
+                LogPrintf("%s\n", strBackupWarning);
+                nWalletBackups = -2;
+                return false;
+            }
+        } else {
+            // ... strWalletFile file
+            fs::path sourceFile = GetDataDir() / strWalletFile;
+            fs::path backupFile = backupsDir / (strWalletFile + dateTimeStr);
+            sourceFile.make_preferred();
+            backupFile.make_preferred();
+            if (fs::exists(backupFile))
+            {
+                strBackupWarning = _("Failed to create backup, file already exists! This could happen if you restarted wallet in less than 60 seconds. You can continue if you are ok with this.");
+                LogPrintf("%s\n", strBackupWarning);
+                return false;
+            }
+            if(fs::exists(sourceFile)) {
+                try {
+                    fs::copy_file(sourceFile, backupFile);
+                    LogPrintf("Creating backup of %s -> %s\n", sourceFile.string(), backupFile.string());
+                } catch(fs::filesystem_error &error) {
+                    strBackupWarning = strprintf(_("Failed to create backup, error: %s"), error.what());
+                    LogPrintf("%s\n", strBackupWarning);
+                    nWalletBackups = -1;
+                    return false;
+                }
+            }
+        }
+
+        // Keep only the last 10 backups, including the new one of course
+        typedef std::multimap<std::time_t, fs::path> folder_set_t;
+        folder_set_t folder_set;
+        fs::directory_iterator end_iter;
+        backupsDir.make_preferred();
+        // Build map of backup files for current(!) wallet sorted by last write time
+        fs::path currentFile;
+        for (fs::directory_iterator dir_iter(backupsDir); dir_iter != end_iter; ++dir_iter)
+        {
+            // Only check regular files
+            if ( fs::is_regular_file(dir_iter->status()))
+            {
+                currentFile = dir_iter->path().filename();
+                // Only add the backups for the current wallet, e.g. wallet.dat.*
+                if(dir_iter->path().stem().string() == strWalletFile)
+                {
+                    folder_set.insert(folder_set_t::value_type(fs::last_write_time(dir_iter->path()), *dir_iter));
+                }
+            }
+        }
+
+        // Loop backward through backup files and keep the N newest ones (1 <= N <= 10)
+        int counter = 0;
+        BOOST_REVERSE_FOREACH(PAIRTYPE(const std::time_t, fs::path) file, folder_set)
+        {
+            counter++;
+            if (counter > nWalletBackups)
+            {
+                // More than nWalletBackups backups: delete oldest one(s)
+                try {
+                    fs::remove(file.second);
+                    LogPrintf("Old backup deleted: %s\n", file.second);
+                } catch(fs::filesystem_error &error) {
+                    strBackupWarning = strprintf(_("Failed to delete backup, error: %s"), error.what());
+                    LogPrintf("%s\n", strBackupWarning);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    LogPrintf("Automatic wallet backups are disabled!\n");
+    return false;
 }
 
 //
@@ -1317,6 +1466,27 @@ bool CWalletDB::ReadMintSeedCount(int32_t& nCount)
 bool CWalletDB::WriteMintSeedCount(const int32_t& nCount)
 {
     return Write(std::string("dzsc"), nCount);
+}
+
+bool CWalletDB::readDiversifier(int32_t& diversifier)
+{
+    return Read(std::string("div"), diversifier);
+
+}
+
+bool CWalletDB::writeDiversifier(const int32_t& diversifier)
+{
+    return Write(std::string("div"), diversifier);
+}
+
+bool CWalletDB::readFullViewKey(spark::FullViewKey& fullViewKey)
+{
+    return Read(std::string("fullViewKey"), fullViewKey);
+}
+
+bool CWalletDB::writeFullViewKey(const spark::FullViewKey& fullViewKey)
+{
+    return Write(std::string("fullViewKey"), fullViewKey);
 }
 
 bool CWalletDB::WritePubcoin(const uint256& hashSerial, const GroupElement& pubcoin)
@@ -1562,6 +1732,126 @@ unsigned int CWalletDB::GetUpdateCounter()
     return nWalletDBUpdateCounter;
 }
 
+std::unordered_map<uint256, CSparkMintMeta> CWalletDB::ListSparkMints()
+{
+    std::unordered_map<uint256, CSparkMintMeta> listMints;
+    Dbc* pcursor = GetCursor();
+    if (!pcursor)
+        throw std::runtime_error(std::string(__func__)+" : cannot create DB cursor");
+    std::string mintName = "sparkMint";
+    bool setRange = true;
+    for (;;)
+    {
+        // Read next record
+        CDataStream ssKey(SER_DISK, CLIENT_VERSION);
+        if (setRange)
+            ssKey << std::make_pair(mintName, ArithToUint256(arith_uint256(0)));
+        CDataStream ssValue(SER_DISK, CLIENT_VERSION);
+        int ret = ReadAtCursor(pcursor, ssKey, ssValue, setRange);
+        setRange = false;
+        if (ret == DB_NOTFOUND)
+            break;
+        else if (ret != 0)
+        {
+            pcursor->close();
+            throw std::runtime_error(std::string(__func__)+" : error scanning DB");
+        }
+
+        // Unserialize
+        std::string strType;
+        ssKey >> strType;
+        if (strType != mintName)
+            break;
+
+        uint256 lTagHash;
+        ssKey >> lTagHash;
+
+        CSparkMintMeta mint;
+        ssValue >> mint;
+
+        listMints[lTagHash] = mint;
+    }
+
+    pcursor->close();
+    return listMints;
+}
+
+bool CWalletDB::WriteSparkOutputTx(const CScript& scriptPubKey, const CSparkOutputTx& output)
+{
+    return Write(std::make_pair(std::string("sparkOutputTx"), scriptPubKey), output);
+}
+
+bool CWalletDB::ReadSparkOutputTx(const CScript& scriptPubKey, CSparkOutputTx& output)
+{
+    return Read(std::make_pair(std::string("sparkOutputTx"), scriptPubKey), output);
+}
+
+bool CWalletDB::WriteSparkMint(const uint256& lTagHash, const CSparkMintMeta& mint)
+{
+    return Write(std::make_pair(std::string("sparkMint"), lTagHash), mint);
+}
+
+bool CWalletDB::ReadSparkMint(const uint256& lTagHash, CSparkMintMeta& mint)
+{
+    return Read(std::make_pair(std::string("sparkMint"), lTagHash), mint);
+}
+
+bool CWalletDB::EraseSparkMint(const uint256& lTagHash)
+{
+    return Erase(std::make_pair(std::string("sparkMint"), lTagHash));
+}
+
+void CWalletDB::ListSparkSpends(std::list<CSparkSpendEntry>& listSparkSpends)
+{
+    Dbc *pcursor = GetCursor();
+    if (!pcursor)
+        throw std::runtime_error("CWalletDB::ListCoinSpendSerial() : cannot create DB cursor");
+    bool setRange = true;
+    while (true) {
+        // Read next record
+        CDataStream ssKey(SER_DISK, CLIENT_VERSION);
+        if (setRange)
+            ssKey << std::make_pair(std::string("spark_spend"), secp_primitives::GroupElement());
+        CDataStream ssValue(SER_DISK, CLIENT_VERSION);
+        int ret = ReadAtCursor(pcursor, ssKey, ssValue, setRange);
+        setRange = false;
+        if (ret == DB_NOTFOUND)
+            break;
+        else if (ret != 0) {
+            pcursor->close();
+            throw std::runtime_error("CWalletDB::ListSparkSpends() : error scanning DB");
+        }
+
+        // Unserialize
+        std::string strType;
+        ssKey >> strType;
+        if (strType != "spark_spend")
+            break;
+        GroupElement value;
+        ssKey >> value;
+        CSparkSpendEntry sparkSpendItem;
+        ssValue >> sparkSpendItem;
+        listSparkSpends.push_back(sparkSpendItem);
+    }
+
+    pcursor->close();
+}
+
+bool CWalletDB::WriteSparkSpendEntry(const CSparkSpendEntry& sparkSpend) {
+    return Write(std::make_pair(std::string("spark_spend"), sparkSpend.lTag), sparkSpend, true);
+}
+
+bool CWalletDB::ReadSparkSpendEntry(const secp_primitives::GroupElement& lTag, CSparkSpendEntry& sparkSpend) {
+    return Read(std::make_pair(std::string("spark_spend"), lTag), sparkSpend);
+}
+
+bool CWalletDB::HasSparkSpendEntry(const secp_primitives::GroupElement& lTag) {
+    return Exists(std::make_pair(std::string("spark_spend"), lTag));
+}
+
+bool CWalletDB::EraseSparkSpendEntry(const secp_primitives::GroupElement& lTag) {
+    return Erase(std::make_pair(std::string("spark_spend"), lTag));
+}
 
 /******************************************************************************/
 // BIP47

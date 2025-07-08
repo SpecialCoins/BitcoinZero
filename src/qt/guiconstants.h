@@ -51,7 +51,7 @@ static const int MAX_URI_LENGTH = 255;
 #define SPINNER_FRAMES 36
 
 #define QAPP_ORG_NAME "BZX"
-#define QAPP_ORG_DOMAIN "BZX.org"
+#define QAPP_ORG_DOMAIN "bzx.world"
 #define QAPP_APP_NAME_DEFAULT "BZX-Qt"
 #define QAPP_APP_NAME_TESTNET "BZX-Qt-testnet"
 

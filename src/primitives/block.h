@@ -27,6 +27,11 @@ class CLelantusTxInfo;
 
 } // namespace lelantus
 
+namespace spark {
+    class CSparkTxInfo;
+
+} // namespace spark
+
 class CBlockHeader
 {
 public:
@@ -107,10 +112,12 @@ public:
     mutable CTxOut txoutMasternode; // masternode payment
     mutable bool fChecked;
 
-    // memory only, sigma tx info
+    // memory only, privcoin tx info after V3-sigma.
     mutable std::shared_ptr<sigma::CSigmaTxInfo> sigmaTxInfo;
 
     mutable std::shared_ptr<lelantus::CLelantusTxInfo> lelantusTxInfo;
+
+    mutable std::shared_ptr<spark::CSparkTxInfo> sparkTxInfo;
 
     CBlock()
     {

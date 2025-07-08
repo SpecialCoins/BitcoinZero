@@ -6,7 +6,7 @@
 #define BITCOIN_QT_TRANSACTIONTABLEMODEL_H
 
 #include "bitcoinunits.h"
-
+#include "uint256.h"
 #include <QAbstractTableModel>
 #include <QStringList>
 
@@ -91,6 +91,7 @@ public:
     void updateChainLockHeight(int chainLockHeight);
     int getNumISLocks() const;
     int getChainLockHeight() const;
+    void refreshWallet() const;
 
 private:
     CWallet* wallet;

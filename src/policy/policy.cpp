@@ -65,8 +65,7 @@ bool IsStandardTx(const CTransaction& tx, std::string& reason)
     // computing signature hashes is O(ninputs*txsize). Limiting transactions
     // to MAX_STANDARD_TX_SIZE mitigates CPU exhaustion attacks.
     unsigned int sz = GetTransactionWeight(tx);
-    unsigned int szLimit = MAX_STANDARD_TX_SIZE;
-    if (sz >= szLimit) {
+    if (sz >= MAX_STANDARD_TX_SIZE) {
         LogPrint("mempoolworker", "ignoring large tx (size: %u)\n", sz);
         return false;
     }
@@ -89,7 +88,7 @@ bool IsStandardTx(const CTransaction& tx, std::string& reason)
             return false;
         }
 
-        if (!txin.scriptSig.IsPrivcoinSpend() && !txin.scriptSig.IsSigmaSpend() && !txin.scriptSig.IsLelantusJoinSplit() && !txin.IsPrivcoinRemint()) {
+        if (!txin.scriptSig.IsPrivcoinSpend() && !txin.scriptSig.IsSigmaSpend() && !txin.scriptSig.IsLelantusJoinSplit() && !txin.scriptSig.IsSparkSpend() && !txin.IsPrivcoinRemint()) {
             if (!txin.scriptSig.IsPushOnly()) {
                 reason = "scriptsig-not-pushonly";
                 return false;
@@ -131,7 +130,12 @@ bool IsStandardTx(const CTransaction& tx, std::string& reason)
 
 bool AreInputsStandard(const CTransaction& tx, const CCoinsViewCache& mapInputs)
 {
-    if (tx.IsCoinBase() || tx.IsPrivcoinSpend() || tx.IsSigmaSpend() || tx.IsPrivcoinRemint() || tx.IsLelantusJoinSplit())
+    if (tx.IsCoinBase()
+    || tx.IsPrivcoinSpend()
+    || tx.IsSigmaSpend()
+    || tx.IsPrivcoinRemint()
+    || tx.IsLelantusJoinSplit()
+    || tx.IsSparkSpend())
         return true; // Coinbases don't use vin normally
 
     for (unsigned int i = 0; i < tx.vin.size(); i++)

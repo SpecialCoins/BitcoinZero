@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
-    <height>440</height>
+    <width>660</width>
+    <height>540</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -186,6 +186,13 @@
            <widget class="QCheckBox" name="autoAnonymize">
             <property name="text">
              <string>Enable &amp;auto-anonymize features</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="fSplit">
+            <property name="text">
+             <string>Enable &amp;splitting when minting</string>
             </property>
            </widget>
           </item>

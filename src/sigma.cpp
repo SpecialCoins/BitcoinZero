@@ -6,8 +6,10 @@
 #include "base58.h"
 #include "definition.h"
 #include "txmempool.h"
+#ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
 #include "wallet/walletdb.h"
+#endif // ENABLE_WALLET
 #include "crypto/sha256.h"
 #include "sigma/coinspend.h"
 #include "sigma/coin.h"
@@ -49,21 +51,6 @@ bool CheckSigmaSpendSerial(
         }
     }
     return true;
-}
-
-bool IsSigmaAllowed()
-{
-    LOCK(cs_main);
-    return IsSigmaAllowed(chainActive.Height());
-}
-
-bool IsSigmaAllowed(int height)
-{
-    return false;
-}
-
-bool IsRemintWindow(int height) {
-    return false;
 }
 
 secp_primitives::GroupElement ParseSigmaMintScript(const CScript& script)
@@ -254,7 +241,7 @@ bool CheckSigmaSpendTransaction(
             if (index->sigmaMintedPubCoins.count(denominationAndId) > 0) {
                 BOOST_FOREACH(const sigma::PublicCoin& pubCoinValue,
                         index->sigmaMintedPubCoins[denominationAndId]) {
-                    if (true) {
+                    {
                         if (::Params().GetConsensus().sigmaBlacklist.count(pubCoinValue.getValue()) > 0) {
                             continue;
                         }
@@ -421,25 +408,6 @@ bool CheckSigmaTransaction(
         return state.DoS(100, false,
                          REJECT_INVALID,
                          "Sigma already is not available, start using Lelantus.");
-    bool const allowSigma = false;
-
-    if (!isVerifyDB && !isCheckWallet) {
-        if (allowSigma && sigmaState.IsSurgeConditionDetected()) {
-            return state.DoS(100, false,
-                REJECT_INVALID,
-                "Sigma surge protection is ON.");
-        }
-    }
-
-    // Check Mint Sigma Transaction
-    if (allowSigma) {
-        for (const CTxOut &txout : tx.vout) {
-            if (!txout.scriptPubKey.empty() && txout.scriptPubKey.IsSigmaMint()) {
-                if (!CheckSigmaMintTransaction(txout, state, hashTx, fStatefulSigmaCheck, sigmaTxInfo))
-                    return false;
-            }
-        }
-    }
 
     // Check Sigma Spend Transaction
     if(tx.IsSigmaSpend()) {
@@ -474,10 +442,15 @@ bool CheckSigmaTransaction(
         // Check vOut
         // Only one loop, we checked on the format before entering this case
         if (!isVerifyDB) {
-            if (!CheckSigmaSpendTransaction(
-                tx, denominations, state, hashTx, isVerifyDB, nHeight, realHeight,
-                isCheckWallet, fStatefulSigmaCheck, sigmaTxInfo)) {
-                    return false;
+            try {
+                if (!CheckSigmaSpendTransaction(
+                    tx, denominations, state, hashTx, isVerifyDB, nHeight, realHeight,
+                    isCheckWallet, fStatefulSigmaCheck, sigmaTxInfo)) {
+                        return false;
+                }
+            }
+            catch (const std::exception &x) {
+                return state.Error(x.what());
             }
         }
     }
@@ -599,15 +572,17 @@ bool ConnectBlockSigma(
                     )) {
                 return false;
             }
+        }
 
-            if (!fJustCheck) {
+        if (!fJustCheck) {
+            BOOST_FOREACH(auto& serial, pblock->sigmaTxInfo->spentSerials) {
                 pindexNew->sigmaSpentSerials.insert(serial);
                 sigmaState.AddSpend(serial.first, serial.second.denomination, serial.second.coinGroupId);
             }
         }
-
-        if (fJustCheck)
+        else {
             return true;
+        }
 
         sigmaState.AddMintsToStateAndBlockIndex(pindexNew, pblock);
     }
@@ -631,7 +606,7 @@ bool GetOutPointFromBlock(COutPoint& outPoint, const GroupElement &pubCoinValue,
                                                       txout.scriptPubKey.end());
                 try {
                     txPubCoinValue.deserialize(&coin_serialised[0]);
-                } catch (...) {
+                } catch (const std::exception &) {
                     return false;
                 }
                 if(pubCoinValue==txPubCoinValue){
@@ -1037,7 +1012,7 @@ int CSigmaState::GetCoinSetForSpend(
                 }
                 BOOST_FOREACH(const sigma::PublicCoin& pubCoinValue,
                         block->sigmaMintedPubCoins[denomAndId]) {
-                    if (true) {
+                    {
                         if (::Params().GetConsensus().sigmaBlacklist.count(pubCoinValue.getValue()) > 0) {
                             continue;
                         }
@@ -1079,7 +1054,7 @@ void CSigmaState::GetAnonymitySet(
             if (block->nHeight <= maxHeight) {
                 BOOST_FOREACH(const sigma::PublicCoin& pubCoinValue,
                         block->sigmaMintedPubCoins[denomAndId]) {
-                    if (true) {
+                    {
                         if (::Params().GetConsensus().sigmaBlacklist.count(pubCoinValue.getValue()) > 0) {
                             continue;
                         }

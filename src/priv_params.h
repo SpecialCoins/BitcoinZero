@@ -8,11 +8,9 @@ static const int64_t DUST_HARD_LIMIT = 1000;   // 0.00001 BZX mininput
 #define ZC_LELANTUS_MAX_MINT_NUM    65000
 #define ZC_LELANTUS_SET_START_SIZE  16000
 
-// Version of the block index enty that introduces evo sporks
-#define EVOSPORK_MIN_VERSION                5140904
-
-// Version of the block index entry that introduces Lelantus protocol
-#define LELANTUS_PROTOCOL_ENABLEMENT_VERSION	5140904
+// limit of coins number per id in Spark
+#define ZC_SPARK_MAX_MINT_NUM    65000
+#define ZC_SPARK_SET_START_SIZE  16000
 
 // number of mint confirmations needed to spend coin
 #define ZC_MINT_CONFIRMATIONS               2

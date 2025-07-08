@@ -7,22 +7,22 @@
 #include <QPainter>
 #include <QPaintEvent>
 
-enum class AutoMintMode : uint8_t {
-    MintAll, // come from overview page
-    AutoMintAll // come from notification
-};
-
 namespace Ui {
     class AutoMintDialog;
 }
 
-class AutoMintDialog : public QDialog
+enum class AutoMintSparkMode : uint8_t {
+    MintAll, // come from overview page
+    AutoMintAll // come from notification
+};
+
+class AutoMintSparkDialog : public QDialog
 {
     Q_OBJECT;
 
 public:
-    explicit AutoMintDialog(AutoMintMode mode, QWidget *parent = 0);
-    ~AutoMintDialog();
+    explicit AutoMintSparkDialog(AutoMintSparkMode mode, QWidget *parent = 0);
+    ~AutoMintSparkDialog();
 
 public:
     int exec();
@@ -35,7 +35,7 @@ private Q_SLOTS:
     void reject();
 
 private:
-    enum class AutoMintProgress : uint8_t {
+    enum class AutoMintSparkProgress : uint8_t {
         Start,
         Unlocking,
         Minting
@@ -43,12 +43,12 @@ private:
 
     Ui::AutoMintDialog *ui;
     WalletModel *model;
-    LelantusModel *lelantusModel;
+    SparkModel *sparkModel;
     bool requiredPassphase;
-    AutoMintProgress progress;
-    AutoMintMode mode;
+    AutoMintSparkProgress progress;
+    AutoMintSparkMode mode;
 
-    void ensureLelantusModel();
+    void ensureSparkModel();
 };
 
 #endif // BZX_QT_AUTOMINT_H

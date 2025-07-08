@@ -3,20 +3,20 @@
 #include "automintdialog.h"
 #include "automintmodel.h"
 #include "bitcoinunits.h"
-#include "lelantusmodel.h"
+#include "sparkmodel.h"
 #include "ui_automintdialog.h"
 
 #include <QMessageBox>
 #include <QPushButton>
 #include <QDebug>
 
-AutoMintDialog::AutoMintDialog(AutoMintMode mode, QWidget *parent) :
+AutoMintSparkDialog::AutoMintSparkDialog(AutoMintSparkMode mode, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AutoMintDialog),
     model(0),
-    lelantusModel(0),
+    sparkModel(0),
     requiredPassphase(true),
-    progress(AutoMintProgress::Start),
+    progress(AutoMintSparkProgress::Start),
     mode(mode)
 {
     ENTER_CRITICAL_SECTION(cs_main);
@@ -27,19 +27,19 @@ AutoMintDialog::AutoMintDialog(AutoMintMode mode, QWidget *parent) :
     ui->buttonBox->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 }
 
-AutoMintDialog::~AutoMintDialog()
+AutoMintSparkDialog::~AutoMintSparkDialog()
 {
-    if (lelantusModel) {
-        LEAVE_CRITICAL_SECTION(lelantusModel->cs);
+    if (sparkModel) {
+        LEAVE_CRITICAL_SECTION(sparkModel->cs);
     }
 
     LEAVE_CRITICAL_SECTION(pwalletMain->cs_wallet);
     LEAVE_CRITICAL_SECTION(cs_main);
 }
 
-void AutoMintDialog::accept()
+void AutoMintSparkDialog::accept()
 {
-    ensureLelantusModel();
+    ensureSparkModel();
 
     ui->buttonBox->setVisible(false);
     ui->passEdit->setVisible(false);
@@ -52,10 +52,10 @@ void AutoMintDialog::accept()
         SecureString passphase(rawPassphase.begin(), rawPassphase.end());
         auto lock = ui->lockCheckBox->isChecked();
 
-        progress = AutoMintProgress::Unlocking;
+        progress = AutoMintSparkProgress::Unlocking;
         repaint();
 
-        if (!lelantusModel->unlockWallet(passphase, lock ? 0 : 60 * 1000)) {
+        if (!sparkModel->unlockSparkWallet(passphase, lock ? 0 : 60 * 1000)) {
             QMessageBox::critical(this, tr("Wallet unlock failed"),
                                   tr("The passphrase was incorrect."));
             QDialog::reject();
@@ -63,18 +63,18 @@ void AutoMintDialog::accept()
         }
     }
 
-    progress = AutoMintProgress::Minting;
+    progress = AutoMintSparkProgress::Minting;
     repaint();
 
-    AutoMintAck status;
+    AutoMintSparkAck status;
     CAmount minted = 0;
     QString error;
 
     try {
-        minted = lelantusModel->mintAll();
-        status = AutoMintAck::Success;
+        minted = sparkModel->mintSparkAll();
+        status = AutoMintSparkAck::Success;
     } catch (std::runtime_error const &e) {
-        status = AutoMintAck::FailToMint;
+        status = AutoMintSparkAck::FailToMint;
         error = e.what();
         QMessageBox::critical(this, tr("Unable to generate mint"),
                               tr(error.toLocal8Bit().data()));
@@ -82,40 +82,40 @@ void AutoMintDialog::accept()
 
     QDialog::accept();
 
-    lelantusModel->sendAckMintAll(status, minted, error);
+    sparkModel->sendAckMintSparkAll(status, minted, error);
 }
 
-int AutoMintDialog::exec()
+int AutoMintSparkDialog::exec()
 {
-    ensureLelantusModel();
-    if (lelantusModel->getMintableAmount() <= 0) {
-        lelantusModel->sendAckMintAll(AutoMintAck::NotEnoughFund);
+    ensureSparkModel();
+    if (sparkModel->getMintableSparkAmount() <= 0) {
+        sparkModel->sendAckMintSparkAll(AutoMintSparkAck::NotEnoughFund);
         return 0;
     }
 
     return QDialog::exec();
 }
 
-void AutoMintDialog::reject()
+void AutoMintSparkDialog::reject()
 {
-    ensureLelantusModel();
-    lelantusModel->sendAckMintAll(AutoMintAck::UserReject);
+    ensureSparkModel();
+    sparkModel->sendAckMintSparkAll(AutoMintSparkAck::UserReject);
     QDialog::reject();
 }
 
-void AutoMintDialog::setModel(WalletModel *model)
+void AutoMintSparkDialog::setModel(WalletModel *model)
 {
     this->model = model;
     if (!this->model) {
         return;
     }
 
-    lelantusModel = this->model->getLelantusModel();
-    if (!lelantusModel) {
+    sparkModel = this->model->getSparkModel();
+    if (!sparkModel) {
         return;
     }
 
-    ENTER_CRITICAL_SECTION(lelantusModel->cs);
+    ENTER_CRITICAL_SECTION(sparkModel->cs);
 
     if (this->model->getEncryptionStatus() != WalletModel::Locked) {
         ui->passLabel->setVisible(false);
@@ -127,13 +127,13 @@ void AutoMintDialog::setModel(WalletModel *model)
     }
 }
 
-void AutoMintDialog::paintEvent(QPaintEvent *event)
+void AutoMintSparkDialog::paintEvent(QPaintEvent *event)
 {
     QPainter painter;
     painter.begin(this);
 
-    if (progress != AutoMintProgress::Start) {
-        auto progressMessage = progress == AutoMintProgress::Unlocking ? tr("Unlocking wallet...") : tr("Anonymizing...");
+    if (progress != AutoMintSparkProgress::Start) {
+        auto progressMessage = progress == AutoMintSparkProgress::Unlocking ? tr("Unlocking wallet...") : tr("Anonymizing...");
         auto size = QFontMetrics(painter.font()).size(Qt::TextSingleLine, progressMessage);
         painter.drawText(
             (width() - size.width()) / 2,
@@ -145,9 +145,9 @@ void AutoMintDialog::paintEvent(QPaintEvent *event)
     painter.end();
 }
 
-void AutoMintDialog::ensureLelantusModel()
+void AutoMintSparkDialog::ensureSparkModel()
 {
-    if (!lelantusModel) {
-        throw std::runtime_error("Lelantus model is not set");
+    if (!sparkModel) {
+        throw std::runtime_error("Spark model is not set");
     }
 }

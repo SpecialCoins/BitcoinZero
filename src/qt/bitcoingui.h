@@ -5,6 +5,7 @@
 #ifndef BITCOIN_QT_BITCOINGUI_H
 #define BITCOIN_QT_BITCOINGUI_H
 
+#include "exportviewkeydialog.h"
 #if defined(HAVE_CONFIG_H)
 #include "config/bitcoin-config.h"
 #endif
@@ -17,6 +18,8 @@
 #include <QMenu>
 #include <QPoint>
 #include <QSystemTrayIcon>
+#include <QPushButton>
+#include <QWidget>
 
 class ClientModel;
 class NetworkStyle;
@@ -38,6 +41,11 @@ class QAction;
 class QProgressBar;
 class QProgressDialog;
 QT_END_NAMESPACE
+
+namespace GUIUtil {
+    class ClickableLabel;
+    class ClickableProgressBar;
+}
 
 /**
   Bitcoin GUI main class. This class represents the main window of the Bitcoin UI. It communicates with both the client and
@@ -85,20 +93,14 @@ private:
     UnitDisplayStatusBarControl *unitDisplayControl;
     QLabel *labelWalletEncryptionIcon;
     QLabel *labelWalletHDStatusIcon;
-    QLabel *connectionsControl;
-    QLabel *labelBlocksIcon;
-    QLabel *labelElysiumPendingIcon;
-    QLabel *labelElysiumPendingText;
+    GUIUtil::ClickableLabel *connectionsControl;
+    GUIUtil::ClickableLabel *labelBlocksIcon;
     QLabel *progressBarLabel;
-    QProgressBar *progressBar;
+    GUIUtil::ClickableProgressBar *progressBar;
     QProgressDialog *progressDialog;
 
     QMenuBar *appMenuBar;
     QAction *overviewAction;
-#ifdef ENABLE_ELYSIUM
-    QAction *elyAssetsAction;
-    QAction *toolboxAction;
-#endif
     QAction *historyAction;
     QAction *quitAction;
     QAction *sendCoinsAction;
@@ -108,12 +110,14 @@ private:
     QAction *signMessageAction;
     QAction *verifyMessageAction;
     QAction *aboutAction;
+    QAction *openRepairAction;
     QAction *receiveCoinsAction;
     QAction *receiveCoinsMenuAction;
     QAction *optionsAction;
     QAction *toggleHideAction;
     QAction *encryptWalletAction;
     QAction *backupWalletAction;
+    QAction *exportViewKeyAction;
     QAction *changePassphraseAction;
     QAction *aboutQtAction;
     QAction *openRPCConsoleAction;
@@ -121,10 +125,9 @@ private:
     QAction *showHelpMessageAction;
     QAction *lelantusAction;
     QAction *masternodeAction;
-    QAction *createPcodeAction;
     QAction *logoAction;
-    QAction *openRepairAction;
-
+    QToolBar *toolbar;
+    QLabel *logoLabel;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     Notificator *notificator;
@@ -144,6 +147,7 @@ private:
     void createMenuBar();
     /** Create the toolbars */
     void createToolBars();
+    void resizeEvent(QResizeEvent*);
     /** Create system tray icon and notification */
     void createTrayIcon(const NetworkStyle *networkStyle);
     /** Create system tray menu (or setup the dock menu) */
@@ -159,8 +163,7 @@ private:
 
     /** Updates Masternode visibility */
     void checkMasternodeVisibility(int numBlocks);
-    /** Updates Lelantus visibility */
-    void checkLelantusVisibility(int numBlocks);
+
     /** Update UI with latest network info from model. */
     void updateNetworkState();
 
@@ -200,8 +203,6 @@ public Q_SLOTS:
     */
     void setEncryptionStatus(int status);
 
-    /** Set the Elysium pending transactions label **/
-    void setElysiumPendingStatus(bool pending);
     /** Set the hd-enabled status as shown in the UI.
      @param[in] status            current hd enabled status
      @see WalletModel::EncryptionStatus
@@ -214,18 +215,10 @@ public Q_SLOTS:
     void incomingTransaction(const QString& date, int unit, const CAmount& amount, const QString& type, const QString& address, const QString& label);
 #endif // ENABLE_WALLET
 
-private Q_SLOTS:
+public Q_SLOTS:
 #ifdef ENABLE_WALLET
     /** Switch to overview (home) page */
     void gotoOverviewPage();
-#ifdef ENABLE_ELYSIUM
-    /** Switch to ElyAssets page */
-    void gotoElyAssetsPage();
-    /** Switch to utility page */
-    void gotoToolboxPage();
-    /** Switch directly to Elysium history tab */
-    void gotoElysiumHistoryTab();
-#endif
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
     /** Switch directly to BZX history tab */
@@ -234,12 +227,8 @@ private Q_SLOTS:
     void gotoMasternodePage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
-    /** Switch to create payment code page */
-    void gotoCreatePcodePage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
-    /** Switch to lelantus page */
-    void gotoLelantusPage();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
@@ -266,7 +255,9 @@ private Q_SLOTS:
 #endif
 
     /** Show window if hidden, unminimize when minimized, rise when obscured or show if hidden and fToggleHidden is true */
-    void showNormalIfMinimized(bool fToggleHidden = false);
+    void showNormalIfMinimized() { showNormalIfMinimized(false); }
+    void showNormalIfMinimized(bool fToggleHidden);
+
     /** Simply calls showNormalIfMinimized(true) for use in SLOT() macro */
     void toggleHidden();
 
@@ -287,8 +278,6 @@ private Q_SLOTS:
 
     void showModalOverlay();
 
-    /** Update Lelantus page visibility */
-    void updateLelantusPage();
 };
 
 class UnitDisplayStatusBarControl : public QLabel
