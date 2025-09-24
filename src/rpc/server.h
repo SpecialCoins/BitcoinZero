@@ -135,11 +135,11 @@ typedef UniValue(*rpcfn_type)(const JSONRPCRequest& jsonRequest);
 class CRPCCommand
 {
 public:
-    std::string category;
-    std::string name;
+    std::string category {};
+    std::string name {};
     rpcfn_type actor;
-    bool okSafeMode;
-    std::vector<std::string> argNames;
+    bool okSafeMode {};
+    std::vector<std::string> argNames {};
 };
 
 /**
@@ -205,6 +205,7 @@ extern UniValue getaddressdeltas(const JSONRPCRequest &request);
 extern UniValue getaddresstxids(const JSONRPCRequest &request);
 extern UniValue getaddressbalance(const JSONRPCRequest &request);
 extern UniValue getAddressNumWBalance(const JSONRPCRequest &request);
+
 
 extern UniValue getanonymityset(const JSONRPCRequest& params);
 extern UniValue getmintmetadata(const JSONRPCRequest& params);

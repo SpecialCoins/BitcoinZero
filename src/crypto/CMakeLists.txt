@@ -2,33 +2,27 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or https://opensource.org/license/mit/.
 
-add_subdirectory(progpow)
-
 add_library(bitcoin_crypto STATIC EXCLUDE_FROM_ALL
-  aes.cpp
-  chacha20.cpp
-  hmac_sha256.cpp
-  hmac_sha512.cpp
-  progpow.cpp
-  ripemd160.cpp
-  sha1.cpp
-  sha256.cpp
-  sha512.cpp
-  scrypt.cpp
-  Lyra2Z/Lyra2.c
-  Lyra2Z/Lyra2Z.c
-  Lyra2Z/Sponge.c
-  Lyra2Z/blake.c
-  ../support/cleanse.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/aes.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/chacha20.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/hmac_sha256.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/hmac_sha512.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/ripemd160.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sha1.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sha256.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sha512.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/scrypt.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/Lyra2Z/Lyra2.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/Lyra2Z/Lyra2Z.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/Lyra2Z/Sponge.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/Lyra2Z/blake.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/../support/cleanse.cpp
 )
 
 target_link_libraries(bitcoin_crypto
   PRIVATE
     core_interface
     ${Boost_LIBRARIES}
-  PUBLIC 
-    ethash
-    keccak
 )
 
 target_include_directories(bitcoin_crypto

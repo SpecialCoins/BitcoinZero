@@ -63,7 +63,7 @@ namespace lelantus {
 // Use this version of code in case you need mobile api
 struct MintValueData {
     bool isJMint = false;
-    uint64_t amount;
+    uint64_t amount = 0;
     std::vector<unsigned char> encryptedValue;
     uint256 txHash;
 
@@ -78,7 +78,7 @@ struct MintValueData {
     }
 };
 
-// Custom hash for the public coin
+// Custom hash for the public coin.
 struct CPublicCoinHash {
     std::size_t operator()(const lelantus::PublicCoin& coin) const noexcept;
 };

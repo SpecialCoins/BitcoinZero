@@ -28,14 +28,13 @@ public:
 
     void setModel(WalletModel *model);
 
-    void accept();
+    void accept() override;
 
 private:
     Ui::CreateSparkNamePage *ui;
     WalletModel *model;
     
     bool CreateSparkNameTransaction(const std::string &name, const std::string &address, int numberOfYears, const std::string &additionalInfo);
-
     void checkSparkBalance();
     void updateFee();
 

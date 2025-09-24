@@ -904,7 +904,6 @@ void static BZXMiner(const CChainParams &chainparams) {
                     const Consensus::Params &params = chainparams.GetConsensus();
                     {
                         LOCK2(cs_main, mempool.cs);
-                        int nCount = 0;
                         fHasMasternodesWinnerForNextBlock =
                                 params.IsRegtest() ||
                                 chainActive.Height()+1 >= chainparams.GetConsensus().DIP0003EnforcementHeight;

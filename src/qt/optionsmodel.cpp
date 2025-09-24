@@ -45,6 +45,7 @@ void OptionsModel::Init(bool resetSettings)
     if (resetSettings)
         Reset();
 
+
     QSettings settings;
 
     // Ensure restart flag is unset on client startup

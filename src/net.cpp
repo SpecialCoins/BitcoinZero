@@ -67,19 +67,6 @@
 #endif
 #endif
 
-
-namespace {
-    const int MAX_OUTBOUND_CONNECTIONS = 8;
-    const int MAX_FEELER_CONNECTIONS = 1;
-
-    struct ListenSocket {
-        SOCKET socket;
-        bool whitelisted;
-
-        ListenSocket(SOCKET socket, bool whitelisted) : socket(socket), whitelisted(whitelisted) {}
-    };
-}
-
 constexpr const CConnman::CFullyConnectedOnly CConnman::FullyConnectedOnly;
 constexpr const CConnman::CAllNodes CConnman::AllNodes;
 
@@ -388,6 +375,7 @@ bool CConnman::CheckIncomingNonce(uint64_t nonce)
 CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCountFailure, bool fAllowLocal)
 {
     if (pszDest == NULL) {
+        // we clean masternode connections in CMasternodeMan::ProcessMasternodeConnections()
         // so should be safe to skip this and connect to local Hot MN on CActiveMasternode::ManageState()
         if (!fAllowLocal && IsLocal(addrConnect))
             return NULL;
@@ -396,7 +384,7 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo
         CNode* pnode = FindNode((CService)addrConnect);
         if (pnode)
         {
-            //LogPrintf("Failed to open new connection, already connected\n");
+            LogPrintf("Failed to open new connection, already connected\n");
             return NULL;
         }
     }
@@ -429,7 +417,7 @@ CNode* CConnman::ConnectNode(CAddress addrConnect, const char *pszDest, bool fCo
             {
                 pnode->MaybeSetAddrName(std::string(pszDest));
                 CloseSocket(hSocket);
-                //LogPrintf("Failed to open new connection, already connected\n");
+                LogPrintf("Failed to open new connection, already connected\n");
                 return NULL;
             }
         }
@@ -1221,14 +1209,14 @@ void CConnman::AcceptConnection(const ListenSocket& hListenSocket) {
     }
 
     if (!fNetworkActive) {
-        //LogPrintf("connection from %s dropped: not accepting new connections\n", addr.ToString());
+        LogPrintf("connection from %s dropped: not accepting new connections\n", addr.ToString());
         CloseSocket(hSocket);
         return;
     }
 
     if (!IsSelectableSocket(hSocket))
     {
-        //LogPrintf("connection from %s dropped: non-selectable socket\n", addr.ToString());
+        LogPrintf("connection from %s dropped: non-selectable socket\n", addr.ToString());
         CloseSocket(hSocket);
         return;
     }
@@ -1244,7 +1232,7 @@ void CConnman::AcceptConnection(const ListenSocket& hListenSocket) {
 
     if (IsBanned(addr) && !whitelisted)
     {
-        //LogPrintf("connection from %s dropped (banned)\n", addr.ToString());
+        LogPrintf("connection from %s dropped (banned)\n", addr.ToString());
         CloseSocket(hSocket);
         return;
     }
@@ -1267,7 +1255,7 @@ void CConnman::AcceptConnection(const ListenSocket& hListenSocket) {
     pnode->fWhitelisted = whitelisted;
     GetNodeSignals().InitializeNode(pnode, *this);
 
-    //LogPrint("net", "connection from %s accepted\n", addr.ToString());
+    LogPrint("net", "connection from %s accepted\n", addr.ToString());
 
     {
         LOCK(cs_vNodes);
@@ -1827,7 +1815,7 @@ void CConnman::ThreadDNSAddressSeed()
         for (auto pnode : vNodes) {
             nRelevant += pnode->fSuccessfullyConnected && ((pnode->nServices & nRelevantServices) == nRelevantServices);
         }
-        if (nRelevant >= 4) {
+        if (nRelevant >= 2) {
             LogPrintf("P2P peers available. Skipped DNS seeding.\n");
             return;
         }

@@ -152,7 +152,7 @@ public:
         consensus.nEvoSporkStartBlock = 91;
         consensus.nLelantusStartBlock = 100;
         consensus.no_zero_payee = 20000;
-        consensus.DIP0008Height = 9999999999;
+        consensus.DIP0008Height = 99999999;
         consensus.nEvoSporkStopBlock = consensus.nSparkStartBlock;
         consensus.nEvoMasternodeMinimumConfirmations = 35;
         consensus.evoSporkKeyID = "XFWzf2xwwARUY3fLhY83P4TDh2pSybUQ8y";
@@ -167,8 +167,8 @@ public:
         consensus.nSparkNamesStartBlock = consensus.nSparkStartBlock;
         consensus.nSparkNamesFee = standardSparkNamesFee;
 
-        consensus.nSparkStartBlock = 9999999999;
-        consensus.nLelantusGracefulPeriod = 9999999999;
+        consensus.nSparkStartBlock = 999;
+        consensus.nLelantusGracefulPeriod = 99999999;
 
         // reorg
         consensus.nMaxReorgDepth = 5;

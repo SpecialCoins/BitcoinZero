@@ -34,7 +34,6 @@
 #include "chainparams.h"
 #include "init.h"
 #include "lelantus.h"
-#include "ui_interface.h"
 #include "util.h"
 
 #include "evo/deterministicmns.h"
@@ -116,8 +115,8 @@ BitcoinGUI::BitcoinGUI(const PlatformStyle *_platformStyle, const NetworkStyle *
     toggleHideAction(0),
     encryptWalletAction(0),
     backupWalletAction(0),
-    changePassphraseAction(0),
     exportViewKeyAction(0),
+    changePassphraseAction(0),
     aboutQtAction(0),
     openRPCConsoleAction(0),
     openAction(0),
@@ -316,7 +315,7 @@ void BitcoinGUI::createActions()
 	tabGroup->addAction(overviewAction);
 
 	sendCoinsAction = new QAction(tr("&Send"), this);
-    sendCoinsAction->setStatusTip(tr("Send coins to a address"));
+	sendCoinsAction->setStatusTip(tr("Send coins to a address"));
 	sendCoinsAction->setToolTip(sendCoinsAction->statusTip());
 	sendCoinsAction->setCheckable(true);
 	sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + key++));
@@ -327,7 +326,7 @@ void BitcoinGUI::createActions()
 	sendCoinsMenuAction->setToolTip(sendCoinsMenuAction->statusTip());
 
 	receiveCoinsAction = new QAction(tr("&Receive"), this);
-    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and BZX: URIs)"));
+	receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and BZX: URIs)"));
 	receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
 	receiveCoinsAction->setCheckable(true);
 	receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT + key++));
@@ -1163,13 +1162,15 @@ void BitcoinGUI::incomingTransaction(const QString& date, int unit, const CAmoun
         msg += tr("Label: %1\n").arg(label);
     else if (!address.isEmpty())
         msg += tr("Address: %1\n").arg(address);
-    // Declare before lambda to ensure they're in scope
-        QString title = (amount < 0) ? tr("Sent transaction") : tr("Incoming transaction");
-        QString finalMsg = msg;
 
-        QMetaObject::invokeMethod(this, [this, title, finalMsg]() {
-            message(title, finalMsg, CClientUIInterface::MSG_INFORMATION);
-        }, Qt::QueuedConnection);
+    // Declare before lambda to ensure they're in scope
+    QString title = (amount < 0) ? tr("Sent transaction") : tr("Incoming transaction");
+    QString finalMsg = msg;
+
+    QMetaObject::invokeMethod(this, [this, title, finalMsg]() {
+        message(title, finalMsg, CClientUIInterface::MSG_INFORMATION);
+    }, Qt::QueuedConnection);
+
 }
 #endif // ENABLE_WALLET
 

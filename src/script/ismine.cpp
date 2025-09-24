@@ -11,6 +11,8 @@
 #include "script/standard.h"
 #include "script/sign.h"
 
+#include "../compat_layer.h"
+
 #include <boost/foreach.hpp>
 
 typedef std::vector<unsigned char> valtype;
@@ -118,7 +120,7 @@ isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey, bool& 
             return ISMINE_SPENDABLE;
         break;
     }
-    case TX_SPARKMINT: {}
+    case TX_SPARKMINT: { BZX_FALLTHROUGH; }
     case TX_SPARKSMINT: {}
     }
 

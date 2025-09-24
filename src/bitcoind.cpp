@@ -157,7 +157,7 @@ bool AppInit(int argc, char* argv[])
         }
         if (GetBoolArg("-daemon", true))
         {
-#if HAVE_DECL_DAEMON
+#if defined(HAVE_DECL_DAEMON) && HAVE_DECL_DAEMON
             fprintf(stdout, "bitcoinzero server starting\n");
 
             // Daemonize
@@ -168,7 +168,7 @@ bool AppInit(int argc, char* argv[])
 #else
             fprintf(stderr, "Error: -daemon is not supported on this operating system\n");
             return false;
-#endif // HAVE_DECL_DAEMON
+#endif // defined(HAVE_DECL_DAEMON) && HAVE_DECL_DAEMON
         }
 
         fRet = AppInitMain(threadGroup, scheduler);

@@ -1054,7 +1054,7 @@ UniValue getanonymityset(const JSONRPCRequest& request)
     UniValue ret(UniValue::VOBJ);
     UniValue mints(UniValue::VARR);
 
-    int i = 0;
+    BZX_UNUSED int i = 0;
     for (const auto& coin : coins) {
         std::vector<unsigned char> vch = coin.first.getValue().getvch();
         std::vector<UniValue> data;
@@ -1159,7 +1159,7 @@ UniValue getusedcoinserials(const JSONRPCRequest& request)
     UniValue serializedSerials(UniValue::VARR);
     int i = 0;
     for ( auto it = serials.begin(); it != serials.end(); ++it, ++i) {
-        if ((serials.size() - i - 1) < startNumber)
+        if (cmp::less((serials.size() - i - 1), startNumber))
             continue;
         std::vector<unsigned char> serialized;
         serialized.resize(32);
@@ -1522,7 +1522,7 @@ UniValue getusedcoinstags(const JSONRPCRequest& request)
     UniValue serializedTags(UniValue::VARR);
     int i = 0;
     for ( auto it = tags.begin(); it != tags.end(); ++it, ++i) {
-        if ((tags.size() - i - 1) < startNumber)
+        if (cmp::less((tags.size() - i - 1), startNumber))
             continue;
         std::vector<unsigned char> serialized;
         serialized.resize(34);
@@ -1570,7 +1570,7 @@ UniValue getusedcoinstagstxhashes(const JSONRPCRequest& request)
     UniValue serializedTagsTxIds(UniValue::VARR);
     int i = 0;
     for ( auto it = tags.begin(); it != tags.end(); ++it, ++i) {
-        if ((tags.size() - i - 1) < startNumber)
+        if (cmp::less((tags.size() - i - 1), startNumber))
             continue;
         std::vector<unsigned char> serialized;
         serialized.resize(34);
@@ -2061,54 +2061,54 @@ UniValue echo(const JSONRPCRequest& request)
 }
 
 static const CRPCCommand commands[] =
-{ //  category              name                      actor (function)         okSafeMode
-  //  --------------------- ------------------------  -----------------------  ----------
-    { "control",            "getinfo",                &getinfo,                true,  {} }, /* uses wallet if enabled */
-    { "control",            "getmemoryinfo",          &getmemoryinfo,          true,  {} },
-    { "util",               "validateaddress",        &validateaddress,        true,  {"address"} }, /* uses wallet if enabled */
-    { "util",               "createmultisig",         &createmultisig,         true,  {"nrequired","keys"} },
-    { "util",               "verifymessage",          &verifymessage,          true,  {"address","signature","message"} },
-    { "util",               "signmessagewithprivkey", &signmessagewithprivkey, true,  {"privkey","message"} },
+{ //  category              name                      actor (function)         okSafeMode   ArgNames
+  //  --------------------- ------------------------  -----------------------  ----------   ---------
+    { "control",            "getinfo",                &getinfo,                true,        {} }, /* uses wallet if enabled */
+    { "control",            "getmemoryinfo",          &getmemoryinfo,          true,        {} },
+    { "util",               "validateaddress",        &validateaddress,        true,        {"address"} }, /* uses wallet if enabled */
+    { "util",               "createmultisig",         &createmultisig,         true,        {"nrequired","keys"} },
+    { "util",               "verifymessage",          &verifymessage,          true,        {"address","signature","message"} },
+    { "util",               "signmessagewithprivkey", &signmessagewithprivkey, true,        {"privkey","message"} },
 
         /* Address index */
-    { "addressindex",       "getaddressmempool",      &getaddressmempool,      true  },
-    { "addressindex",       "getaddressutxos",        &getaddressutxos,        false },
-    { "addressindex",       "getaddressdeltas",       &getaddressdeltas,       false },
-    { "addressindex",       "getaddresstxids",        &getaddresstxids,        false },
-    { "addressindex",       "getaddressbalance",      &getaddressbalance,      false },
+    { "addressindex",       "getaddressmempool",      &getaddressmempool,      true,         {} },
+    { "addressindex",       "getaddressutxos",        &getaddressutxos,        false,        {} },
+    { "addressindex",       "getaddressdeltas",       &getaddressdeltas,       false,        {} },
+    { "addressindex",       "getaddresstxids",        &getaddresstxids,        false,        {} },
+    { "addressindex",       "getaddressbalance",      &getaddressbalance,      false,        {} },
 
-    /* masternode features */
-    { "BZX",              "znsync",                 &mnsync,                 true,  {} },
-    { "BZX",              "evomnsync",              &mnsync,                 true,  {} },
+    /* Masternode features */
+    { "BZX",              "mnsync",                 &mnsync,                 true,           {} },
+    { "BZX",              "evomnsync",              &mnsync,                 true,           {} },
 
-    { "BZX",              "verifyprivatetxown",      &verifyprivatetxown,      true,  {} },
+    { "BZX",              "verifyprivatetxown",      &verifyprivatetxown,      true,         {} },
 
     /* Not shown in help */
-    { "hidden",             "getinfoex",              &getinfoex,              false },
-    { "addressindex",       "gettotalsupply",         &gettotalsupply,         false },
-    { "addressindex",       "getprivcoinpoolbalance", &getprivcoinpoolbalance, false },
+    { "hidden",             "getinfoex",              &getinfoex,              false,         {} },
+    { "addressindex",       "gettotalsupply",         &gettotalsupply,         false,         {} },
+    { "addressindex",       "getprivcoinpoolbalance", &getprivcoinpoolbalance, false,         {} },
         /* Mobile related */
-    { "mobile",             "getanonymityset",        &getanonymityset,        false  },
-    { "mobile",             "getmintmetadata",        &getmintmetadata,        true  },
-    { "mobile",             "getusedcoinserials",     &getusedcoinserials,     false  },
-    { "mobile",             "getfeerate",             &getfeerate,             true  },
-    { "mobile",             "getlatestcoinid",        &getlatestcoinid,        true  },
+    { "mobile",             "getanonymityset",        &getanonymityset,        false,         {} },
+    { "mobile",             "getmintmetadata",        &getmintmetadata,        true,          {} },
+    { "mobile",             "getusedcoinserials",     &getusedcoinserials,     false,         {} },
+    { "mobile",             "getfeerate",             &getfeerate,             true,          {} },
+    { "mobile",             "getlatestcoinid",        &getlatestcoinid,        true,          {} },
 
         /* Mobile Spark */
-    { "mobile",             "getsparkanonymityset",   &getsparkanonymityset, false },
-    { "mobile",             "getsparkanonymitysetmeta",   &getsparkanonymitysetmeta, false },
-    { "mobile",             "getsparkanonymitysetsector",   &getsparkanonymitysetsector, false },
-    { "mobile",             "getsparkmintmetadata",   &getsparkmintmetadata, true  },
-    { "mobile",             "getusedcoinstags",       &getusedcoinstags,     false },
-    { "mobile",             "getusedcoinstagstxhashes", &getusedcoinstagstxhashes, false },
-    { "mobile",             "getsparklatestcoinid",   &getsparklatestcoinid, true  },
-    { "mobile",             "getmempoolsparktxids",   &getmempoolsparktxids, true },
-    { "mobile",             "getmempoolsparktxs",     &getmempoolsparktxs,       true  },
+    { "mobile",             "getsparkanonymityset",   &getsparkanonymityset, false,            {} },
+    { "mobile",             "getsparkanonymitysetmeta",   &getsparkanonymitysetmeta, false,    {} },
+    { "mobile",             "getsparkanonymitysetsector",   &getsparkanonymitysetsector, false,{} },
+    { "mobile",             "getsparkmintmetadata",   &getsparkmintmetadata, true,             {} },
+    { "mobile",             "getusedcoinstags",       &getusedcoinstags,     false,            {} },
+    { "mobile",             "getusedcoinstagstxhashes", &getusedcoinstagstxhashes, false,      {} },
+    { "mobile",             "getsparklatestcoinid",   &getsparklatestcoinid, true,             {} },
+    { "mobile",             "getmempoolsparktxids",   &getmempoolsparktxids, true,             {} },
+    { "mobile",             "getmempoolsparktxs",     &getmempoolsparktxs,       true,         {} },
 
-    { "mobile",             "checkifmncollateral",   &checkifmncollateral, false  },
+    { "mobile",             "checkifmncollateral",   &checkifmncollateral, false,              {} },
 
-    { "hidden",             "echo",                   &echo,                   true,  {"arg0","arg1","arg2","arg3","arg4","arg5","arg6","arg7","arg8","arg9"}},
-    { "hidden",             "echojson",               &echo,                  true,  {"arg0","arg1","arg2","arg3","arg4","arg5","arg6","arg7","arg8","arg9"}},
+    { "hidden",             "echo",                   &echo,                   true,           {"arg0","arg1","arg2","arg3","arg4","arg5","arg6","arg7","arg8","arg9"} },
+    { "hidden",             "echojson",               &echo,                  true,            {"arg0","arg1","arg2","arg3","arg4","arg5","arg6","arg7","arg8","arg9"} },
 };
 
 void RegisterMiscRPCCommands(CRPCTable &t)

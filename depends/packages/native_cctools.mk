@@ -1,30 +1,24 @@
 package=native_cctools
-$(package)_version=2ef2e931cf641547eb8a68cfebde61003587c9fd
+$(package)_version=877.8-ld64-253.9-1
 $(package)_download_path=https://github.com/tpoechtrager/cctools-port/archive
-$(package)_file_name=$($(package)_version).tar.gz
-$(package)_sha256_hash=6b73269efdf5c58a070e7357b66ee760501388549d6a12b423723f45888b074b
+$(package)_file_name=cctools-$($(package)_version).tar.gz
+$(package)_sha256_hash=c88b0631b1d7bb5186dd6466a62f5220dc6191f2b2d9c7c122b327385e734aaf
 $(package)_build_subdir=cctools
 $(package)_dependencies=native_libtapi
 
 define $(package)_set_vars
-  $(package)_config_opts=--target=$(host) --enable-lto-support
-  $(package)_config_opts+=--with-llvm-config=$(llvm_config_prog)
+  $(package)_config_opts=--target=$(host)
   $(package)_ldflags+=-Wl,-rpath=\\$$$$$$$$\$$$$$$$$ORIGIN/../lib
+  ifeq ($(strip $(FORCE_USE_SYSTEM_CLANG)),)
+  $(package)_config_opts+=--enable-lto-support --with-llvm-config=$(build_prefix)/bin/llvm-config
+  endif
   $(package)_cc=$(clang_prog)
   $(package)_cxx=$(clangxx_prog)
 endef
 
-ifneq ($(strip $(FORCE_USE_SYSTEM_CLANG)),)
-define $(package)_preprocess_cmds
-  mkdir -p $($(package)_staging_prefix_dir)/lib && \
-  cp $(llvm_lib_dir)/libLTO.so $($(package)_staging_prefix_dir)/lib/ && \
-  cp -f $(BASEDIR)/config.guess $(BASEDIR)/config.sub cctools
-endef
-else
 define $(package)_preprocess_cmds
   cp -f $(BASEDIR)/config.guess $(BASEDIR)/config.sub cctools
 endef
-endif
 
 define $(package)_config_cmds
   $($(package)_autoconf)

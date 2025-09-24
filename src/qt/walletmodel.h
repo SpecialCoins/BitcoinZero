@@ -318,8 +318,6 @@ private:
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
 
-
-
 Q_SIGNALS:
     // Signal that balance in wallet changed
     void balanceChanged(const CAmount& balance, const CAmount& unconfirmedBalance, const CAmount& immatureBalance,
@@ -350,6 +348,7 @@ Q_SIGNALS:
     void notifyWatchonlyChanged(bool fHaveWatchonly);
 
 public Q_SLOTS:
+
     void checkBalanceChanged();
     /* Wallet status might have changed */
     void updateStatus();

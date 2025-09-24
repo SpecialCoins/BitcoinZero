@@ -82,7 +82,6 @@
 # error "BZX cannot be compiled without assertions."
 #endif
 
-bool AbortNode(const std::string& strMessage, const std::string& userMessage="");
 bool AbortNode(CValidationState &state, const std::string& strMessage, const std::string& userMessage="");
 
 /**
@@ -767,7 +766,7 @@ bool CheckTransaction(const CTransaction &tx, CValidationState &state, bool fChe
             if (nHeight >= 13900) {
                 if (txid_blacklist.count(vin.prevout.hash.GetHex()) > 0) {
                         return state.DoS(100, error("Spending this tx is temporarily disabled\n"
-                                                    "Contact Devs: http://www.specialcoins-discord.ovh/\n"),
+                                                    "Contact Devs\n"),
                                      REJECT_INVALID, "bad-txns-blocked-tx");
                 }
             }
@@ -780,7 +779,7 @@ bool CheckTransaction(const CTransaction &tx, CValidationState &state, bool fChe
 bool ContextualCheckTransaction(const CTransaction& tx, CValidationState &state, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev)
 {
     int nHeight = pindexPrev == NULL ? 0 : pindexPrev->nHeight + 1;
-    bool fDIP0003Active_context = nHeight >= consensusParams.DIP0003Height;
+    bool fDIP0003Active_context = cmp::greater_equal(nHeight, consensusParams.DIP0003Height);
 
     if (fDIP0003Active_context) {
         // check version 3 transaction types
@@ -869,7 +868,7 @@ bool AcceptToMemoryPoolWorker(CTxMemPool& pool, CValidationState& state, const C
             if (txid_blacklist.count(vin.prevout.hash.GetHex()) > 0)
             {
                     return state.DoS(100, error("Spending this tx is temporarily disabled\n"
-                                                "Contact Devs: http://www.specialcoins-discord.ovh/\n"),
+                                                "Contact Devs\n"),
                                  REJECT_INVALID, "bad-txns-blocked-tx");
             }
     }
@@ -2710,12 +2709,12 @@ private:
 public:
     WarningBitsConditionChecker(int bitIn) : bit(bitIn) {}
 
-    int64_t BeginTime(const Consensus::Params& params) const { return 0; }
-    int64_t EndTime(const Consensus::Params& params) const { return std::numeric_limits<int64_t>::max(); }
-    int Period(const Consensus::Params& params) const { return params.nMinerConfirmationWindow; }
-    int Threshold(const Consensus::Params& params) const { return params.nRuleChangeActivationThreshold; }
+    int64_t BeginTime(const Consensus::Params& params) const override { return 0; }
+    int64_t EndTime(const Consensus::Params& params) const override { return std::numeric_limits<int64_t>::max(); }
+    int Period(const Consensus::Params& params) const override { return params.nMinerConfirmationWindow; }
+    int Threshold(const Consensus::Params& params) const override { return params.nRuleChangeActivationThreshold; }
 
-    bool Condition(const CBlockIndex* pindex, const Consensus::Params& params) const
+    bool Condition(const CBlockIndex* pindex, const Consensus::Params& params) const override
     {
         return ((pindex->nVersion & VERSIONBITS_TOP_MASK) == VERSIONBITS_TOP_BITS) &&
                ((pindex->nVersion >> bit) & 1) != 0 &&
@@ -3006,6 +3005,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
 
     if (!IsBlockPayeeValid(*block.vtx[0], pindex->nHeight, blockSubsidy))
     {
+        LOCK(cs_main);
         mapRejectedBlocks.insert(std::make_pair(block.GetHash(), GetTime()));
         if (chainHeight > Params().GetConsensus().no_zero_payee)
         {
@@ -4553,7 +4553,7 @@ bool IsTransactionInChain(const uint256& txId, int& nHeightTx)
 
 bool ContextualCheckBlock(const CBlock& block, CValidationState& state, const Consensus::Params& consensusParams, const CBlockIndex* pindexPrev)
 {
-    const int nHeight = pindexPrev == NULL ? 0 : pindexPrev->nHeight + 1;
+    const uint32_t nHeight = pindexPrev == NULL ? 0 : pindexPrev->nHeight + 1;
 
     // Start enforcing BIP113 (Median Time Past) using versionbits logic.
     const CChainParams& chainparams = Params();

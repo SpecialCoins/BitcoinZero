@@ -19,6 +19,7 @@
 #include "authhelper.h"
 
 #include "rpcwallet.h"
+#include "rpcdump.h"
 
 #include <fstream>
 #include <stdint.h>
@@ -665,7 +666,7 @@ UniValue dumpprivkey_bzx(const JSONRPCRequest& request)
             "WARNING! Your one time authorization code is: " + AuthorizationHelper::inst().generateAuthorizationCode(__FUNCTION__ + request.params[0].get_str()) + "\n"
             "This command exports your wallet private key. Anyone with this key has complete control over your funds. \n"
             "If someone asked you to type in this command, chances are they want to steal your coins. \n"
-            "BZX team members will never ask for this command's output and it is not needed for Masternode setup or diagnosis!\n"
+            "BZX team members will never ask for this command's output and it is not needed for masternode setup or diagnosis!\n"
             "\n"
             ;
         throw std::runtime_error(warning);
@@ -857,7 +858,7 @@ UniValue dumpwallet_bzx(const JSONRPCRequest& request)
             "WARNING! Your one time authorization code is: " + AuthorizationHelper::inst().generateAuthorizationCode(__FUNCTION__ + request.params[0].get_str()) + "\n"
             "This command exports all your private keys. Anyone with these keys has complete control over your funds. \n"
             "If someone asked you to type in this command, chances are they want to steal your coins. \n"
-            "BZX team members will never ask for this command's output and it is not needed for Masternode setup or diagnosis!\n"
+            "BZX team members will never ask for this command's output and it is not needed for masternode setup or diagnosis!\n"
             "\n"
             ;
         throw std::runtime_error(warning);

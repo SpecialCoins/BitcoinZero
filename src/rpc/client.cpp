@@ -16,9 +16,9 @@
 class CRPCConvertParam
 {
 public:
-    std::string methodName; //!< method whose params want conversion
-    int paramIdx;           //!< 0-based idx of param to convert
-    std::string paramName;  //!< parameter name
+    std::string methodName {}; //!< method whose params want conversion
+    int paramIdx {};           //!< 0-based idx of param to convert
+    std::string paramName {};  //!< parameter name
 };
 
 /**
@@ -29,7 +29,7 @@ public:
  */
 static const CRPCConvertParam vRPCConvertParams[] =
 {
-    { "stop", 0 },
+    { "stop", 0, {} },
     { "getaddednodeinfo", 0 },
     { "generate", 0, "nblocks" },
     { "generate", 1, "maxtries" },
@@ -57,8 +57,8 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "getbalance", 2, "include_watchonly" },
     { "getbalance", 3, "addlockconf" },
     { "getblockhash", 0, "height" },
-    { "move", 2 },
-    { "move", 3 },
+    { "move", 2, {} },
+    { "move", 3, {} },
     { "waitforblockheight", 0, "height" },
     { "waitforblockheight", 1, "timeout" },
     { "waitforblock", 1, "timeout" },
@@ -128,15 +128,15 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "getmempoolancestors", 1, "verbose" },
     { "getmempooldescendants", 1, "verbose" },
     { "bumpfee", 1, "options" },
-    { "getblockhashes", 0 },
-    { "getblockhashes", 1 },
-    { "getspentinfo", 0},
-    { "getaddresstxids", 0},
-    { "getaddressbalance", 0},
-    { "getAddressNumWBalance", 0},
-    { "getaddressdeltas", 0},
-    { "getaddressutxos", 0},
-    { "getaddressmempool", 0},
+    { "getblockhashes", 0, {} },
+    { "getblockhashes", 1, {} },
+    { "getspentinfo", 0, {} },
+    { "getaddresstxids", 0, {} },
+    { "getaddressbalance", 0, {} },
+    { "getAddressNumWBalance", 0, {} },
+    { "getaddressdeltas", 0, {} },
+    { "getaddressutxos", 0, {} },
+    { "getaddressmempool", 0, {} },
     { "getspecialtxes", 1, "type" },
     { "getspecialtxes", 2, "count" },
     { "getspecialtxes", 3, "skip" },
@@ -153,33 +153,33 @@ static const CRPCConvertParam vRPCConvertParams[] =
     { "echojson", 8, "arg8" },
     { "echojson", 9, "arg9" },
         //[BZX]
-    { "setmininput", 0 },
-    { "setgenerate", 0 },
-    { "setgenerate", 1 },
-    { "setlelantusmintstatus", 1 },
-    { "listlelantusmints", 0 },
-    { "listlelantusjoinsplits", 0 },
-    { "listlelantusjoinsplits", 1 },
-    { "joinsplit", 0 },
-    { "joinsplit", 1 },
-    { "joinsplit", 2 },
-    { "getanonymityset", 0},
-    { "getmintmetadata", 0 },
-    { "getusedcoinserials", 0 },
-    { "getlatestcoinids", 0 },
-    { "getsparkmintmetadata", 0 },
-    { "getmempooltxs", 0 },
+    { "setmininput", 0, {} },
+    { "setgenerate", 0, {} },
+    { "setgenerate", 1, {} },
+    { "setlelantusmintstatus", 1, {} },
+    { "listlelantusmints", 0, {} },
+    { "listlelantusjoinsplits", 0, {} },
+    { "listlelantusjoinsplits", 1, {} },
+    { "joinsplit", 0, {} },
+    { "joinsplit", 1, {} },
+    { "joinsplit", 2, {} },
+    { "getanonymityset", 0, {} },
+    { "getmintmetadata", 0, {} },
+    { "getusedcoinserials", 0, {} },
+    { "getlatestcoinids", 0, {} },
+    { "getsparkmintmetadata", 0, {} },
+    { "getmempooltxs", 0, {} },
 
     //Lelantus
-    { "mintspark", 0 },
-    { "mintspark", 1 },
-    { "mintspark", 2 },
-    { "spendspark", 0 },
-    { "spendspark", 1 },
+    { "mintspark", 0, {} },
+    { "mintspark", 1, {} },
+    { "mintspark", 2, {} },
+    { "spendspark", 0, {} },
+    { "spendspark", 1, {} },
 
     // Spark names
-    { "registersparkname", 2 },
-    { "getsparknames", 0 },
+    { "registersparkname", 2, {} },
+    { "getsparknames", 0, {} },
 
     /* Evo spork */
     { "spork", 2, "features"},

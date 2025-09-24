@@ -9,12 +9,15 @@
 #include "rpcconsole.h"
 #include "ui_debugwindow.h"
 
+#include "../compat_layer.h"
+
 #include "bantablemodel.h"
 #include "clientmodel.h"
 #include "guiutil.h"
 #include "platformstyle.h"
 #include "bantablemodel.h"
 #include "validation.h"
+
 #include "chainparams.h"
 #include "netbase.h"
 #include "rpc/server.h"
@@ -127,8 +130,8 @@ class QtRPCTimerInterface: public RPCTimerInterface
 {
 public:
     ~QtRPCTimerInterface() {}
-    const char *Name() { return "Qt"; }
-    RPCTimerBase* NewTimer(boost::function<void(void)>& func, int64_t millis)
+    const char *Name() override { return "Qt"; }
+    RPCTimerBase* NewTimer(boost::function<void(void)>& func, int64_t millis) override
     {
         return new QtRPCTimerBase(func, millis);
     }
@@ -150,7 +153,7 @@ public:
  *   - Within double quotes, only escape \c " and backslashes before a \c " or another backslash
  *   - Within single quotes, no escaping is possible and no special interpretation takes place
  *
- * @param[out]   result      stringified Result from the executed command(chain)
+ * @param[out]   strResult   stringified Result from the executed command(chain)
  * @param[in]    strCommand  Command line to split
  * @param[in]    fExecute    set true if you want the command to be executed
  * @param[out]   pstrFilteredOut  Command line, filtered to remove any sensitive data
@@ -211,7 +214,7 @@ bool RPCConsole::RPCParseCommandLine(std::string &strResult, const std::string &
         char ch = strCommandTerminated[chpos];
         switch(state)
         {
-            case STATE_COMMAND_EXECUTED_INNER:
+            case STATE_COMMAND_EXECUTED_INNER:     BZX_FALLTHROUGH;
             case STATE_COMMAND_EXECUTED:
             {
                 bool breakParsing = true;
@@ -274,10 +277,11 @@ bool RPCConsole::RPCParseCommandLine(std::string &strResult, const std::string &
                 }
                 if (breakParsing)
                     break;
+                BZX_FALLTHROUGH;
             }
-            case STATE_ARGUMENT: // In or after argument
-            case STATE_EATING_SPACES_IN_ARG:
-            case STATE_EATING_SPACES_IN_BRACKETS:
+            case STATE_ARGUMENT:                    BZX_FALLTHROUGH;// In or after argument
+            case STATE_EATING_SPACES_IN_ARG:        BZX_FALLTHROUGH;
+            case STATE_EATING_SPACES_IN_BRACKETS:   BZX_FALLTHROUGH;
             case STATE_EATING_SPACES: // Handle runs of whitespace
                 switch(ch)
             {
@@ -380,7 +384,9 @@ bool RPCConsole::RPCParseCommandLine(std::string &strResult, const std::string &
                 strResult = lastResult.get_str();
             else
                 strResult = lastResult.write(2);
+            BZX_FALLTHROUGH;
         case STATE_ARGUMENT:
+            BZX_FALLTHROUGH;
         case STATE_EATING_SPACES:
             return true;
         default: // ERROR to end in one of the other states
@@ -982,7 +988,6 @@ void RPCConsole::startExecutor()
 
     // Replies from executor object must go to this object
     connect(executor, &RPCExecutor::reply, this, qOverload<int, const QString&>(&RPCConsole::message));
-
     // Requests from this object must go to executor
     connect(this, &RPCConsole::cmdRequest, executor, &RPCExecutor::request);
 

@@ -3,9 +3,9 @@
 # file COPYING or https://opensource.org/license/mit/.
 
 add_library(BZX_zmq STATIC EXCLUDE_FROM_ALL
-  zmqabstractnotifier.cpp
-  zmqnotificationinterface.cpp
-  zmqpublishnotifier.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/zmqabstractnotifier.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/zmqnotificationinterface.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/zmqpublishnotifier.cpp
 )
 target_compile_definitions(BZX_zmq
   INTERFACE

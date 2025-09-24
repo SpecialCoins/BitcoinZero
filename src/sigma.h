@@ -15,8 +15,8 @@
 #include "coin_containers.h"
 
 //tests
-namespace sigma_mintspend_many { class sigma_mintspend_many; }
-namespace sigma_mintspend { class sigma_mintspend_test; }
+namespace sigma_mintspend_many { struct sigma_mintspend_many; }
+namespace sigma_mintspend { struct sigma_mintspend_test; }
 namespace sigma_partialspend_mempool_tests { class partialspend; }
 namespace privcoin_tests3_v3 { class privcoin_mintspend_v3; }
 
@@ -247,17 +247,17 @@ private:
 
         void CheckSurgeCondition(int groupId, CoinDenomination denom);
 
-        friend class sigma_mintspend_many::sigma_mintspend_many;
+        friend struct sigma_mintspend_many::sigma_mintspend_many;
         friend class privcoin_tests3_v3::privcoin_mintspend_v3;
-        friend class sigma_mintspend::sigma_mintspend_test;
+        friend struct sigma_mintspend::sigma_mintspend_test;
         friend class sigma_partialspend_mempool_tests::partialspend;
     };
 
     Containers containers;
 
-    friend class sigma_mintspend_many::sigma_mintspend_many;
+    friend struct sigma_mintspend_many::sigma_mintspend_many;
     friend class privcoin_tests3_v3::privcoin_mintspend_v3;
-    friend class sigma_mintspend::sigma_mintspend_test;
+    friend struct sigma_mintspend::sigma_mintspend_test;
     friend class sigma_partialspend_mempool_tests::partialspend;
 };
 

@@ -923,7 +923,6 @@ static void ShowProgress(TransactionTableModel *ttm, const std::string &title, i
         fQueueNotifications = true;
     }
 
-
     if (nProgress == 100)
     {
         fQueueNotifications = false;

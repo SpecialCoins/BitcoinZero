@@ -1,4 +1,5 @@
 #include "state.h"
+#include "compat_layer.h"
 #include "sparkname.h"
 #include "../validation.h"
 #include "../batchproof_container.h"
@@ -175,7 +176,7 @@ spark::SpendTransaction ParseSparkSpend(const CTransaction &tx)
     const spark::Params* params = spark::Params::get_default();
     spark::SpendTransaction spendTransaction(params);
     serialized >> spendTransaction;
-    return std::move(spendTransaction);
+    return spendTransaction;
 }
 
 
@@ -285,7 +286,6 @@ bool ConnectBlockSpark(
             return true;
         }
 
-        const auto& params = ::Params().GetConsensus();
         CHash256 hash;
         bool updateHash = false;
 
@@ -314,7 +314,6 @@ bool ConnectBlockSpark(
         }
 
         if (!pblock->sparkTxInfo->sparkNames.empty()) {
-            CSparkNameManager *sparkNameManager = CSparkNameManager::GetInstance();
             for (const auto &sparkName : pblock->sparkTxInfo->sparkNames) {
                 pindexNew->addedSparkNames[sparkName.first] =
                         CSparkNameBlockIndexData(sparkName.second.name,
@@ -412,7 +411,7 @@ bool CheckSparkBlock(CValidationState &state, const CBlock& block) {
         blockSpendsValue += txSpendsValue;
     }
 
-    if (blockSpendsValue > consensus.nMaxValueSparkSpendPerBlock) {
+    if (cmp::greater(blockSpendsValue, consensus.nMaxValueSparkSpendPerBlock)) {
         return state.DoS(100, false, REJECT_INVALID,
                          "bad-txns-spark-spend-invalid");
     }
@@ -464,7 +463,7 @@ bool CheckSparkMintTransaction(
 
     for (size_t i = 0; i < coins.size(); i++) {
         auto& coin = coins[i];
-        if (coin.v != txOuts[i].nValue)
+        if (cmp::not_equal(coin.v, txOuts[i].nValue))
             return state.DoS(100,
                              false,
                              PUBCOIN_NOT_VALIDATE,
@@ -913,28 +912,6 @@ std::vector<unsigned char> getSerialContext(const CTransaction &tx) {
     return serial_context;
 }
 
-static bool CheckSparkSpendTAg(
-        CValidationState& state,
-        CSparkTxInfo* sparkTxInfo,
-        const GroupElement& tag,
-        int nHeight,
-        bool fConnectTip) {
-    // check for spark transaction in this block as well
-    if (sparkTxInfo &&
-        !sparkTxInfo->fInfoIsComplete &&
-        sparkTxInfo->spentLTags.find(tag) != sparkTxInfo->spentLTags.end())
-        return state.DoS(0, error("CTransaction::CheckTransaction() : two or more spark spends with same tag in the same block"));
-
-    // check for used tags in sparkState
-    if (sparkState.IsUsedLTag(tag)) {
-        // Proceed with checks ONLY if we're accepting tx into the memory pool or connecting block to the existing blockchain
-        if (nHeight == INT_MAX || fConnectTip) {
-            return state.DoS(0, error("CTransaction::CheckTransaction() : The Spark spend tag has been used"));
-        }
-    }
-    return true;
-}
-
 /******************************************************************************/
 // CSparkState
 /******************************************************************************/
@@ -1154,7 +1131,7 @@ void CSparkState::RemoveBlock(CBlockIndex *index) {
         if (nMintsToForget == 0)
             continue;
 
-        assert(coinGroup.nCoins >= nMintsToForget);
+        assert(cmp::greater_equal(coinGroup.nCoins, nMintsToForget));
         auto isExtended = coins.first > 1;
         coinGroup.nCoins -= nMintsToForget;
 
@@ -1257,7 +1234,6 @@ void CSparkState::GetCoinSet(
     uint256 blockHash;
     std::vector<unsigned char> setHash;
     {
-        const auto &params = ::Params().GetConsensus();
         LOCK(cs_main);
         maxHeight = chainActive.Height() - (ZC_MINT_CONFIRMATIONS - 1);
     }
@@ -1422,7 +1398,7 @@ void CSparkState::GetCoinsForRecovery(
         std::vector<std::pair<spark::Coin, std::pair<uint256, std::vector<unsigned char>>>>& coins) {
     coins.clear();
     if (coinGroups.count(coinGroupID) == 0) {
-        throw std::runtime_error(std::string("There is no anonymity set with this id: " + coinGroupID));
+        throw std::runtime_error(std::string("There is no anonymity set with this id: " + std::to_string(coinGroupID)));
     }
     SparkCoinGroupInfo &coinGroup = coinGroups[coinGroupID];
     CBlockIndex *index = coinGroup.lastBlock;
@@ -1450,11 +1426,11 @@ void CSparkState::GetCoinsForRecovery(
         if (id) {
             if (block->sparkMintedCoins.count(id) > 0) {
                 for (const auto &coin : block->sparkMintedCoins[id]) {
-                    if (counter < startIndex) {
+                    if (cmp::less(counter, startIndex)) {
                         ++counter;
                         continue;
                     }
-                    if (counter >= endIndex) {
+                    if (cmp::greater_equal(counter, endIndex)) {
                         break;
                     }
                     std::pair<uint256, std::vector<unsigned char>> txHashContext;
@@ -1465,7 +1441,7 @@ void CSparkState::GetCoinsForRecovery(
                 }
             }
         }
-        if (block == coinGroup.firstBlock || counter >= endIndex) {
+        if (block == coinGroup.firstBlock || cmp::greater_equal(counter, endIndex)) {
             break ;
         }
     }
