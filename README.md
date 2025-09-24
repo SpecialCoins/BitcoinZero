@@ -26,7 +26,7 @@
 - Mac: /Library/Application Support/bitcoinzero
 - Unix: /.bitcoinzero
 
-# Debian/Ubuntu Linux Daemon Build Instructions
+# 1. Debian/Ubuntu Linux Daemon Build Instructions
 
     install dependencies:
     Build a node or qt:
@@ -73,4 +73,18 @@
 
     port 29301
     rpc port 29201
+
+
+    
+# 2. Build using cmake
+
+gmake -C depends HOST=x86_64-w64-mingw32  # Append "-j N" for N parallel jobs.
+cmake -B build --toolchain depends/x86_64-w64-mingw32/toolchain.cmake
+cmake --build build     # Append "-j N" for N parallel jobs.
+
+Hosts:
+x86_64-pc-linux-gnu for Linux x86 64 bit
+x86_64-w64-mingw32 for Win64
+x86_64-apple-darwin for macOS
+
 
