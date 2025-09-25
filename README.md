@@ -1,6 +1,4 @@
-# Bitcoinzero [BZX] (Lelantus) Core 2024
-
-[![Build Status](https://travis-ci.org/BitcoinZeroOfficial/bitcoinzero.svg?branch=master)](https://travis-ci.org/BitcoinZeroOfficial/bitcoinzero)
+# Bitcoinzero [BZX] (Lelantus) Core 2025
 
 ## Bitcoinzero
 
@@ -18,7 +16,7 @@
 
 - P2P Port=29301
 - RPC Port=29201
-- Client core= based on Firo 14.12.X
+- Client core= based on Firo 14.14.X
 - Client name=bitcoinzero.qt
 - Conf file=bitcoinzero.conf
 
@@ -28,7 +26,7 @@
 - Mac: /Library/Application Support/bitcoinzero
 - Unix: /.bitcoinzero
 
-# Debian/Ubuntu Linux Daemon Build Instructions
+# 1. Debian/Ubuntu Linux Daemon Build Instructions
 
     install dependencies:
     Build a node or qt:
@@ -54,20 +52,7 @@
     make -j4   (-j is optional, number of your cores, -j4)
     cd ..
     ./autogen.sh
-    CONFIG_SITE=$PWD/depends/x86_64-pc-linux-gnu/share/config.site ./configure --disable-option-checking --prefix=$PWD/depends/x86_64-pc-linux-gnu --disable-dependency-tracking --enable-zmq --with-gui=no --enable-glibc-back-compat --enable-reduce-exports --disable-shared --with-pic --enable-module-recovery --disable-jni
-    cd src/bls-signatures/build && make chiabls_la && cd -  (optional, only if bls libs fail to build)
-    cd src/bls-signatures/build && make && cd - (optional, only if bls libs fail to build)
-    make -j4   (-j is optional, number of your cores, -j4)
-
-    for qt:
-    cd depends
-    make
-    cd ..
-    ./autogen.sh
-    CONFIG_SITE=$PWD/depends/x86_64-pc-linux-gnu/share/config.site ./configure --disable-option-checking --prefix=$PWD/depends/x86_64-pc-linux-gnu --disable-dependency-tracking --enable-zmq --with-gui --enable-glibc-back-compat --enable-reduce-exports --disable-shared --with-pic --enable-module-recovery --disable-jni
-    cd src/bls-signatures/build && make chiabls_la && cd -   (optional, only if bls libs fail to build)
-    cd src/bls-signatures/build && make && cd - (optional, only if bls libs fail to build)
-    make -j4   (-j is optional, number of your cores, -j4)
+    CONFIG_SITE=$PWD/depends/x86_64-pc-linux-gnu/share/config.site ./configure --disable-option-checking --prefix=$PWD/depends/x86_64-pc-linux-gnu --disable-dependency-tracking
 
     cd src
     strip bitcoinzerod
@@ -88,4 +73,18 @@
 
     port 29301
     rpc port 29201
+
+
+    
+# 2. Build using cmake
+
+gmake -C depends HOST=x86_64-w64-mingw32  # Append "-j N" for N parallel jobs.
+cmake -B build --toolchain depends/x86_64-w64-mingw32/toolchain.cmake
+cmake --build build     # Append "-j N" for N parallel jobs.
+
+Hosts:
+x86_64-pc-linux-gnu for Linux x86 64 bit
+x86_64-w64-mingw32 for Win64
+x86_64-apple-darwin for macOS
+
 
