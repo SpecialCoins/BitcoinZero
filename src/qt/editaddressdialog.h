@@ -31,7 +31,11 @@ public:
         EditReceivingAddress,
         EditSendingAddress,
         NewPcode,
-        EditPcode
+        EditPcode,
+        NewSparkSendingAddress,
+        EditSparkSendingAddress,
+        NewSparkReceivingAddress,
+        EditSparkReceivingAddress
     };
 
     explicit EditAddressDialog(Mode mode, QWidget *parent);
@@ -44,7 +48,7 @@ public:
     void setAddress(const QString &address);
 
 public Q_SLOTS:
-    void accept();
+    void accept() override;
 
 private:
     bool saveCurrentRow();

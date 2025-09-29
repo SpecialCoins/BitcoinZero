@@ -130,60 +130,15 @@ namespace GUIUtil
         explicit ToolTipToRichTextFilter(int size_threshold, QObject *parent = 0);
 
     protected:
-        bool eventFilter(QObject *obj, QEvent *evt);
+        bool eventFilter(QObject *obj, QEvent *evt) override;
 
     private:
         int size_threshold;
     };
 
-    /**
-     * Makes a QTableView last column feel as if it was being resized from its left border.
-     * Also makes sure the column widths are never larger than the table's viewport.
-     * In Qt, all columns are resizable from the right, but it's not intuitive resizing the last column from the right.
-     * Usually our second to last columns behave as if stretched, and when on strech mode, columns aren't resizable
-     * interactively or programmatically.
-     *
-     * This helper object takes care of this issue.
-     *
-     */
-    class TableViewLastColumnResizingFixer: public QObject
-    {
-        Q_OBJECT
-
-        public:
-            TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth, QObject *parent);
-            TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth, QObject *parent, int resizeColumnIndex);
-            void stretchColumnWidth(int column);
-
-        private:
-            QTableView* tableView;
-            int lastColumnMinimumWidth;
-            int allColumnsMinimumWidth;
-            int lastColumnIndex;
-            int columnCount;
-            int secondToLastColumnIndex;
-
-            void adjustTableColumnsWidth();
-            int getAvailableWidthForColumn(int column);
-            int getColumnsWidth();
-            void connectViewHeadersSignals();
-            void disconnectViewHeadersSignals();
-            void setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode);
-            void resizeColumn(int nColumnIndex, int width);
-
-        private Q_SLOTS:
-            void on_sectionResized(int logicalIndex, int oldSize, int newSize);
-            void on_geometriesChanged();
-    };
-
     bool GetStartOnSystemStartup();
     bool SetStartOnSystemStartup(bool fAutoStart);
 
-    /** Save window size and position */
-    void saveWindowGeometry(const QString& strSetting, QWidget *parent);
-    /** Restore window size and position */
-    void restoreWindowGeometry(const QString& strSetting, const QSize &defaultSizeIn, QWidget *parent);
-    
     /* load stylesheet */
     void loadTheme();
 
@@ -217,7 +172,7 @@ namespace GUIUtil
          */
         void clicked(const QPoint& point);
     protected:
-        void mouseReleaseEvent(QMouseEvent *event);
+        void mouseReleaseEvent(QMouseEvent *event) override;
     };
 
     class ClickableProgressBar : public QProgressBar
@@ -230,7 +185,7 @@ namespace GUIUtil
          */
         void clicked(const QPoint& point);
     protected:
-        void mouseReleaseEvent(QMouseEvent *event);
+        void mouseReleaseEvent(QMouseEvent *event) override;
     };
 
 #if defined(Q_OS_MAC) && QT_VERSION >= 0x050000
@@ -239,7 +194,7 @@ namespace GUIUtil
     // QProgressBar uses around 10% CPU even when app is in background
     class ProgressBar : public ClickableProgressBar
     {
-        bool event(QEvent *e) {
+        bool event(QEvent *e) override {
             return (e->type() != QEvent::StyleAnimationUpdate) ? QProgressBar::event(e) : false;
         }
     };
@@ -261,6 +216,50 @@ namespace GUIUtil
     protected:
         void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     };
+
+    /**
+     * Returns the distance in pixels appropriate for drawing a subsequent character after text.
+     *
+     * In Qt 5.12 and before the QFontMetrics::width() is used and it is deprecated since Qt 5.13.
+     * In Qt 5.11 the QFontMetrics::horizontalAdvance() was introduced.
+     */
+    int TextWidth(const QFontMetrics& fm, const QString& text);
+
+    /**
+     * Returns the start-moment of the day in local time.
+     *
+     * QDateTime::QDateTime(const QDate& date) is deprecated since Qt 5.15.
+     * QDate::startOfDay() was introduced in Qt 5.14.
+     */
+    QDateTime StartOfDay(const QDate& date);    
+
+    /**
+     * Returns true if pixmap has been set.
+     *
+     * QPixmap* QLabel::pixmap() is deprecated since Qt 5.15.
+     */
+    bool HasPixmap(const QLabel* label);
+    QImage GetImage(const QLabel* label);
+
+    /**
+     * Splits the string into substrings wherever separator occurs, and returns
+     * the list of those strings. Empty strings do not appear in the result.
+     *
+     * QString::split() signature differs in different Qt versions:
+     *  - QString::SplitBehavior is deprecated since Qt 5.15
+     *  - Qt::SplitBehavior was introduced in Qt 5.14
+     * If {QString|Qt}::SkipEmptyParts behavior is required, use this
+     * function instead of QString::split().
+     */
+    template <typename SeparatorType>
+    QStringList SplitSkipEmptyParts(const QString& string, const SeparatorType& separator)
+    {
+    #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+        return string.split(separator, Qt::SkipEmptyParts);
+    #else
+        return string.split(separator, QString::SkipEmptyParts);
+    #endif
+    }
 
 } // namespace GUIUtil
 

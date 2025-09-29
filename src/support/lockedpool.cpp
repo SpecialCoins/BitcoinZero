@@ -2,11 +2,11 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "support/lockedpool.h"
-#include "support/cleanse.h"
+#include "lockedpool.h"
+#include "cleanse.h"
 
 #if defined(HAVE_CONFIG_H)
-#include "config/bitcoin-config.h"
+#include "../config/bitcoin-config.h"
 #endif
 
 #ifdef WIN32
@@ -27,6 +27,7 @@
 #endif
 
 #include <algorithm>
+#include <stdexcept>
 
 LockedPoolManager* LockedPoolManager::_instance = NULL;
 std::once_flag LockedPoolManager::init_flag;
@@ -148,9 +149,9 @@ class Win32LockedPageAllocator: public LockedPageAllocator
 {
 public:
     Win32LockedPageAllocator();
-    void* AllocateLocked(size_t len, bool *lockingSuccess);
-    void FreeLocked(void* addr, size_t len);
-    size_t GetLimit();
+    void* AllocateLocked(size_t len, bool *lockingSuccess) override;
+    void FreeLocked(void* addr, size_t len) override;
+    size_t GetLimit() override;
 private:
     size_t page_size;
 };
@@ -200,9 +201,9 @@ class PosixLockedPageAllocator: public LockedPageAllocator
 {
 public:
     PosixLockedPageAllocator();
-    void* AllocateLocked(size_t len, bool *lockingSuccess);
-    void FreeLocked(void* addr, size_t len);
-    size_t GetLimit();
+    void* AllocateLocked(size_t len, bool *lockingSuccess) override;
+    void FreeLocked(void* addr, size_t len) override;
+    size_t GetLimit() override;
 private:
     size_t page_size;
 };

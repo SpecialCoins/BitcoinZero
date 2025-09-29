@@ -45,11 +45,13 @@ public:
     void setAddress(const QString &address);
     void pasteEntry(const SendCoinsRecipient &rv);
     bool handlePaymentRequest(const SendCoinsRecipient &recipient);
+    
+    SendCoinsEntry *entry;
 
 public Q_SLOTS:
     void clear();
-    void reject();
-    void accept();
+    void reject() override;
+    void accept() override;
     SendCoinsEntry *addEntry();
     void updateBlocks(int count, const QDateTime& blockDate, double nVerificationProgress, bool header);
     void updateTabsAndLabels();
@@ -65,6 +67,8 @@ private:
     bool fFeeMinimized;
     bool fAnonymousMode;
     const PlatformStyle *platformStyle;
+    void resizeEvent(QResizeEvent* event) override;
+    void adjustTextSize(int width, int height);
 
     // Process WalletModel::SendCoinsReturn and generate a pair consisting
     // of a message and message flags for use in Q_EMIT message().
@@ -113,7 +117,7 @@ class SendConfirmationDialog : public QMessageBox
 
 public:
     SendConfirmationDialog(const QString &title, const QString &text, int secDelay = 0, QWidget *parent = 0);
-    int exec();
+    int exec() override;
 
 private Q_SLOTS:
     void countDown();
@@ -123,6 +127,7 @@ private:
     QAbstractButton *yesButton;
     QTimer countDownTimer;
     int secDelay;
+    
 };
 
 #endif // BITCOIN_QT_SENDCOINSDIALOG_H

@@ -67,8 +67,8 @@ uint32_t CAccountBase::getVersion() const
 
 /******************************************************************************/
 
-CAccountSender::CAccountSender(CExtKey const & walletKey, uint32_t accountNum, CPaymentCode const & theirPcode)
-: CAccountBase(walletKey, accountNum), theirPcode(theirPcode)
+CAccountSender::CAccountSender(CExtKey const & walletKey, uint32_t accountNumParam, CPaymentCode const & theirPcode)
+: CAccountBase(walletKey, accountNumParam), theirPcode(theirPcode)
 {
     updateMyNextAddresses();
 }
@@ -141,8 +141,8 @@ uint256 CAccountSender::getNotificationTxId() const
 
 /******************************************************************************/
 
-CAccountReceiver::CAccountReceiver(CExtKey const & walletKey, uint32_t accountNum, std::string const & label)
-: CAccountBase(walletKey, accountNum), label(label)
+CAccountReceiver::CAccountReceiver(CExtKey const & walletKey, uint32_t accountNumParam, std::string const & label)
+: CAccountBase(walletKey, accountNumParam), label(label)
 {}
 
 CBitcoinAddress const & CAccountReceiver::getMyNotificationAddress() const
@@ -254,7 +254,7 @@ bool CAccountReceiver::acceptMaskedPayload(std::vector<unsigned char> const & ma
     std::unique_ptr<lelantus::JoinSplit> jsplit;
     try {
         jsplit = lelantus::ParseLelantusJoinSplit(tx);
-    }catch (...) {
+    }catch (const std::exception &) {
         return false;
     }
     if (!jsplit)

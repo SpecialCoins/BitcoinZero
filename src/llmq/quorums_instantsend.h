@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DASH_QUORUMS_INSTANTSEND_H
-#define DASH_QUORUMS_INSTANTSEND_H
+#ifndef BZX_QUORUMS_INSTANTSEND_H
+#define BZX_QUORUMS_INSTANTSEND_H
 
 #include "quorums_signing.h"
 
@@ -127,6 +127,7 @@ public:
 
     CInstantSendLockPtr GetConflictingLock(const CTransaction& tx);
     void RemoveChainLockConflictingLock(const uint256& islockHash, const CInstantSendLock& islock);
+    bool RemoveISLockByTxId(const uint256& txid);
 
     void UpdatedBlockTip(const CBlockIndex* pindexNew);
 
@@ -143,7 +144,7 @@ private:
     bool CheckCanLock(const COutPoint& outpoint, bool printDebug, const uint256& txHash, CAmount* retValue, const Consensus::Params& params);
     bool IsConflicted(const CTransaction& tx);
     
-    virtual void HandleNewRecoveredSig(const CRecoveredSig& recoveredSig);
+    virtual void HandleNewRecoveredSig(const CRecoveredSig& recoveredSig) override;
     void HandleNewInputLockRecoveredSig(const CRecoveredSig& recoveredSig, const uint256& txid);
     void HandleNewInstantSendLockRecoveredSig(const CRecoveredSig& recoveredSig);
 
@@ -176,4 +177,4 @@ extern CInstantSendManager* quorumInstantSendManager;
 
 bool IsNewInstantSendEnabled();
 
-#endif//DASH_QUORUMS_INSTANTSEND_H
+#endif//BZX_QUORUMS_INSTANTSEND_H

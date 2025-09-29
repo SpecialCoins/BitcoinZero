@@ -12,6 +12,8 @@
 #include <boost/signals2/last_value.hpp>
 #include <boost/signals2/signal.hpp>
 
+#include "chain.h"
+
 class CBasicKeyStore;
 class CWallet;
 class uint256;
@@ -121,17 +123,10 @@ public:
     /** Additional data sync progress changed */
     boost::signals2::signal<void (double nSyncProgress)> NotifyAdditionalDataSyncProgressChanged;
 
-    /** Elysium balances have been updated. */
-    boost::signals2::signal<void ()> ElysiumBalanceChanged;
-
-    /** Elysium state has been changed. */
-    boost::signals2::signal<void ()> ElysiumStateChanged;
-
-    /** Elysium pending status has been changed */
-    boost::signals2::signal<void (bool pending)> ElysiumPendingChanged;
-
-    /** Elysium state has been invalidated due to a reorg */
-    boost::signals2::signal<void ()> ElysiumStateInvalidated;
+    /** Spark name has been added */
+    boost::signals2::signal<void (const CSparkNameBlockIndexData&)> NotifySparkNameAdded;
+    /** Spark name has been removed */
+    boost::signals2::signal<void (const CSparkNameBlockIndexData&)> NotifySparkNameRemoved;
 };
 
 /** Show warning message **/

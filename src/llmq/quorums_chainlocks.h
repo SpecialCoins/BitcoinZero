@@ -2,8 +2,8 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef DASH_QUORUMS_CHAINLOCKS_H
-#define DASH_QUORUMS_CHAINLOCKS_H
+#ifndef BZX_QUORUMS_CHAINLOCKS_H
+#define BZX_QUORUMS_CHAINLOCKS_H
 
 #include "llmq/quorums.h"
 #include "llmq/quorums_signing.h"
@@ -96,7 +96,7 @@ public:
     void CheckActiveState();
     void TrySignChainTip();
     void EnforceBestChainLock();
-    virtual void HandleNewRecoveredSig(const CRecoveredSig& recoveredSig);
+    virtual void HandleNewRecoveredSig(const CRecoveredSig& recoveredSig) override;
 
     bool HasChainLock(int nHeight, const uint256& blockHash);
     bool HasConflictingChainLock(int nHeight, const uint256& blockHash);
@@ -123,4 +123,4 @@ extern CChainLocksHandler* chainLocksHandler;
 
 bool IsChainlocksEnabled();
 
-#endif //DASH_QUORUMS_CHAINLOCKS_H
+#endif //BZX_QUORUMS_CHAINLOCKS_H

@@ -86,12 +86,11 @@ namespace GUIUtil {
 
 static QString stylesheetDirectory = ":css";
 static QString BZXTheme = "BZXTheme";
-static QString BZXLowTheme = "BZXLowTheme";
 static CCriticalSection cs_css;
 
 QString dateTimeStr(const QDateTime &date)
 {
-    return date.date().toString(Qt::SystemLocaleShortDate) + QString(" ") + date.toString("hh:mm");
+    return  QLocale::system().toString(date.date(), QLocale::ShortFormat) + QString(" ") + date.toString("hh:mm");
 }
 
 QString dateTimeStr(qint64 nTime)
@@ -141,7 +140,7 @@ void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)
     // and this is the only place, where this address is supplied.
     widget->setPlaceholderText(QObject::tr("Enter a address (e.g. %1)").arg(
         QString::fromStdString(DummyAddress(Params()))) +
-        QObject::tr(" or a payment code"));
+        QObject::tr(" or a payment code") + QObject::tr(" or a BZX spark address (e.g. pr1cjgedy25xhr4fmzx8cm5gf940v5j2482m94uaa0yguxxw2yrel0f0hyjesg77px7at47f4s3jy8hthmyr6ajhvn025yp28fyuwzvar0gcc7p27rvttn2tyl9ejwthjpaavlmy3cm3sysz)"));
 #endif
     widget->setValidator(new BitcoinAddressEntryValidator(parent));
     widget->setCheckValidator(new BitcoinAddressCheckValidator(parent));
@@ -489,130 +488,6 @@ bool ToolTipToRichTextFilter::eventFilter(QObject *obj, QEvent *evt)
     return QObject::eventFilter(obj, evt);
 }
 
-void TableViewLastColumnResizingFixer::connectViewHeadersSignals()
-{
-    connect(tableView->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), this, SLOT(on_sectionResized(int,int,int)));
-    connect(tableView->horizontalHeader(), SIGNAL(geometriesChanged()), this, SLOT(on_geometriesChanged()));
-}
-
-// We need to disconnect these while handling the resize events, otherwise we can enter infinite loops.
-void TableViewLastColumnResizingFixer::disconnectViewHeadersSignals()
-{
-    disconnect(tableView->horizontalHeader(), SIGNAL(sectionResized(int,int,int)), this, SLOT(on_sectionResized(int,int,int)));
-    disconnect(tableView->horizontalHeader(), SIGNAL(geometriesChanged()), this, SLOT(on_geometriesChanged()));
-}
-
-// Setup the resize mode, handles compatibility for Qt5 and below as the method signatures changed.
-// Refactored here for readability.
-void TableViewLastColumnResizingFixer::setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode)
-{
-#if QT_VERSION < 0x050000
-    tableView->horizontalHeader()->setResizeMode(logicalIndex, resizeMode);
-#else
-    tableView->horizontalHeader()->setSectionResizeMode(logicalIndex, resizeMode);
-#endif
-}
-
-void TableViewLastColumnResizingFixer::resizeColumn(int nColumnIndex, int width)
-{
-    tableView->setColumnWidth(nColumnIndex, width);
-    tableView->horizontalHeader()->resizeSection(nColumnIndex, width);
-}
-
-int TableViewLastColumnResizingFixer::getColumnsWidth()
-{
-    int nColumnsWidthSum = 0;
-    for (int i = 0; i < columnCount; i++)
-    {
-        nColumnsWidthSum += tableView->horizontalHeader()->sectionSize(i);
-    }
-    return nColumnsWidthSum;
-}
-
-int TableViewLastColumnResizingFixer::getAvailableWidthForColumn(int column)
-{
-    int nResult = lastColumnMinimumWidth;
-    int nTableWidth = tableView->horizontalHeader()->width();
-
-    if (nTableWidth > 0)
-    {
-        int nOtherColsWidth = getColumnsWidth() - tableView->horizontalHeader()->sectionSize(column);
-        nResult = std::max(nResult, nTableWidth - nOtherColsWidth);
-    }
-
-    return nResult;
-}
-
-// Make sure we don't make the columns wider than the table's viewport width.
-void TableViewLastColumnResizingFixer::adjustTableColumnsWidth()
-{
-    disconnectViewHeadersSignals();
-    resizeColumn(lastColumnIndex, getAvailableWidthForColumn(lastColumnIndex));
-    connectViewHeadersSignals();
-
-    int nTableWidth = tableView->horizontalHeader()->width();
-    int nColsWidth = getColumnsWidth();
-    if (nColsWidth > nTableWidth)
-    {
-        resizeColumn(secondToLastColumnIndex,getAvailableWidthForColumn(secondToLastColumnIndex));
-    }
-}
-
-// Make column use all the space available, useful during window resizing.
-void TableViewLastColumnResizingFixer::stretchColumnWidth(int column)
-{
-    disconnectViewHeadersSignals();
-    resizeColumn(column, getAvailableWidthForColumn(column));
-    connectViewHeadersSignals();
-}
-
-// When a section is resized this is a slot-proxy for ajustAmountColumnWidth().
-void TableViewLastColumnResizingFixer::on_sectionResized(int logicalIndex, int oldSize, int newSize)
-{
-    adjustTableColumnsWidth();
-    int remainingWidth = getAvailableWidthForColumn(logicalIndex);
-    if (newSize > remainingWidth)
-    {
-       resizeColumn(logicalIndex, remainingWidth);
-    }
-}
-
-// When the table's geometry is ready, we manually perform the stretch of the "Message" column,
-// as the "Stretch" resize mode does not allow for interactive resizing.
-void TableViewLastColumnResizingFixer::on_geometriesChanged()
-{
-    if ((getColumnsWidth() - this->tableView->horizontalHeader()->width()) != 0)
-    {
-        disconnectViewHeadersSignals();
-        resizeColumn(secondToLastColumnIndex, getAvailableWidthForColumn(secondToLastColumnIndex));
-        connectViewHeadersSignals();
-    }
-}
-
-/**
- * Initializes all internal variables and prepares the
- * the resize modes of the last 2 columns of the table and
- */
-TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth, QObject *parent) :
-    QObject(parent),
-    tableView(table),
-    lastColumnMinimumWidth(lastColMinimumWidth),
-    allColumnsMinimumWidth(allColsMinimumWidth)
-{
-    columnCount = tableView->horizontalHeader()->count();
-    lastColumnIndex = columnCount - 1;
-    secondToLastColumnIndex = columnCount - 2;
-    tableView->horizontalHeader()->setMinimumSectionSize(allColumnsMinimumWidth);
-    setViewHeaderResizeMode(secondToLastColumnIndex, QHeaderView::Interactive);
-    setViewHeaderResizeMode(lastColumnIndex, QHeaderView::Interactive);
-}
-
-TableViewLastColumnResizingFixer::TableViewLastColumnResizingFixer(QTableView* table, int lastColMinimumWidth, int allColsMinimumWidth, QObject *parent, int resizeColumnIndex):
-    TableViewLastColumnResizingFixer(table, lastColMinimumWidth, allColsMinimumWidth, parent)
-{
-    secondToLastColumnIndex = resizeColumnIndex;
-}
-
 #ifdef WIN32
 boost::filesystem::path static StartupShortcutPath()
 {
@@ -847,29 +722,6 @@ bool SetStartOnSystemStartup(bool fAutoStart) { return false; }
 
 #endif
 
-void saveWindowGeometry(const QString& strSetting, QWidget *parent)
-{
-    QSettings settings;
-    settings.setValue(strSetting + "Pos", parent->pos());
-    settings.setValue(strSetting + "Size", parent->size());
-}
-
-void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, QWidget *parent)
-{
-    QSettings settings;
-    QPoint pos = settings.value(strSetting + "Pos").toPoint();
-    QSize size = settings.value(strSetting + "Size", defaultSize).toSize();
-
-    if (!pos.x() && !pos.y()) {
-        QRect screen = QApplication::desktop()->screenGeometry();
-        pos.setX((screen.width() - size.width()) / 2);
-        pos.setY((screen.height() - size.height()) / 2);
-    }
-
-    parent->resize(size);
-    parent->move(pos);
-}
-
 void setClipboard(const QString& str)
 {
     QApplication::clipboard()->setText(str, QClipboard::Clipboard);
@@ -1033,19 +885,43 @@ void loadTheme()
 
     stylesheet->append(strStyle);
 
+    qApp->setStyleSheet(*stylesheet);
+}
 
-    if (QApplication::desktop()->screenGeometry().height() <= 800) {
-        fileName = stylesheetDirectory + "/" + BZXLowTheme;
-        QFile qFile_(fileName);
-        if (!qFile_.open(QFile::ReadOnly)) {
-            throw std::runtime_error(strprintf("%s: Failed to open file: %s", __func__, fileName.toStdString()));
-        }
+int TextWidth(const QFontMetrics& fm, const QString& text)
+{
+    return fm.horizontalAdvance(text);
+}
 
-        QString strLowStyle = QLatin1String(qFile_.readAll());
-        stylesheet->append(strLowStyle);
+QDateTime StartOfDay(const QDate& date)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+    return date.startOfDay();
+#else
+    return QDateTime(date);
+#endif
+}
+
+bool HasPixmap(const QLabel* label)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    return !label->pixmap(Qt::ReturnByValue).isNull();
+#else
+    return label->pixmap() != nullptr;
+#endif
+}
+
+QImage GetImage(const QLabel* label)
+{
+    if (!HasPixmap(label)) {
+        return QImage();
     }
 
-    qApp->setStyleSheet(*stylesheet);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    return label->pixmap(Qt::ReturnByValue).toImage();
+#else
+    return label->pixmap()->toImage();
+#endif
 }
 
 } // namespace GUIUtil

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>850</width>
-    <height>587</height>
+    <height>535</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -587,8 +587,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>826</width>
-        <height>85</height>
+        <width>830</width>
+        <height>68</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
@@ -1284,7 +1284,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Lelantus Balance:</string>
+          <string>Private Balance:</string>
          </property>
         </widget>
        </item>
@@ -1359,7 +1359,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../bitcoin.qrc"/>
+ </resources>
  <connections/>
  <buttongroups>
   <buttongroup name="groupCustomFee"/>

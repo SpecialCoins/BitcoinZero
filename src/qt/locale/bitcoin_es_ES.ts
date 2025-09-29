@@ -3519,10 +3519,6 @@
         <translation>Mostrar depuración (por defecto: %u, proporcionar &lt;category&gt; es opcional)</translation>
     </message>
     <message>
-        <source>Support filtering of blocks and transaction with bloom filters (default: %u)</source>
-        <translation>Admite filtrado de bloques, y transacciones con filtros Bloom. Reduce la carga de red. ( por defecto :%u)</translation>
-    </message>
-    <message>
         <source>Total length of network version string (%i) exceeds maximum length (%i). Reduce the number or size of uacomments.</source>
         <translation>La longitud total de la cadena de versión de red ( %i ) supera la longitud máxima ( %i ) . Reducir el número o tamaño de uacomments .</translation>
     </message>

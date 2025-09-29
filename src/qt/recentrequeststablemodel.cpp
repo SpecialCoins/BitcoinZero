@@ -11,7 +11,12 @@
 #include "clientversion.h"
 #include "streams.h"
 
+#include "../compat_layer.h"
+
 #include <boost/foreach.hpp>
+
+const QString RecentRequestsTableModel::Transparent = "Transparent";
+const QString RecentRequestsTableModel::Spark = "Spark";
 
 RecentRequestsTableModel::RecentRequestsTableModel(CWallet *wallet, WalletModel *parent) :
     QAbstractTableModel(parent), walletModel(parent)
@@ -26,9 +31,9 @@ RecentRequestsTableModel::RecentRequestsTableModel(CWallet *wallet, WalletModel 
         addNewRequest(request);
 
     /* These columns must match the indices in the ColumnIndex enumeration */
-    columns << tr("Date") << tr("Label") << tr("Message") << getAmountTitle();
+    columns << tr("Date") << tr("Label") << tr("Address Type") << tr("Message") << getAmountTitle();
 
-    connect(walletModel->getOptionsModel(), SIGNAL(displayUnitChanged(int)), this, SLOT(updateDisplayUnit()));
+    connect(walletModel->getOptionsModel(), &OptionsModel::displayUnitChanged, this, &RecentRequestsTableModel::updateDisplayUnit);
 }
 
 RecentRequestsTableModel::~RecentRequestsTableModel()
@@ -72,6 +77,16 @@ QVariant RecentRequestsTableModel::data(const QModelIndex &index, int role) cons
             {
                 return rec->recipient.label;
             }
+        case AddressType:
+            if(walletModel->validateAddress(rec->recipient.address))
+            {
+                return tr("transparent");
+            }
+            else if(walletModel->validateSparkAddress(rec->recipient.address))
+            {
+                return tr("spark");
+            }
+            BZX_FALLTHROUGH;
         case Message:
             if(rec->recipient.message.isEmpty() && role == Qt::DisplayRole)
             {
@@ -125,7 +140,7 @@ void RecentRequestsTableModel::updateAmountColumnTitle()
 /** Gets title for amount column including current display unit if optionsModel reference available. */
 QString RecentRequestsTableModel::getAmountTitle()
 {
-    return (this->walletModel->getOptionsModel() != NULL) ? tr("Requested") + " ("+BitcoinUnits::name(this->walletModel->getOptionsModel()->getDisplayUnit()) + ")" : "";
+    return (this->walletModel->getOptionsModel() != NULL) ? tr("Requested") + " ("+BitcoinUnits::name(this->walletModel->getOptionsModel()->getDisplayUnit()) + ")" : QString("");
 }
 
 QModelIndex RecentRequestsTableModel::index(int row, int column, const QModelIndex &parent) const
@@ -208,7 +223,7 @@ void RecentRequestsTableModel::addNewRequest(RecentRequestEntry &recipient)
 
 void RecentRequestsTableModel::sort(int column, Qt::SortOrder order)
 {
-    qSort(list.begin(), list.end(), RecentRequestEntryLessThan(column, order));
+    std::sort(list.begin(), list.end(), RecentRequestEntryLessThan(column, order));
     Q_EMIT dataChanged(index(0, 0, QModelIndex()), index(list.size() - 1, NUMBER_OF_COLUMNS - 1, QModelIndex()));
 }
 

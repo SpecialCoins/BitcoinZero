@@ -3383,10 +3383,6 @@ Per specificare più URL separarli con una barra verticale "|".</translation>
         <translation>Emette informazioni di debug (predefinito: %u, fornire &lt;category&gt; è opzionale)</translation>
     </message>
     <message>
-        <source>Support filtering of blocks and transaction with bloom filters (default: %u)</source>
-        <translation>Supporta filtraggio di blocchi e transazioni con filtri bloom (default: %u)</translation>
-    </message>
-    <message>
         <source>Total length of network version string (%i) exceeds maximum length (%i). Reduce the number or size of uacomments.</source>
         <translation>La lunghezza totale della stringa di network version (%i) eccede la lunghezza massima (%i). Ridurre il numero o la dimensione di uacomments.</translation>
     </message>

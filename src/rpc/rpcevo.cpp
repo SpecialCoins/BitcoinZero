@@ -12,18 +12,19 @@
 #include "validation.h"
 
 #ifdef ENABLE_WALLET
-#include "wallet/coincontrol.h"
 #include "wallet/wallet.h"
 #include "wallet/rpcwallet.h"
 #endif//ENABLE_WALLET
 
+#include "wallet/coincontrol.h"
 #include "netbase.h"
 
 #include "evo/specialtx.h"
 #include "evo/providertx.h"
 #include "evo/deterministicmns.h"
 #include "evo/simplifiedmns.h"
-
+#include "evo/spork.h"
+#include "llmq/quorums_instantsend.h"
 #include "bls/bls.h"
 
 extern UniValue signrawtransaction(const JSONRPCRequest& request);
@@ -510,11 +511,33 @@ UniValue _bls(const JSONRPCRequest& request)
     }
 }
 
+UniValue removeislock(const JSONRPCRequest& request)
+{
+    if (request.fHelp || request.params.size() != 1)
+        throw std::runtime_error(
+            "removeislock \"txid\"\n"
+            "\nRemoves an InstantSend lock for a transaction.\n"
+            "\nArguments:\n"
+            "1. \"txid\"        (string, required) The transaction id\n"
+            "\nExamples:\n"
+            + HelpExampleCli("removeislock", "\"txid\"")
+        );
+
+    uint256 hash = ParseHashV(request.params[0], "txid");
+
+    if (llmq::quorumInstantSendManager->RemoveISLockByTxId(hash)) {
+        return "ISLock removed";
+    } else {
+        return "ISLock not found";
+    }
+}
+
 static const CRPCCommand commands[] =
 { //  category              name                      actor (function)         okSafeMode
   //  --------------------- ------------------------  -----------------------  ----------
     { "evo",                "bls",                    &_bls,                   false, {}  },
     { "evo",                "protx",                  &protx,                  false, {}  },
+    { "evo",                "removeislock",           &removeislock,           false, {}  },
 };
 
 void RegisterEvoRPCCommands(CRPCTable &tableRPC)

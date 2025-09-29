@@ -7,6 +7,7 @@
 #include "bitcoinunits.h"
 #include "guiconstants.h"
 #include "qvaluecombobox.h"
+#include "guiutil.h"
 
 #include <QApplication>
 #include <QAbstractSpinBox>
@@ -29,10 +30,10 @@ public:
     {
         setAlignment(Qt::AlignRight);
 
-        connect(lineEdit(), SIGNAL(textEdited(QString)), this, SIGNAL(valueChanged()));
+        connect(lineEdit(), &QLineEdit::textEdited, this, &AmountSpinBox::valueChanged);
     }
 
-    QValidator::State validate(QString &text, int &pos) const
+    QValidator::State validate(QString &text, int &pos) const override
     {
         if(text.isEmpty())
             return QValidator::Intermediate;
@@ -45,7 +46,7 @@ public:
         return valid ? QValidator::Intermediate : QValidator::Invalid;
     }
 
-    void fixup(QString &input) const
+    void fixup(QString &input) const override
     {
         bool valid = false;
         CAmount val = parse(input, &valid);
@@ -67,7 +68,7 @@ public:
         Q_EMIT valueChanged();
     }
 
-    void stepBy(int steps)
+    void stepBy(int steps) override
     {
         bool valid = false;
         CAmount val = value(&valid);
@@ -94,7 +95,7 @@ public:
         singleStep = step;
     }
 
-    QSize minimumSizeHint() const
+    QSize minimumSizeHint() const override
     {
         if(cachedMinimumSizeHint.isEmpty())
         {
@@ -102,7 +103,7 @@ public:
 
             const QFontMetrics fm(fontMetrics());
             int h = lineEdit()->minimumSizeHint().height();
-            int w = fm.width(BitcoinUnits::format(BitcoinUnits::BTC, BitcoinUnits::maxMoney(), false, BitcoinUnits::separatorAlways));
+            int w = GUIUtil::TextWidth(fm, BitcoinUnits::format(BitcoinUnits::BTC, BitcoinUnits::maxMoney(), false, BitcoinUnits::separatorAlways));
             w += 2; // cursor blinking space
 
             QStyleOptionSpinBox opt;
@@ -152,7 +153,7 @@ private:
     }
 
 protected:
-    bool event(QEvent *event)
+    bool event(QEvent *event) override
     {
         if (event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
         {
@@ -167,14 +168,14 @@ protected:
         return QAbstractSpinBox::event(event);
     }
 
-    StepEnabled stepEnabled() const
+    StepEnabled stepEnabled() const override
     {
         if (isReadOnly()) // Disable steps when AmountSpinBox is read-only
             return StepNone;
         if (text().isEmpty()) // Allow step-up with empty field
             return StepUpEnabled;
 
-        StepEnabled rv = 0;
+        StepEnabled rv = StepEnabled();
         bool valid = false;
         CAmount val = value(&valid);
         if(valid)
@@ -216,8 +217,8 @@ BitcoinAmountField::BitcoinAmountField(QWidget *parent) :
     setFocusProxy(amount);
 
     // If one if the widgets changes, the combined content changes as well
-    connect(amount, SIGNAL(valueChanged()), this, SIGNAL(valueChanged()));
-    connect(unit, SIGNAL(currentIndexChanged(int)), this, SLOT(unitChanged(int)));
+    connect(amount, &AmountSpinBox::valueChanged, this, &BitcoinAmountField::valueChanged);
+    connect(unit, qOverload<int>(&QComboBox::currentIndexChanged), this, &BitcoinAmountField::unitChanged);
 
     // Set default based on configuration
     unitChanged(unit->currentIndex());

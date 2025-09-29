@@ -250,8 +250,6 @@ void CRecoveredSigsDb::WriteRecoveredSig(const llmq::CRecoveredSig& recSig)
     db.WriteBatch(batch);
 
     {
-        int64_t t = GetTimeMillis();
-
         LOCK(cs);
         hasSigForIdCache.insert(std::make_pair((Consensus::LLMQType)recSig.llmqType, recSig.id), true);
         hasSigForSessionCache.insert(signHash, true);
@@ -745,8 +743,6 @@ void CSigningManager::UnregisterRecoveredSigsListener(CRecoveredSigsListener* l)
 
 bool CSigningManager::AsyncSignIfMember(Consensus::LLMQType llmqType, const uint256& id, const uint256& msgHash, bool allowReSign)
 {
-    auto& params = Params().GetConsensus().llmqs.at(llmqType);
-
     if (!fMasternodeMode || activeMasternodeInfo.proTxHash.IsNull()) {
         return false;
     }

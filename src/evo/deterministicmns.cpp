@@ -235,7 +235,7 @@ CDeterministicMNCPtr CDeterministicMNList::GetMNPayee() const
 
 std::vector<CDeterministicMNCPtr> CDeterministicMNList::GetProjectedMNPayees(int nCount) const
 {
-    if (nCount > GetValidMNsCount()) {
+    if (cmp::greater(nCount, GetValidMNsCount())) {
         nCount = GetValidMNsCount();
     }
 
@@ -821,6 +821,7 @@ bool CDeterministicMNManager::BuildNewListFromBlock(const CBlock& block, const C
                 // can't spend collateral funded by proreg tx in the same block
                 if (dmn->pdmnState && dmn->collateralOutpoint.hash == dmn->proTxHash && dmn->pdmnState->nRegisteredHeight == nHeight)
                     return _state.DoS(100, false, REJECT_CONFLICT, "bad-protx-collateral-spend");
+
                 newList.RemoveMN(dmn->proTxHash);
 
                 if (debugLogs) {

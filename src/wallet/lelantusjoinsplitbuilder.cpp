@@ -59,6 +59,10 @@ CWalletTx LelantusJoinSplitBuilder::Build(
     for (size_t i = 0; i < recipients.size(); i++) {
         auto& recipient = recipients[i];
 
+        if (recipient.scriptPubKey.IsPayToExchangeAddress()) {
+            throw std::runtime_error("Exchange addresses cannot receive private funds. Please transfer your funds to a transparent address first before sending to an Exchange address");
+        }
+
         if (!MoneyRange(recipient.nAmount)) {
             throw std::runtime_error(boost::str(boost::format(_("Recipient has invalid amount")) % i));
         }
@@ -115,7 +119,7 @@ CWalletTx LelantusJoinSplitBuilder::Build(
     assert(tx.nLockTime < LOCKTIME_THRESHOLD);
 
     // Start with no fee and loop until there is enough fee;
-    uint32_t nCountNextUse;
+    uint32_t nCountNextUse = 0;
     if (pwalletMain->zwallet) {
         nCountNextUse = pwalletMain->zwallet->GetCount();
     }
@@ -188,29 +192,6 @@ CWalletTx LelantusJoinSplitBuilder::Build(
         CAmount changeToMint = 0;
 
         std::vector<sigma::CoinDenomination> denomChanges;
-        try {
-            CAmount availableBalance(0);
-            for (auto coin : sigmaCoins) {
-                availableBalance += coin.get_denomination_value();
-            }
-            if(availableBalance > 0) {
-                CAmount inputFromSigma;
-                if (required > availableBalance)
-                    inputFromSigma = availableBalance;
-                else
-                    inputFromSigma = required;
-
-                std::list<CSigmaEntry> sigmaCoinsCp = sigmaCoins;
-                wallet.GetCoinsToSpend(inputFromSigma, sigmaSpendCoins, denomChanges, sigmaCoinsCp, //try to spend sigma first
-                                       consensusParams.nMaxLelantusInputPerTransaction,
-                                       consensusParams.nMaxValueLelantusSpendPerTransaction, coinControl);
-
-                required -= inputFromSigma;
-
-                isSigmaToLelantusJoinSplit = true;
-            }
-        } catch (std::runtime_error const &) {
-        }
 
         if(required > 0) {
             if (!wallet.GetCoinsToJoinSplit(required, spendCoins, changeToMint, coins,
@@ -315,7 +296,7 @@ CWalletTx LelantusJoinSplitBuilder::Build(
         result.SetTx(MakeTransactionRef(tx));
 
         if (GetTransactionWeight(tx) >= MAX_STANDARD_TX_SIZE) {
-            throw std::runtime_error(_("Transaction too large-0"));
+            throw std::runtime_error(_("Transaction is too large (size limit: 100Kb). Select less inputs or consolidate your UTXOs"));
         }
 
         // check fee
@@ -444,7 +425,6 @@ void LelantusJoinSplitBuilder::CreateJoinSplit(
 
         // get coin group
         int groupId;
-
         int mintHeight;
         std::tie(mintHeight, groupId) = state->GetMintedCoinHeightAndId(pub);
 

@@ -13,14 +13,15 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QAbstractButton>
+#include <QDate>
 
 NotifyMnemonic::NotifyMnemonic(QWidget *parent) :
         QWizard(parent),
         ui(new Ui::NotifyMnemonic)
 {
     ui->setupUi(this);
-    disconnect(QWizard::button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT(reject()));
-    connect(QWizard::button(QWizard::CancelButton), SIGNAL(clicked()), this, SLOT( cancelEvent()));
+    disconnect(QWizard::button(QWizard::CancelButton), &QAbstractButton::clicked, this, &QDialog::reject);
+    connect(QWizard::button(QWizard::CancelButton), &QAbstractButton::clicked, this, &NotifyMnemonic::cancelEvent);
 }
 
 NotifyMnemonic::~NotifyMnemonic()
@@ -30,10 +31,14 @@ NotifyMnemonic::~NotifyMnemonic()
 
 void NotifyMnemonic::cancelEvent()
 {
-    if( QMessageBox::question( this, trUtf8( "Warning" ), trUtf8( "Are you sure you wish to proceed without confirming whether you have written down your seed words correctly?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes ) {
+    if( QMessageBox::question( this, tr( "Warning" ), tr( "Are you sure you wish to proceed without confirming whether you have written down your seed words correctly?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes ) {
         // allow cancel
         reject();
     }
+}
+
+QString getCurrentDate() {
+    return QDate::currentDate().toString("dd-MM-yyyy");
 }
 
 void NotifyMnemonic::notify()
@@ -44,6 +49,7 @@ void NotifyMnemonic::notify()
     NotifyMnemonic notify;
     notify.setWindowIcon(QIcon(":icons/BZX"));
     notify.show();
+    notify.ui->walletBirthDate->setText("Wallet creation date:  " + getCurrentDate());
     notify.ui->mnemonic->setText(mnemonic.c_str());
     notify.restart();
     while(true)
