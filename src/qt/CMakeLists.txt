@@ -158,7 +158,7 @@ target_link_libraries(bitcoinzeroqt
     $<TARGET_NAME_IF_EXISTS:libevent::extra>
     $<TARGET_NAME_IF_EXISTS:libevent::core>
     ${TOR_LIBRARY}
-    $<$<BOOL:${WITH_ZMQ}>:BZX_zmq>
+    $<$<BOOL:${WITH_ZMQ}>:bitcoin_zmq>
     $<$<BOOL:${WIN32}>:windows_system>
 )
 
@@ -233,7 +233,7 @@ target_link_libraries(bitcoinzero-qt
     bitcoinzero_cli
     univalue
     $<TARGET_NAME_IF_EXISTS:bitcoinzero_wallet>
-    $<$<BOOL:${WITH_ZMQ}>:BZX_zmq>
+    $<$<BOOL:${WITH_ZMQ}>:bitcoin_zmq>
     Boost::thread
     Boost::filesystem
     Boost::thread

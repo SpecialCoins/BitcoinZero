@@ -118,6 +118,7 @@ bool CreateSparkNamePage::CreateSparkNameTransaction(const std::string &name, co
         assert(!name.empty() && name.length() <= CSparkNameManager::maximumSparkNameLength);
 
         CAmount sparkNameFee = consensusParams.nSparkNamesFee[name.length()]*COIN*numberOfYears;
+        BZX_UNUSED CAmount txFee;
 
         WalletModelTransaction tx = model->initSparkNameTransaction(sparkNameFee);
 

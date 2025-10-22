@@ -872,7 +872,6 @@ void ThreadImport(std::vector <boost::filesystem::path> vImportFiles) {
     }
     // Need this to restore Sigma spend state
     if (GetBoolArg("-rescan", false) && !GetBoolArg("-disablewallet", false) && pwalletMain->zwallet) {
-        pwalletMain->zwallet->GetTracker().ListMints();
         pwalletMain->zwallet->GetTracker().ListLelantusMints();
     }
 #endif
@@ -2080,13 +2079,13 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         return InitError(strNodeError);
     // ********************************************************* Step 14: finished
 
-    SetRPCWarmupFinished();
-    uiInterface.InitMessage(_("Done loading"));
-
 #ifdef ENABLE_WALLET
     if (pwalletMain)
         pwalletMain->postInitProcess(threadGroup);
 #endif
+
+    SetRPCWarmupFinished();
+    uiInterface.InitMessage(_("Done loading"));
 
     return !fRequestShutdown;
 }

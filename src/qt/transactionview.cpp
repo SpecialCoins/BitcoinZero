@@ -703,13 +703,19 @@ void TransactionView::resizeEvent(QResizeEvent* event)
 
     int headerHeight = newHeight * 0.1; 
 
+    // Calculate the height of widgets in the header subtracting a small margin
+    BZX_UNUSED int widgetHeight = headerHeight - 5;
+
     // Determine widths for specific widgets as percentages of total width
     int comboBoxesWidgetWidth = newWidth * 0.10; 
+    BZX_UNUSED int addressWidgetWidth = newWidth * 0.25;
 
     dateWidget->setFixedWidth(comboBoxesWidgetWidth);
     typeWidget->setFixedWidth(comboBoxesWidgetWidth);
     amountWidget->setFixedWidth(comboBoxesWidgetWidth);
     instantsendWidget->setFixedWidth(comboBoxesWidgetWidth);
+
+    BZX_UNUSED int tableViewHeight = newHeight - headerHeight;
     
     // Calculate and set column widths based on new width, keeping proportions
     int statusColumnWidth = newWidth * 0.05;

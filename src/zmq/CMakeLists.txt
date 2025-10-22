@@ -2,18 +2,18 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or https://opensource.org/license/mit/.
 
-add_library(BZX_zmq STATIC EXCLUDE_FROM_ALL
+add_library(bitcoin_zmq STATIC EXCLUDE_FROM_ALL
   ${CMAKE_CURRENT_SOURCE_DIR}/zmqabstractnotifier.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/zmqnotificationinterface.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/zmqpublishnotifier.cpp
 )
-target_compile_definitions(BZX_zmq
+target_compile_definitions(bitcoin_zmq
   INTERFACE
     ENABLE_ZMQ=1
   PRIVATE
     $<$<BOOL:${WIN32}>:ZMQ_STATIC>
 )
-target_link_libraries(BZX_zmq
+target_link_libraries(bitcoin_zmq
   PRIVATE
     core_interface
     univalue

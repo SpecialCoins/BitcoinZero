@@ -10,9 +10,9 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/bitcoin-build-config.h.in ${CMAKE_CUR
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_target(generate_build_info
-  BYPRODUCTS ${PROJECT_BINARY_DIR}/src/bitcoin-build-info.h
-  COMMAND ${CMAKE_COMMAND} -DBUILD_INFO_HEADER_PATH=${PROJECT_BINARY_DIR}/src/bitcoin-build-info.h -DSOURCE_DIR=${PROJECT_SOURCE_DIR} -P ${PROJECT_SOURCE_DIR}/cmake/script/GenerateBuildInfo.cmake
-  COMMENT "Generating bitcoin-build-info.h"
+  BYPRODUCTS ${PROJECT_BINARY_DIR}/src/build.h
+  COMMAND ${CMAKE_COMMAND} -DBUILD_INFO_HEADER_PATH=${PROJECT_BINARY_DIR}/src/build.h -DSOURCE_DIR=${PROJECT_SOURCE_DIR} -P ${PROJECT_SOURCE_DIR}/cmake/script/GenerateBuildInfo.cmake
+  COMMENT "Generating build.h"
   VERBATIM
 )
 add_library(bitcoin_clientversion OBJECT EXCLUDE_FROM_ALL
@@ -23,10 +23,11 @@ target_link_libraries(bitcoin_clientversion
     core_interface
 )
 add_dependencies(bitcoin_clientversion generate_build_info)
+target_include_directories(bitcoin_clientversion PRIVATE ${PROJECT_BINARY_DIR}/src)
 
 #=============================
 # util library
-# BZX does not have util subdirectory
+# bitcoinzero does not have util subdirectory
 #=============================
 
 add_library(bitcoin_util STATIC EXCLUDE_FROM_ALL
@@ -220,7 +221,7 @@ target_link_libraries(bitcoin_common
     Boost::headers
     $<$<BOOL:ENABLE_CRASH_HOOKS>:${BACKTRACE_LIBRARY}>
     leveldb
-    $<$<BOOL:${WITH_ZMQ}>:BZX_zmq>
+    $<$<BOOL:${WITH_ZMQ}>:bitcoin_zmq>
     $<TARGET_NAME_IF_EXISTS:USDT::headers>
     $<$<BOOL:${WIN32}>:windows_system>
 )
@@ -334,11 +335,6 @@ add_library(bitcoinzero_node STATIC EXCLUDE_FROM_ALL
   ${CMAKE_CURRENT_SOURCE_DIR}/rpc/server.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/script/ismine.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/script/sigcache.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sigma.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sigma/coin.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sigma/coinspend.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sigma/params.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/sigma/spend_metadata.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/spark/primitives.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/sparkname.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/spark/state.cpp
@@ -360,7 +356,7 @@ target_link_libraries(bitcoinzero_node
     bitcoin_common
     bitcoin_util
     secp256k1
-    $<$<BOOL:${WITH_ZMQ}>:BZX_zmq>
+    $<$<BOOL:${WITH_ZMQ}>:bitcoin_zmq>
     leveldb
     univalue
     Boost::headers
@@ -391,7 +387,7 @@ if(BUILD_DAEMON)
     $<TARGET_NAME_IF_EXISTS:libevent::pthreads>
     $<TARGET_NAME_IF_EXISTS:libevent::extra>
     $<TARGET_NAME_IF_EXISTS:libevent::core>
-    $<$<BOOL:${WITH_ZMQ}>:BZX_zmq>
+    $<$<BOOL:${WITH_ZMQ}>:bitcoin_zmq>
     bitcoinzero_cli
     secp256k1
     secp256k1pp
@@ -450,7 +446,7 @@ target_link_libraries(bitcoinzero_cli
     $<TARGET_NAME_IF_EXISTS:libevent::pthreads>
     $<TARGET_NAME_IF_EXISTS:libevent::extra>
     $<TARGET_NAME_IF_EXISTS:libevent::core>
-    $<$<BOOL:${WITH_ZMQ}>:BZX_zmq>
+    $<$<BOOL:${WITH_ZMQ}>:bitcoin_zmq>
     $<TARGET_NAME_IF_EXISTS:bitcoinzero_wallet>
     ${TOR_LIBRARY}
     $<$<BOOL:${WIN32}>:windows_system>
@@ -470,7 +466,7 @@ if(BUILD_CLI)
     $<TARGET_NAME_IF_EXISTS:libevent::pthreads>
     $<TARGET_NAME_IF_EXISTS:libevent::extra>
     $<TARGET_NAME_IF_EXISTS:libevent::core>
-    $<$<BOOL:${WITH_ZMQ}>:BZX_zmq>
+    $<$<BOOL:${WITH_ZMQ}>:bitcoin_zmq>
     bitcoinzero_cli
     $<TARGET_NAME_IF_EXISTS:bitcoinzero_wallet>
     ${TOR_LIBRARY}
@@ -552,13 +548,6 @@ endif()
 
 install(TARGETS ${installable_targets}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  COMPONENT GUI
 )
 unset(installable_targets)
-
-if(INSTALL_MAN)
-  # TODO: these stubs are no longer needed. man pages should be generated at install time.
-  install(DIRECTORY ../doc/man/
-    DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
-    FILES_MATCHING PATTERN *.1
-  )
-endif()

@@ -286,6 +286,7 @@ bool ConnectBlockSpark(
             return true;
         }
 
+        BZX_UNUSED const auto& params = ::Params().GetConsensus();
         CHash256 hash;
         bool updateHash = false;
 
@@ -314,6 +315,7 @@ bool ConnectBlockSpark(
         }
 
         if (!pblock->sparkTxInfo->sparkNames.empty()) {
+            BZX_UNUSED CSparkNameManager *sparkNameManager = CSparkNameManager::GetInstance();
             for (const auto &sparkName : pblock->sparkTxInfo->sparkNames) {
                 pindexNew->addedSparkNames[sparkName.first] =
                         CSparkNameBlockIndexData(sparkName.second.name,
@@ -912,6 +914,28 @@ std::vector<unsigned char> getSerialContext(const CTransaction &tx) {
     return serial_context;
 }
 
+BZX_UNUSED static bool CheckSparkSpendTAg(
+        CValidationState& state,
+        CSparkTxInfo* sparkTxInfo,
+        const GroupElement& tag,
+        int nHeight,
+        bool fConnectTip) {
+    // check for spark transaction in this block as well
+    if (sparkTxInfo &&
+        !sparkTxInfo->fInfoIsComplete &&
+        sparkTxInfo->spentLTags.find(tag) != sparkTxInfo->spentLTags.end())
+        return state.DoS(0, error("CTransaction::CheckTransaction() : two or more spark spends with same tag in the same block"));
+
+    // check for used tags in sparkState
+    if (sparkState.IsUsedLTag(tag)) {
+        // Proceed with checks ONLY if we're accepting tx into the memory pool or connecting block to the existing blockchain
+        if (nHeight == INT_MAX || fConnectTip) {
+            return state.DoS(0, error("CTransaction::CheckTransaction() : The Spark spend tag has been used"));
+        }
+    }
+    return true;
+}
+
 /******************************************************************************/
 // CSparkState
 /******************************************************************************/
@@ -932,6 +956,7 @@ void CSparkState::Reset() {
     latestCoinId = 0;
     mintedCoins.clear();
     usedLTags.clear();
+    mobileUsedLTags.clear();
     mintMetaInfo.clear();
     spendMetaInfo.clear();
 }
@@ -1018,7 +1043,6 @@ void CSparkState::AddMintsToStateAndBlockIndex(
         const CBlock* pblock) {
 
     std::vector<spark::Coin> blockMints = pblock->sparkTxInfo->mints;
-
     latestCoinId = std::max(1, latestCoinId);
     auto &coinGroup = coinGroups[latestCoinId];
 
@@ -1067,6 +1091,9 @@ void CSparkState::AddMintsToStateAndBlockIndex(
 void CSparkState::AddSpend(const GroupElement& lTag, int coinGroupId) {
     if (mintMetaInfo.count(coinGroupId) > 0) {
         usedLTags[lTag] = coinGroupId;
+        if (GetBoolArg("-mobile", false)) {
+            mobileUsedLTags.push_back({lTag, coinGroupId});
+        }
         spendMetaInfo[coinGroupId] += 1;
     }
 }
@@ -1077,6 +1104,14 @@ void CSparkState::AddLTagTxHash(const uint256& lTagHash, const uint256& txHash) 
 
 void CSparkState::RemoveSpend(const GroupElement& lTag) {
     auto iter = usedLTags.find(lTag);
+    if (GetBoolArg("-mobile", false) && iter != usedLTags.end()) {
+        for (auto tag = mobileUsedLTags.begin(); tag != mobileUsedLTags.end(); tag++) {
+            if (tag->first == lTag) {
+                mobileUsedLTags.erase(tag);
+                break;
+            }
+        }
+    }
     if (iter != usedLTags.end()) {
         spendMetaInfo[iter->second] -= 1;
         usedLTags.erase(iter);
@@ -1234,6 +1269,7 @@ void CSparkState::GetCoinSet(
     uint256 blockHash;
     std::vector<unsigned char> setHash;
     {
+        BZX_UNUSED const auto &params = ::Params().GetConsensus();
         LOCK(cs_main);
         maxHeight = chainActive.Height() - (ZC_MINT_CONFIRMATIONS - 1);
     }
@@ -1452,6 +1488,10 @@ std::unordered_map<spark::Coin, CMintedCoinInfo, spark::CoinHash> const & CSpark
 }
 std::unordered_map<GroupElement, int, spark::CLTagHash> const & CSparkState::GetSpends() const {
     return usedLTags;
+}
+
+std::vector<std::pair<GroupElement, int>> const & CSparkState::GetSpendsMobile() const {
+    return mobileUsedLTags;
 }
 
 std::unordered_map<uint256, uint256> const& CSparkState::GetSpendTxIds() const {

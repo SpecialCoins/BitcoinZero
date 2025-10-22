@@ -1,7 +1,7 @@
 #include "joinsplit.h"
 #include "lelantus_prover.h"
 #include "lelantus_verifier.h"
-#include "../sigma/openssl_context.h"
+#include "openssl_context.h"
 #include "hash.h"
 #include "util.h"
 
@@ -226,10 +226,6 @@ bool JoinSplit::HasValidSerials() const {
         if(!serialNumbers[i].isMember() || serialNumbers[i].isZero())
             return false;
     return true;
-}
-
-bool JoinSplit::isSigmaToLelantus() const {
-    return false;
 }
 
 } //namespace lelantus

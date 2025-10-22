@@ -738,7 +738,7 @@ void BlockAssembler::FillBlackListForBlockTemplate() {
 
         const CTransaction &tx = mi->GetTx();
 
-        // transactions depending (directly or not) on sigma spends in the mempool cannot be included in the
+        // transactions depending (directly or not) on spends in the mempool cannot be included in the
         // same block with spend transaction
         if (tx.IsLelantusJoinSplit() || tx.IsSparkSpend()) {
             mempool.CalculateDescendants(mi, txBlackList);

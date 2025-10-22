@@ -167,7 +167,7 @@ public:
         consensus.nSparkNamesStartBlock = consensus.nSparkStartBlock;
         consensus.nSparkNamesFee = standardSparkNamesFee;
 
-        consensus.nSparkStartBlock = 999;
+        consensus.nSparkStartBlock = 99999999;
         consensus.nLelantusGracefulPeriod = 99999999;
 
         // reorg
