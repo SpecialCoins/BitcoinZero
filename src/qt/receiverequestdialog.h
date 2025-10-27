@@ -38,8 +38,8 @@ public Q_SLOTS:
     void copyImage();
 
 protected:
-    virtual void mousePressEvent(QMouseEvent *event);
-    virtual void contextMenuEvent(QContextMenuEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event) override;
+    virtual void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
     QMenu *contextMenu;
@@ -65,6 +65,7 @@ private Q_SLOTS:
 private:
     Ui::ReceiveRequestDialog *ui;
     OptionsModel *model;
+    WalletModel *walletModel;
     SendCoinsRecipient info;
 };
 

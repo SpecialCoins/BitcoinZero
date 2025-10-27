@@ -72,8 +72,6 @@ public:
         return ecdsaPubkeys;
     }
 
-    bool isSigmaToLelantus() const;
-
     ADD_SERIALIZE_METHODS;
     template <typename Stream, typename Operation>
     void SerializationOp(Stream& s, Operation ser_action)

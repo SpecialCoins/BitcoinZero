@@ -4,6 +4,7 @@
 
 #include "base58.h"
 #include "chain.h"
+#include "libspark/keys.h"
 #include "rpc/server.h"
 #include "init.h"
 #include "validation.h"
@@ -18,6 +19,7 @@
 #include "authhelper.h"
 
 #include "rpcwallet.h"
+#include "rpcdump.h"
 
 #include <fstream>
 #include <stdint.h>
@@ -576,13 +578,25 @@ UniValue importwallet(const JSONRPCRequest& request)
 
     if(fMintUpdate){
         pwallet->zwallet->SyncWithChain();
-        pwallet->zwallet->GetTracker().ListMints(false, false);
+        pwallet->zwallet->GetTracker().ListLelantusMints(false, false);
     }
 
     if (!fGood)
         throw JSONRPCError(RPC_WALLET_ERROR, "Error adding some keys to wallet");
 
     return NullUniValue;
+}
+
+UniValue dumpsparkviewkey(const JSONRPCRequest& request) {
+    CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
+    if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
+        throw std::runtime_error("wallet not available");
+    }
+
+    if (request.fHelp || request.params.size() != 0)
+        throw std::runtime_error("dumpviewkey\n\nDisplay our Spark View Key.\n");
+
+  return {pwallet->GetSparkViewKeyStr()};
 }
 
 UniValue dumpprivkey(const JSONRPCRequest& request)
@@ -652,7 +666,7 @@ UniValue dumpprivkey_bzx(const JSONRPCRequest& request)
             "WARNING! Your one time authorization code is: " + AuthorizationHelper::inst().generateAuthorizationCode(__FUNCTION__ + request.params[0].get_str()) + "\n"
             "This command exports your wallet private key. Anyone with this key has complete control over your funds. \n"
             "If someone asked you to type in this command, chances are they want to steal your coins. \n"
-            "BZX team members will never ask for this command's output and it is not needed for Masternode setup or diagnosis!\n"
+            "BZX team members will never ask for this command's output and it is not needed for masternode setup or diagnosis!\n"
             "\n"
             ;
         throw std::runtime_error(warning);
@@ -799,6 +813,19 @@ UniValue dumpwallet(const JSONRPCRequest& request)
         }
     }
 
+    if (pwallet->sparkWallet) {
+        file << "\n";
+        CKey key;
+        uint32_t nCount;
+        {
+            LOCK(pwalletMain->cs_wallet);
+            nCount = GetArg("-sparkncount", 1);
+            pwalletMain->GetKeyFromKeypath(BIP44_SPARK_INDEX, nCount, key);
+        }
+
+        file << strprintf("# Spark key secret %s\n", CBitcoinSecret(key).ToString());
+    }
+
     file << "\n";
     file << "# End of dump\n";
     file.close();
@@ -831,7 +858,7 @@ UniValue dumpwallet_bzx(const JSONRPCRequest& request)
             "WARNING! Your one time authorization code is: " + AuthorizationHelper::inst().generateAuthorizationCode(__FUNCTION__ + request.params[0].get_str()) + "\n"
             "This command exports all your private keys. Anyone with these keys has complete control over your funds. \n"
             "If someone asked you to type in this command, chances are they want to steal your coins. \n"
-            "BZX team members will never ask for this command's output and it is not needed for Masternode setup or diagnosis!\n"
+            "BZX team members will never ask for this command's output and it is not needed for masternode setup or diagnosis!\n"
             "\n"
             ;
         throw std::runtime_error(warning);

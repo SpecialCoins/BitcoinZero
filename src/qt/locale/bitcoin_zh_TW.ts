@@ -3695,10 +3695,6 @@
         <translation>是否允許在節點位址數目不足時，使用域名查詢來搜尋節點 (預設值: 當沒用 -connect/-noconnect 時為 1)</translation>
     </message>
     <message>
-        <source>Support filtering of blocks and transaction with bloom filters (default: %u)</source>
-        <translation>支援用布倫過濾器來過濾區塊和交易(預設值: %u)</translation>
-    </message>
-    <message>
         <source>This is the transaction fee you may pay when fee estimates are not available.</source>
         <translation>這是當預估手續費還沒計算出來時，付款交易預設會付的手續費。</translation>
     </message>

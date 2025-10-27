@@ -6,8 +6,10 @@
 #include "base58.h"
 #include "definition.h"
 #include "txmempool.h"
+#ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
 #include "wallet/walletdb.h"
+#endif // ENABLE_WALLET
 #include "crypto/sha256.h"
 #include "liblelantus/coin.h"
 #include "liblelantus/schnorr_prover.h"
@@ -26,6 +28,8 @@
 #include <boost/scope_exit.hpp>
 
 #include <ios>
+
+int64_t nMinimumInputValue = DUST_HARD_LIMIT;
 
 namespace lelantus {
 
@@ -89,7 +93,14 @@ bool IsLelantusAllowed()
 
 bool IsLelantusAllowed(int height)
 {
-	return height >= ::Params().GetConsensus().nLelantusStartBlock;
+	return height >= ::Params().GetConsensus().nLelantusStartBlock && height < ::Params().GetConsensus().nSparkStartBlock;
+}
+
+bool IsLelantusGraceFulPeriod()
+{
+    LOCK(cs_main);
+    int height = chainActive.Height();
+    return height >= ::Params().GetConsensus().nLelantusStartBlock && height < ::Params().GetConsensus().nLelantusGracefulPeriod;
 }
 
 bool IsAvailableToMint(const CAmount& amount)
@@ -335,6 +346,7 @@ bool CheckLelantusJMintTransaction(
 
         // Update public coin list in the info
         lelantusTxInfo->mints.push_back(std::make_pair(pubCoin, std::make_pair(amount, mintTag)));
+        lelantusTxInfo->encryptedJmintValues.insert(std::make_pair(pubCoin, encryptedValue));
         lelantusTxInfo->zcTransactions.insert(hashTx);
     }
 
@@ -352,9 +364,8 @@ bool CheckLelantusJoinSplitTransaction(
         int realHeight,
         bool isCheckWallet,
         bool fStatefulSigmaCheck,
-        sigma::CSigmaTxInfo* sigmaTxInfo,
         CLelantusTxInfo* lelantusTxInfo) {
-    std::unordered_set<Scalar, sigma::CScalarHash> txSerials;
+    std::unordered_set<Scalar, lelantus::CScalarHash> txSerials;
 
     Consensus::Params const & params = ::Params().GetConsensus();
 
@@ -372,7 +383,6 @@ bool CheckLelantusJoinSplitTransaction(
                 return state.DoS(100, false, NSEQUENCE_INCORRECT,
                         "CheckLelantusJoinSplitTransaction: lelantus data should reside in transaction payload");
     }
-    const CTxIn &txin = tx.vin[0];
     std::unique_ptr<lelantus::JoinSplit> joinsplit;
 
     try {
@@ -384,7 +394,7 @@ bool CheckLelantusJoinSplitTransaction(
             REJECT_MALFORMED,
             "CheckLelantusJoinSplitTransaction: invalid joinsplit transaction");
     }
-    catch (...) {
+    catch (const std::exception &) {
         return state.DoS(100,
                          false,
                          REJECT_MALFORMED,
@@ -423,8 +433,13 @@ bool CheckLelantusJoinSplitTransaction(
 
     for (const CTxOut &txout : tx.vout) {
         if (!txout.scriptPubKey.empty() && txout.scriptPubKey.IsLelantusJMint()) {
-            if (!CheckLelantusJMintTransaction(txout, state, hashTx, fStatefulSigmaCheck, Cout, lelantusTxInfo))
-                return false;
+            try {
+                if (!CheckLelantusJMintTransaction(txout, state, hashTx, fStatefulSigmaCheck, Cout, lelantusTxInfo))
+                    return false;
+            }
+            catch (const std::exception &x) {
+                return state.Error(x.what());
+            }
         } else if(txout.scriptPubKey.IsLelantusMint()) {
             return false; //putting regular mints at JoinSplit transactions is not allowed
         } else {
@@ -433,48 +448,11 @@ bool CheckLelantusJoinSplitTransaction(
     }
 
     std::vector<std::vector<unsigned char>> anonymity_set_hashes;
-
+    const std::vector<uint32_t>& ids = joinsplit->getCoinGroupIds();
+	
     for (auto& idAndHash : joinsplit->getIdAndBlockHashes()) {
         auto& anonymity_set = anonymity_sets[idAndHash.first];
-        int coinGroupId = idAndHash.first % (CENT / 1000);
-        int64_t intDenom = (idAndHash.first - coinGroupId);
-        intDenom *= 1000;
-
-        sigma::CoinDenomination denomination;
-        if (joinsplit->isSigmaToLelantus() && sigma::IntegerToDenomination(intDenom, denomination)) {
-
-            sigma::CSigmaState::SigmaCoinGroupInfo coinGroup;
-            sigma::CSigmaState *sigmaState = sigma::CSigmaState::GetState();
-            if (!sigmaState->GetCoinGroupInfo(denomination, coinGroupId, coinGroup))
-                return state.DoS(100, false, NO_MINT_PRIVCOIN,
-                                 "CheckSigmaSpendTransaction: Error: no coins were minted with such parameters");
-
-            CBlockIndex *index = coinGroup.lastBlock;
-
-            // find index for block with hash of accumulatorBlockHash or set index to the coinGroup.firstBlock if not found
-            while (index != coinGroup.firstBlock && index->GetBlockHash() != idAndHash.second)
-                index = index->pprev;
-
-            std::pair<sigma::CoinDenomination, int> denominationAndId = std::make_pair(denomination, coinGroupId);
-
-            auto lelantusParams = lelantus::Params::get_default();
-            while (true) {
-                if (index->sigmaMintedPubCoins.count(denominationAndId) > 0) {
-                    BOOST_FOREACH(
-                    const sigma::PublicCoin &pubCoinValue,
-                    index->sigmaMintedPubCoins[denominationAndId]) {
-                        if (::Params().GetConsensus().sigmaBlacklist.count(pubCoinValue.getValue()) > 0) {
-                            continue;
-                        }
-                        lelantus::PublicCoin publicCoin(pubCoinValue.getValue() + lelantusParams->get_h1() * intDenom);
-                        anonymity_set.push_back(publicCoin);
-                    }
-                }
-                if (index == coinGroup.firstBlock)
-                    break;
-                index = index->pprev;
-            }
-        } else {
+        {
             CLelantusState::LelantusCoinGroupInfo coinGroup;
             if (!lelantusState.GetCoinGroupInfo(idAndHash.first, coinGroup))
                 return state.DoS(100, false, NO_MINT_PRIVCOIN,
@@ -526,41 +504,46 @@ bool CheckLelantusJoinSplitTransaction(
         anonymity_sets[idAndHash.first] = anonymity_set;
     }
 
-    BatchProofContainer* batchProofContainer = BatchProofContainer::get_instance();
-    bool useBatching = batchProofContainer->fCollectProofs && !isVerifyDB && !isCheckWallet && lelantusTxInfo && !lelantusTxInfo->fInfoIsComplete;
+    {
+        for (const auto& id: ids) {
+            if (!anonymity_sets.count(id))
+                return state.DoS(100,
+                                 error("CheckLelantusJoinSplitTransaction: No anonymity set found."));
+        }
 
-    Scalar challenge;
-    // if we are collecting proofs, skip verification and collect proofs
-    passVerify = joinsplit->Verify(anonymity_sets, anonymity_set_hashes, Cout, Vout, txHashForMetadata, challenge, useBatching);
+        BatchProofContainer* batchProofContainer = BatchProofContainer::get_instance();
+        bool useBatching = batchProofContainer->fCollectProofs && !isVerifyDB && !isCheckWallet && lelantusTxInfo && !lelantusTxInfo->fInfoIsComplete;
 
-    // add proofs into container
-    if(useBatching) {
-        std::map<uint32_t, size_t> idAndSizes;
+        Scalar challenge;
+        // if we are collecting proofs, skip verification and collect proofs
+        passVerify = joinsplit->Verify(anonymity_sets, anonymity_set_hashes, Cout, Vout, txHashForMetadata, challenge, useBatching);
 
-        for(auto itr : anonymity_sets)
-            idAndSizes[itr.first] = itr.second.size();
+        // add proofs into container
+        if(useBatching) {
+            std::map<uint32_t, size_t> idAndSizes;
 
-        batchProofContainer->add(joinsplit.get(), idAndSizes, challenge, nHeight >= params.nLelantusStartBlock);
-        batchProofContainer->add(joinsplit.get(), Cout);
+            for(auto itr : anonymity_sets)
+                idAndSizes[itr.first] = itr.second.size();
+
+            batchProofContainer->add(joinsplit.get(), Cout);
+        }
     }
 
     if (passVerify) {
         const std::vector<Scalar>& serials = joinsplit->getCoinSerialNumbers();
-        const std::vector<uint32_t> &ids = joinsplit->getCoinGroupIds();
-
         if (serials.size() != ids.size()) {
             return state.DoS(100,
                              error("CheckLelantusJoinSplitTransaction: sized of serials and group ids don't match."));
         }
 
         // do not check for duplicates in case we've seen exact copy of this tx in this block before
-        if (!(sigmaTxInfo && sigmaTxInfo->zcTransactions.count(hashTx) > 0) && !(lelantusTxInfo && lelantusTxInfo->zcTransactions.count(hashTx) > 0)) {
+        if (!(lelantusTxInfo && lelantusTxInfo->zcTransactions.count(hashTx) > 0)) {
             for (size_t i = 0; i < serials.size(); ++i) {
-                    if (!CheckLelantusSpendSerial(
-                            state, lelantusTxInfo, serials[i], nHeight, false)) {
-                        LogPrintf("CheckLelantusJoinSplitTransaction: serial check failed, serial=%s\n", serials[i]);
-                        return false;
-                    }
+                if (!CheckLelantusSpendSerial(
+                        state, lelantusTxInfo, serials[i], nHeight, false)) {
+                    LogPrintf("CheckLelantusJoinSplitTransaction: serial check failed, serial=%s\n", serials[i].GetHex());
+                    return false;
+                }
             }
         }
 
@@ -574,25 +557,9 @@ bool CheckLelantusJoinSplitTransaction(
 
         if (!isVerifyDB && !isCheckWallet) {
             // add spend information to the index
-            if (joinsplit->isSigmaToLelantus()) {
-                if (sigmaTxInfo && !sigmaTxInfo->fInfoIsComplete) {
-                    for (size_t i = 0; i < serials.size(); i++) {
-                        int coinGroupId = ids[i] % (CENT / 1000);
-                        int64_t intDenom = (ids[i] - coinGroupId);
-                        intDenom *= 1000;
-                        sigma::CoinDenomination denomination;
-                        if(!sigma::IntegerToDenomination(intDenom, denomination) && lelantusTxInfo && !lelantusTxInfo->fInfoIsComplete)
-                            lelantusTxInfo->spentSerials.insert(std::make_pair(serials[i], ids[i]));
-                        else
-                            sigmaTxInfo->spentSerials.insert(std::make_pair(
-                                    serials[i], sigma::CSpendCoinInfo::make(denomination, coinGroupId)));
-                    }
-                }
-            } else {
-                if (lelantusTxInfo && !lelantusTxInfo->fInfoIsComplete) {
-                    for (size_t i = 0; i < serials.size(); i++) {
-                        lelantusTxInfo->spentSerials.insert(std::make_pair(serials[i], ids[i]));
-                    }
+            if (lelantusTxInfo && !lelantusTxInfo->fInfoIsComplete) {
+                for (size_t i = 0; i < serials.size(); i++) {
+                    lelantusTxInfo->spentSerials.insert(std::make_pair(serials[i], ids[i]));
                 }
             }
         }
@@ -685,7 +652,6 @@ bool CheckLelantusTransaction(
         int nHeight,
         bool isCheckWallet,
         bool fStatefulSigmaCheck,
-        sigma::CSigmaTxInfo* sigmaTxInfo,
         CLelantusTxInfo* lelantusTxInfo)
 {
     Consensus::Params const & consensus = ::Params().GetConsensus();
@@ -695,6 +661,22 @@ bool CheckLelantusTransaction(
     if (realHeight == INT_MAX) {
         LOCK(cs_main);
         realHeight = chainActive.Height();
+    }
+
+    // accept Lelantus mint tx into 5 more blocks, to allow mempool cleared
+    if (!isVerifyDB && realHeight >= (::Params().GetConsensus().nSparkStartBlock + 5)) {
+        if (tx.IsLelantusMint() && !tx.IsLelantusJoinSplit())
+            return state.DoS(100, false,
+                             REJECT_INVALID,
+                             "Lelantus already is not available, start using Spark.");
+    }
+
+    // accept lelantus spends until nLelantusGracefulPeriod passed, to allow migration of funds from lelantus to spark
+    if (!isVerifyDB && realHeight >= (::Params().GetConsensus().nLelantusGracefulPeriod)) {
+        if (tx.IsLelantusJoinSplit())
+            return state.DoS(100, false,
+                             REJECT_INVALID,
+                             "Lelantus is fully disabled.");
     }
 
     bool const allowLelantus = (realHeight >= consensus.nLelantusStartBlock);
@@ -711,8 +693,13 @@ bool CheckLelantusTransaction(
     if (allowLelantus && !isVerifyDB) {
         for (const CTxOut &txout : tx.vout) {
             if (!txout.scriptPubKey.empty() && txout.scriptPubKey.IsLelantusMint()) {
-                if (!CheckLelantusMintTransaction(txout, state, hashTx, fStatefulSigmaCheck, lelantusTxInfo))
-                    return false;
+                try {
+                    if (!CheckLelantusMintTransaction(txout, state, hashTx, fStatefulSigmaCheck, lelantusTxInfo))
+                        return false;
+                }
+                catch (const std::exception &x) {
+                    return state.Error(x.what());
+                }
             }
         }
     }
@@ -733,10 +720,15 @@ bool CheckLelantusTransaction(
         }
 
         if (!isVerifyDB) {
-            if (!CheckLelantusJoinSplitTransaction(
-                tx, state, hashTx, isVerifyDB, nHeight, realHeight,
-                isCheckWallet, fStatefulSigmaCheck, sigmaTxInfo, lelantusTxInfo)) {
-                    return false;
+            try {
+                if (!CheckLelantusJoinSplitTransaction(
+                    tx, state, hashTx, isVerifyDB, nHeight, realHeight,
+                    isCheckWallet, fStatefulSigmaCheck, lelantusTxInfo)) {
+                        return false;
+                }
+            }
+            catch (const std::exception &x) {
+                return state.Error(x.what());
             }
         }
     }
@@ -759,7 +751,7 @@ void RemoveLelantusJoinSplitReferencingBlock(CTxMemPool& pool, CBlockIndex* bloc
                     try {
                         joinsplit = ParseLelantusJoinSplit(tx);
                     }
-                    catch (...) {
+                    catch (const std::exception &) {
                         txn_to_remove.push_back(tx);
                         break;
                     }
@@ -798,7 +790,7 @@ std::vector<Scalar> GetLelantusJoinSplitSerialNumbers(const CTransaction &tx, co
     try {
         return ParseLelantusJoinSplit(tx)->getCoinSerialNumbers();
     }
-    catch (...) {
+    catch (const std::exception &) {
         return std::vector<Scalar>();
     }
 }
@@ -810,7 +802,7 @@ std::vector<uint32_t> GetLelantusJoinSplitIds(const CTransaction &tx, const CTxI
     try {
         return ParseLelantusJoinSplit(tx)->getCoinGroupIds();
     }
-    catch (...) {
+    catch (const std::exception &) {
         return std::vector<uint32_t>();
     }
 }
@@ -870,15 +862,17 @@ bool ConnectBlockLelantus(
                     )) {
                 return false;
             }
+        }
 
-            if (!fJustCheck) {
+        if (!fJustCheck) {
+            BOOST_FOREACH(auto& serial, pblock->lelantusTxInfo->spentSerials) {
                 pindexNew->lelantusSpentSerials.insert(serial);
                 lelantusState.AddSpend(serial.first, serial.second);
             }
         }
-
-        if (fJustCheck)
+        else {
             return true;
+        }
 
         const auto& params = ::Params().GetConsensus();
         CHash256 hash;
@@ -950,7 +944,7 @@ bool GetOutPointFromBlock(COutPoint& outPoint, const GroupElement &pubCoinValue,
                 try {
                     ParseLelantusMintScript(txout.scriptPubKey, txPubCoinValue);
                 }
-                catch (...) {
+                catch (const std::exception &) {
                     continue;
                 }
                 if(pubCoinValue==txPubCoinValue){
@@ -963,6 +957,12 @@ bool GetOutPointFromBlock(COutPoint& outPoint, const GroupElement &pubCoinValue,
     }
 
     return false;
+}
+
+uint256 GetTxHashFromPubcoin(const lelantus::PublicCoin& pubCoin) {
+    COutPoint outPoint;
+    GetOutPoint(outPoint, pubCoin.getValue());
+    return  outPoint.hash;
 }
 
 bool GetOutPoint(COutPoint& outPoint, const lelantus::PublicCoin &pubCoin) {
@@ -1069,13 +1069,11 @@ void CLelantusState::Containers::RemoveMint(lelantus::PublicCoin const & pubCoin
 }
 
 void CLelantusState::Containers::AddSpend(Scalar const & serial, int coinGroupId) {
-    if (!mintMetaInfo.count(coinGroupId)) {
-        throw std::invalid_argument("group id doesn't exist");
+    if (mintMetaInfo.count(coinGroupId) > 0) {
+        usedCoinSerials[serial] = coinGroupId;
+        spendMetaInfo[coinGroupId] += 1;
+        CheckSurgeCondition();
     }
-
-    usedCoinSerials[serial] = coinGroupId;
-    spendMetaInfo[coinGroupId] += 1;
-    CheckSurgeCondition();
 }
 
 void CLelantusState::Containers::RemoveSpend(Scalar const & serial) {
@@ -1181,7 +1179,22 @@ void CLelantusState::AddMintsToStateAndBlockIndex(
         const CBlock* pblock) {
 
     std::vector<std::pair<lelantus::PublicCoin, uint256>> blockMints;
+    std::unordered_map<GroupElement, lelantus::MintValueData> lelantusMintData;
+
     for (const auto& mint : pblock->lelantusTxInfo->mints) {
+        if (GetBoolArg("-mobile", false)) {
+            lelantus::MintValueData mintdata;
+            mintdata.amount = mint.second.first;
+            if (pblock->lelantusTxInfo->encryptedJmintValues.count(mint.first) > 0) {
+                mintdata.isJMint = true;
+                mintdata.encryptedValue = pblock->lelantusTxInfo->encryptedJmintValues[mint.first];
+            }
+
+            COutPoint outPoint;
+            GetOutPointFromBlock(outPoint, mint.first.getValue(), *pblock);
+            mintdata.txHash = outPoint.hash;
+            lelantusMintData[mint.first.getValue()] = mintdata;
+        }
         blockMints.push_back(std::make_pair(mint.first, mint.second.second));
     }
 
@@ -1221,6 +1234,10 @@ void CLelantusState::AddMintsToStateAndBlockIndex(
 
         LogPrintf("AddMintsToStateAndBlockIndex: Lelantus mint added id=%d\n", latestCoinId);
         index->lelantusMintedPubCoins[latestCoinId].push_back(mint);
+
+        if (GetBoolArg("-mobile", false)) {
+            index->lelantusMintData[mint.first.getValue()] = lelantusMintData[mint.first.getValue()];
+        }
     }
 }
 
@@ -1265,9 +1282,8 @@ void CLelantusState::RemoveBlock(CBlockIndex *index) {
     // roll back coin group updates
     for (auto &coins : index->lelantusMintedPubCoins)
     {
-        if (coinGroups.count(coins.first) == 0) {
-            throw std::invalid_argument("Group Id does not exist");
-        }
+        if (coinGroups.count(coins.first) == 0)
+            continue;
 
         LelantusCoinGroupInfo& coinGroup = coinGroups[coins.first];
         auto nMintsToForget = coins.second.size();
@@ -1275,7 +1291,7 @@ void CLelantusState::RemoveBlock(CBlockIndex *index) {
         if (nMintsToForget == 0)
             continue;
 
-        assert(coinGroup.nCoins >= nMintsToForget);
+        assert(cmp::greater_equal(coinGroup.nCoins, nMintsToForget));
         auto isExtended = coins.first > 1;
         coinGroup.nCoins -= nMintsToForget;
 
@@ -1387,7 +1403,8 @@ int CLelantusState::GetCoinSetForSpend(
     int coinGroupID,
     uint256& blockHash_out,
     std::vector<lelantus::PublicCoin>& coins_out,
-    std::vector<unsigned char>& setHash_out) {
+    std::vector<unsigned char>& setHash_out,
+    std::string start_block_hash) {
 
     coins_out.clear();
 
@@ -1403,6 +1420,10 @@ int CLelantusState::GetCoinSetForSpend(
         // ignore block heigher than max height
         if (block->nHeight > maxHeight) {
             continue;
+        }
+
+        if (block->GetBlockHash().GetHex() == start_block_hash) {
+            break ;
         }
 
         // check coins in group coinGroupID - 1 in the case that using coins from prev group.
@@ -1441,6 +1462,76 @@ int CLelantusState::GetCoinSetForSpend(
     }
 
     return numberOfCoins;
+}
+
+void CLelantusState::GetCoinsForRecovery(
+        CChain *chain,
+        int maxHeight,
+        int coinGroupID,
+        std::string start_block_hash,
+        uint256& blockHash_out,
+        std::vector<std::pair<lelantus::PublicCoin, std::pair<lelantus::MintValueData, uint256>>>& coins,
+        std::vector<unsigned char>& setHash_out) {
+
+    coins.clear();
+    if (coinGroups.count(coinGroupID) == 0) {
+        return;
+    }
+
+    LelantusCoinGroupInfo &coinGroup = coinGroups[coinGroupID];
+
+    int numberOfCoins = 0;
+    for (CBlockIndex *block = coinGroup.lastBlock;; block = block->pprev) {
+        // ignore block heigher than max height
+        if (block->nHeight > maxHeight) {
+            continue;
+        }
+
+        if (block->GetBlockHash().GetHex() == start_block_hash) {
+            break;
+        }
+
+        // check coins in group coinGroupID - 1 in the case that using coins from prev group.
+        int id = 0;
+        if (CountCoinInBlock(block, coinGroupID)) {
+            id = coinGroupID;
+        } else if (CountCoinInBlock(block, coinGroupID - 1)) {
+            id = coinGroupID - 1;
+        }
+
+        if (id) {
+            if (numberOfCoins == 0) {
+                // latest block satisfying given conditions
+                // remember block hash and set hash
+                blockHash_out = block->GetBlockHash();
+                setHash_out =  GetAnonymitySetHash(block, id);
+            }
+
+            numberOfCoins += block->lelantusMintedPubCoins[id].size();
+            if (block->lelantusMintedPubCoins.count(id) > 0) {
+                for (const auto &coin : block->lelantusMintedPubCoins[id]) {
+                    LOCK(cs_main);
+                    // skip mints from blacklist if nLelantusStartBlock is passed
+                    if (chainActive.Height() >= ::Params().GetConsensus().nLelantusStartBlock) {
+                        if (::Params().GetConsensus().lelantusBlacklist.count(coin.first.getValue()) > 0) {
+                            continue;
+                        }
+                    }
+
+                    lelantus::MintValueData lelantusMintData;
+                    if (block->lelantusMintData.count(coin.first.getValue()))
+                        lelantusMintData = block->lelantusMintData[coin.first.getValue()];
+                    coins.push_back(std::make_pair(coin.first, std::make_pair(lelantusMintData, coin.second)));
+
+                }
+            }
+        }
+
+        if (block == coinGroup.firstBlock) {
+            break ;
+        }
+    }
+
 }
 
 void CLelantusState::GetAnonymitySet(
@@ -1581,7 +1672,7 @@ std::unordered_map<int, CLelantusState::LelantusCoinGroupInfo> const & CLelantus
     return coinGroups;
 }
 
-std::unordered_map<Scalar, uint256, sigma::CScalarHash> const & CLelantusState::GetMempoolCoinSerials() const {
+std::unordered_map<Scalar, uint256, lelantus::CScalarHash> const & CLelantusState::GetMempoolCoinSerials() const {
     LOCK(mempool.cs);
     return mempool.lelantusState.GetMempoolCoinSerials();
 }

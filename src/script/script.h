@@ -201,7 +201,15 @@ enum opcodetype
     OP_LELANTUSJOINSPLITPAYLOAD = 0xc9,
 
     // input for reminting privcoin to sigma (v3)
-    OP_PRIVCOINTOSIGMAREMINT = 0xc8
+    OP_PRIVCOINTOSIGMAREMINT = 0xc8,
+
+    // spark params
+    OP_SPARKMINT = 0xd1,
+    OP_SPARKSMINT = 0xd2,
+    OP_SPARKSPEND = 0xd3,
+
+    // basically NOP but identifies that sunsequent txout script contains super transparent address
+    OP_EXCHANGEADDR = 0xe0
 };
 
 const char* GetOpName(opcodetype opcode);
@@ -575,7 +583,8 @@ public:
         opcodeRet = (opcodetype)opcode;
 
         if (opcodeRet == opcodetype::OP_SIGMASPEND || opcodeRet == opcodetype::OP_SIGMAMINT ||
-            opcodeRet == opcodetype::OP_LELANTUSMINT || opcodeRet == opcodetype::OP_LELANTUSJMINT || opcodeRet == opcodetype::OP_LELANTUSJOINSPLIT) {
+            opcodeRet == opcodetype::OP_LELANTUSMINT || opcodeRet == opcodetype::OP_LELANTUSJMINT || opcodeRet == opcodetype::OP_LELANTUSJOINSPLIT ||
+            opcodeRet == opcodetype::OP_SPARKMINT || opcodeRet == opcodetype::OP_SPARKSMINT || opcodeRet == opcodetype::OP_SPARKSPEND) {
             if (pvchRet) {
                 pvchRet->assign(pc, end());
             }
@@ -654,6 +663,7 @@ public:
     bool IsNormalPaymentScript() const;
 
     bool IsPayToPublicKeyHash() const;
+    bool IsPayToExchangeAddress() const;
 
     bool IsPayToScriptHash() const;
     bool IsPayToWitnessScriptHash() const;
@@ -670,6 +680,13 @@ public:
     bool IsLelantusMint() const;
     bool IsLelantusJMint() const;
     bool IsLelantusJoinSplit() const;
+
+    // Spark
+    bool IsSparkMint() const;
+
+    bool IsSparkSMint() const;
+
+    bool IsSparkSpend() const;
 
     bool IsPrivcoinRemint() const;
 

@@ -25,7 +25,9 @@
 #include "util.h"
 #include "utilmoneystr.h"
 #include "validationinterface.h"
+#ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
+#endif // ENABLE_WALLET
 #include "definition.h"
 #include "crypto/scrypt.h"
 #include "crypto/Lyra2Z/Lyra2Z.h"
@@ -132,6 +134,9 @@ void BlockAssembler::resetBlock()
 
     nLelantusSpendAmount = 0;
     nLelantusSpendInputs = 0;
+
+    nSparkSpendAmount = 0;
+    nSparkSpendInputs = 0;
 }
 
 std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& scriptPubKeyIn)
@@ -293,7 +298,6 @@ void BlockAssembler::onlyUnconfirmed(CTxMemPool::setEntries& testSet)
 
 bool BlockAssembler::TestPackage(uint64_t packageSize, int64_t packageSigOpsCost)
 {
-    // TODO: switch to weight-based accounting for packages instead of vsize-based accounting.
     if (nBlockSize + packageSize >= nBlockMaxSize)
         return false;
     if (nBlockSigOpsCost + packageSigOpsCost >= MAX_BLOCK_SIGOPS_COST)
@@ -385,6 +389,18 @@ bool BlockAssembler::TestForBlock(CTxMemPool::txiter iter)
             return false;
     }
 
+    // Check transaction against spark limits
+    if(tx.IsSparkSpend()) {
+        CAmount spendAmount = spark::GetSpendTransparentAmount(tx);
+        const auto &params = chainparams.GetConsensus();
+
+        if (spendAmount > params.nMaxValueSparkSpendPerTransaction)
+            return false;
+
+        if (spendAmount + nSparkSpendAmount > params.nMaxValueSparkSpendPerBlock)
+            return false;
+    }
+
     return true;
 }
 
@@ -403,6 +419,17 @@ void BlockAssembler::AddToBlock(CTxMemPool::txiter iter)
             return;
 
         if ((nLelantusSpendInputs += spendNumber) > params.nMaxLelantusInputPerBlock)
+            return;
+    }
+
+    if(tx.IsSparkSpend()) {
+        CAmount spendAmount = spark::GetSpendTransparentAmount(tx);
+        const auto &params = chainparams.GetConsensus();
+
+        if (spendAmount > params.nMaxValueSparkSpendPerTransaction)
+            return;
+
+        if ((nSparkSpendAmount += spendAmount) > params.nMaxValueSparkSpendPerBlock)
             return;
     }
 
@@ -435,7 +462,6 @@ int BlockAssembler::UpdatePackagesForAdded(const CTxMemPool::setEntries& already
 {
     int nDescendantsUpdated = 0;
     BOOST_FOREACH(const CTxMemPool::txiter it, alreadyAdded) {
-
         CTxMemPool::setEntries descendants;
         mempool.CalculateDescendants(it, descendants);
         // Insert all descendants (not yet in block) into the modified set
@@ -712,6 +738,14 @@ void BlockAssembler::FillBlackListForBlockTemplate() {
 
         const CTransaction &tx = mi->GetTx();
 
+        // transactions depending (directly or not) on spends in the mempool cannot be included in the
+        // same block with spend transaction
+        if (tx.IsLelantusJoinSplit() || tx.IsSparkSpend()) {
+            mempool.CalculateDescendants(mi, txBlackList);
+            // remove privacy transaction itself
+            txBlackList.erase(mi);
+        }
+
         if (tx.nVersion >= 3 && tx.nType == TRANSACTION_PROVIDER_REGISTER) {
             CProRegTx proTx;
             if (GetTxPayload(tx, proTx)) {
@@ -767,34 +801,49 @@ void BlockAssembler::FillBlackListForBlockTemplate() {
 
     // Now if we have limit on lelantus transparent outputs scan mempool and drop all the transactions exceeding the limit
     if (sporkMap.count(CSporkAction::featureLelantusTransparentLimit) > 0) {
-        CAmount limit = sporkMap[CSporkAction::featureLelantusTransparentLimit].second;
-
-        std::vector<CTxMemPool::txiter> joinSplitTxs;
-        for (CTxMemPool::txiter mi = mempool.mapTx.begin(); mi != mempool.mapTx.end(); ++mi) {
-            if (txBlackList.count(mi) == 0 && mi->GetTx().IsLelantusJoinSplit())
-                joinSplitTxs.push_back(mi);
-        }
-
-        // sort join splits in order of their transparent outputs so large txs won't block smaller ones
-        // from getting into the mempool
-        std::sort(joinSplitTxs.begin(), joinSplitTxs.end(), 
-            [](CTxMemPool::txiter a, CTxMemPool::txiter b) -> bool {
-                return lelantus::GetSpendTransparentAmount(a->GetTx()) < lelantus::GetSpendTransparentAmount(b->GetTx());
-            });
-
-        CAmount transparentAmount = 0;
-        std::vector<CTxMemPool::txiter>::const_iterator it;
-        for (it = joinSplitTxs.cbegin(); it != joinSplitTxs.cend(); ++it) {
-            CAmount output = lelantus::GetSpendTransparentAmount((*it)->GetTx());
-            if (transparentAmount + output > limit)
-                break;
-            transparentAmount += output;
-        }
-
-        // found all the joinsplit transaction fitting in the limit, blacklist the rest
-        while (it != joinSplitTxs.cend())
-            mempool.CalculateDescendants(*it++, txBlackList);
+        BlacklistTxsExceedingLimit(sporkMap[CSporkAction::featureLelantusTransparentLimit].second,
+            [](const CTransaction &tx)->bool { return tx.IsLelantusJoinSplit(); },
+            [](const CTransaction &tx)->CAmount { return lelantus::GetSpendTransparentAmount(tx); });
     }
+
+    // Same for spark spends
+    if (sporkMap.count(CSporkAction::featureSparkTransparentLimit) > 0) {
+        BlacklistTxsExceedingLimit(sporkMap[CSporkAction::featureSparkTransparentLimit].second,
+            [](const CTransaction &tx)->bool { return tx.IsSparkSpend(); },
+            [](const CTransaction &tx)->CAmount { return spark::GetSpendTransparentAmount(tx); });
+    }
+}
+
+void BlockAssembler::BlacklistTxsExceedingLimit(CAmount limit,
+                                    std::function<bool (const CTransaction &)> txTypeFilter,
+                                    std::function<CAmount (const CTransaction &)> txAmount) {
+
+    std::vector<CTxMemPool::txiter> txList;
+    for (CTxMemPool::txiter mi = mempool.mapTx.begin(); mi != mempool.mapTx.end(); ++mi) {
+        if (txBlackList.count(mi) == 0 && txTypeFilter(mi->GetTx()))
+            txList.push_back(mi);
+    }
+
+    // sort transactions in order of their transparent outputs so large txs won't block smaller ones
+    // from getting into the mempool
+    std::sort(txList.begin(), txList.end(), 
+        [=](CTxMemPool::txiter a, CTxMemPool::txiter b) -> bool {
+            return txAmount(a->GetTx()) < txAmount(b->GetTx());
+        });
+
+    CAmount transparentAmount = 0;
+    std::vector<CTxMemPool::txiter>::const_iterator it;
+    for (it = txList.cbegin(); it != txList.cend(); ++it) {
+        CAmount output = txAmount((*it)->GetTx());
+        if (transparentAmount + output > limit)
+            break;
+        transparentAmount += output;
+    }
+
+    // found all the private transaction fitting in the limit, blacklist the rest
+    while (it != txList.cend())
+        mempool.CalculateDescendants(*it++, txBlackList);
+
 }
 
 static bool ProcessBlockFound(const CBlock* pblock, const CChainParams& chainparams)
@@ -826,6 +875,7 @@ bool fGenerate = false;
 void static BZXMiner(const CChainParams &chainparams) {
 
     LogPrintf("BZXMiner Started\n");
+    fGenerate = true;
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("BZX-miner");
 
@@ -850,7 +900,15 @@ void static BZXMiner(const CChainParams &chainparams) {
                 // Also try to wait for masternode winners unless we're on regtest chain
                 do {
                     bool fvNodesEmpty = g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0;
-                    if (!fvNodesEmpty && !IsInitialBlockDownload()) {
+                    bool fHasMasternodesWinnerForNextBlock;
+                    const Consensus::Params &params = chainparams.GetConsensus();
+                    {
+                        LOCK2(cs_main, mempool.cs);
+                        fHasMasternodesWinnerForNextBlock =
+                                params.IsRegtest() ||
+                                chainActive.Height()+1 >= chainparams.GetConsensus().DIP0003EnforcementHeight;
+                    }
+                    if (!fvNodesEmpty && fHasMasternodesWinnerForNextBlock && !IsInitialBlockDownload()) {
                         break;
                     }
                     MilliSleep(1000);
@@ -957,10 +1015,12 @@ void static BZXMiner(const CChainParams &chainparams) {
         }
     }
     catch (const boost::thread_interrupted &) {
+        fGenerate = false;
         LogPrintf("BZXMiner terminated\n");
         throw;
     }
     catch (const std::runtime_error &e) {
+        fGenerate = false;
         LogPrintf("BZXMiner runtime error: %s\n", e.what());
         return;
     }

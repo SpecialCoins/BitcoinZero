@@ -13,7 +13,7 @@
 - (NSString *)__bundleIdentifier
 {
     if (self == [NSBundle mainBundle]) {
-        return @"org.BZX.BZX-Qt";
+        return @"org.BZX.bitcoinzero-qt";
     } else {
         return [self __bundleIdentifier];
     }

@@ -57,14 +57,6 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 "Delete all wallet transactions and only recover those parts of the "
 "blockchain through -rescan on startup"),
 QT_TRANSLATE_NOOP("BZX-core", ""
-"Disabled transaction index detected.\n"
-"\n"
-"Exodus requires an enabled transaction index. To enable transaction "
-"indexing, please use the \"-txindex\" option as command line argument or add "
-"\"txindex=1\" to your client configuration file within your data directory.\n"
-"\n"
-"Configuration file"),
-QT_TRANSLATE_NOOP("BZX-core", ""
 "Discover own IP addresses (default: 1 when listening and no -externalip or -"
 "proxy)"),
 QT_TRANSLATE_NOOP("BZX-core", ""
@@ -117,7 +109,7 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 "Found unconfirmed denominated outputs, will wait till they confirm to "
 "continue."),
 QT_TRANSLATE_NOOP("BZX-core", ""
-"Has to have at least two mint coins with at least 2 confirmation in order to "
+"Has to have at least two mint coins with at least 1 confirmation in order to "
 "spend a coin"),
 QT_TRANSLATE_NOOP("BZX-core", ""
 "How thorough the block verification of -checkblocks is (0-4, default: %u)"),
@@ -162,10 +154,6 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 QT_TRANSLATE_NOOP("BZX-core", ""
 "Please add txindex=1 to your configuration file manually.\n"
 "\n"
-"Exodus will now shutdown."),
-QT_TRANSLATE_NOOP("BZX-core", ""
-"Please add txindex=1 to your configuration file manually.\n"
-"\n"
 "Omni Core will now shutdown."),
 QT_TRANSLATE_NOOP("BZX-core", ""
 "Please check that your computer's date and time are correct! If your clock "
@@ -173,6 +161,9 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 QT_TRANSLATE_NOOP("BZX-core", ""
 "Please contribute if you find %s useful. Visit %s for further information "
 "about the software."),
+QT_TRANSLATE_NOOP("BZX-core", ""
+"PrivateSend uses exact denominated amounts to send funds, you might simply "
+"need to anonymize some more coins."),
 QT_TRANSLATE_NOOP("BZX-core", ""
 "Prune configured below the minimum of %d MiB.  Please use a higher number."),
 QT_TRANSLATE_NOOP("BZX-core", ""
@@ -208,8 +199,6 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 "Set the number of script verification threads (%u to %d, 0 = auto, <0 = "
 "leave that many cores free, default: %d)"),
 QT_TRANSLATE_NOOP("BZX-core", ""
-"Support filtering of blocks and transaction with bloom filters (default: %u)"),
-QT_TRANSLATE_NOOP("BZX-core", ""
 "The block database contains a block which appears to be from the future. "
 "This may be due to your computer's date and time being set incorrectly. Only "
 "rebuild the block database if you are sure that your computer's date and "
@@ -235,8 +224,11 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 "Tries to keep outbound traffic under the given target (in MiB per 24h), 0 = "
 "no limit (default: %d)"),
 QT_TRANSLATE_NOOP("BZX-core", ""
-"Unable to locate enough funds for this transaction that are not equal 1000 "
-"BZX."),
+"Unable to locate enough PrivateSend denominated funds for this transaction."),
+QT_TRANSLATE_NOOP("BZX-core", ""
+"Unable to locate enough PrivateSend non-denominated funds for this transaction."),
+QT_TRANSLATE_NOOP("BZX-core", ""
+"Unable to locate enough funds for this transaction."),
 QT_TRANSLATE_NOOP("BZX-core", ""
 "Unable to rewind the database to a pre-fork state. You will need to "
 "redownload the blockchain"),
@@ -294,9 +286,6 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 "Whitelisted peers cannot be DoS banned and their transactions are always "
 "relayed, even if they are already in the mempool, useful e.g. for a gateway"),
 QT_TRANSLATE_NOOP("BZX-core", ""
-"Would you like Exodus to attempt to update your configuration file "
-"accordingly?"),
-QT_TRANSLATE_NOOP("BZX-core", ""
 "You must specify a masternodeprivkey in the configuration. Please see "
 "documentation for help."),
 QT_TRANSLATE_NOOP("BZX-core", ""
@@ -304,11 +293,6 @@ QT_TRANSLATE_NOOP("BZX-core", ""
 "mode.  This will redownload the entire blockchain"),
 QT_TRANSLATE_NOOP("BZX-core", ""
 "You need to rebuild the database using -reindex-chainstate to change -txindex"),
-QT_TRANSLATE_NOOP("BZX-core", ""
-"Your configuration file has been updated.\n"
-"\n"
-"Exodus will now shutdown - please restart the client for your new "
-"configuration to take effect."),
 QT_TRANSLATE_NOOP("BZX-core", ""
 "it has to have at least two mint coins with at least 2 confirmation in order "
 "to spend a coin"),
@@ -434,6 +418,8 @@ QT_TRANSLATE_NOOP("BZX-core", "Invalid script detected."),
 QT_TRANSLATE_NOOP("BZX-core", "Keep at most <n> unconnectable transactions in memory (default: %u)"),
 QT_TRANSLATE_NOOP("BZX-core", "Keep the transaction memory pool below <n> megabytes (default: %u)"),
 QT_TRANSLATE_NOOP("BZX-core", "Keypool ran out, please call keypoolrefill first"),
+QT_TRANSLATE_NOOP("BZX-core", "Last PrivateSend was too recent."),
+QT_TRANSLATE_NOOP("BZX-core", "Last successful PrivateSend action was too recent."),
 QT_TRANSLATE_NOOP("BZX-core", "Line: %d"),
 QT_TRANSLATE_NOOP("BZX-core", "List commands"),
 QT_TRANSLATE_NOOP("BZX-core", "Listen for JSON-RPC connections on <port> (default: %u or testnet: %u)"),
@@ -470,13 +456,15 @@ QT_TRANSLATE_NOOP("BZX-core", "One of minted coin does not found in the chain"),
 QT_TRANSLATE_NOOP("BZX-core", "One of the minted coin is invalid"),
 QT_TRANSLATE_NOOP("BZX-core", "Only connect to nodes in network <net> (ipv4, ipv6 or onion)"),
 QT_TRANSLATE_NOOP("BZX-core", "Options:"),
-QT_TRANSLATE_NOOP("BZX-core", "Parsing Exodus transactions..."),
 QT_TRANSLATE_NOOP("BZX-core", "Pass named instead of positional arguments (default: %s)"),
 QT_TRANSLATE_NOOP("BZX-core", "Password for JSON-RPC connections"),
 QT_TRANSLATE_NOOP("BZX-core", "Port: %d"),
 QT_TRANSLATE_NOOP("BZX-core", "Prepend debug output with timestamp (default: %u)"),
 QT_TRANSLATE_NOOP("BZX-core", "Print this help message and exit"),
 QT_TRANSLATE_NOOP("BZX-core", "Print version and exit"),
+QT_TRANSLATE_NOOP("BZX-core", "PrivateSend is idle."),
+QT_TRANSLATE_NOOP("BZX-core", "PrivateSend request complete:"),
+QT_TRANSLATE_NOOP("BZX-core", "PrivateSend request incomplete:"),
 QT_TRANSLATE_NOOP("BZX-core", "Problem with coin selection for re-mint while spending."),
 QT_TRANSLATE_NOOP("BZX-core", "Problem with coin selection for spend."),
 QT_TRANSLATE_NOOP("BZX-core", "Prune cannot be configured with a negative value."),
@@ -558,7 +546,7 @@ QT_TRANSLATE_NOOP("BZX-core", "Transaction has too long of a mempool chain"),
 QT_TRANSLATE_NOOP("BZX-core", "Transaction must have at least one recipient"),
 QT_TRANSLATE_NOOP("BZX-core", "Transaction not valid."),
 QT_TRANSLATE_NOOP("BZX-core", "Transaction too large for fee policy"),
-QT_TRANSLATE_NOOP("BZX-core", "Transaction too large"),
+QT_TRANSLATE_NOOP("BZX-core", "Transaction is too large."),
 QT_TRANSLATE_NOOP("BZX-core", "Trying to spend an already spent serial #, try again."),
 QT_TRANSLATE_NOOP("BZX-core", "Unable to bind to %s on this computer (bind returned error %s)"),
 QT_TRANSLATE_NOOP("BZX-core", "Unable to bind to %s on this computer. %s is probably already running."),
@@ -578,6 +566,7 @@ QT_TRANSLATE_NOOP("BZX-core", "Use UPnP to map the listening port (default: %u)"
 QT_TRANSLATE_NOOP("BZX-core", "Use the test chain"),
 QT_TRANSLATE_NOOP("BZX-core", "User Agent comment (%s) contains unsafe characters."),
 QT_TRANSLATE_NOOP("BZX-core", "Username for JSON-RPC connections"),
+QT_TRANSLATE_NOOP("BZX-core", "Value more than PrivateSend pool maximum allows."),
 QT_TRANSLATE_NOOP("BZX-core", "Verifying blocks..."),
 QT_TRANSLATE_NOOP("BZX-core", "Verifying wallet..."),
 QT_TRANSLATE_NOOP("BZX-core", "Very low number of keys left: %d"),

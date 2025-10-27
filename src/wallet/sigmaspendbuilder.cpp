@@ -70,7 +70,7 @@ static std::unique_ptr<SigmaSpendSigner> CreateSigner(const CSigmaEntry& coin)
         throw std::runtime_error(_("One of the minted coin is invalid"));
     }
 
-    int version =  31;
+    int version = 31;
 
     // construct private part of the mint
     sigma::PrivateCoin priv(params, denom, version);
@@ -107,8 +107,8 @@ static std::unique_ptr<SigmaSpendSigner> CreateSigner(const CSigmaEntry& coin)
     return signer;
 }
 
-SigmaSpendBuilder::SigmaSpendBuilder(CWallet& wallet, CHDMintWallet& mintWallet, const CCoinControl *coinControl) :
-    TxBuilder(wallet),
+SigmaSpendBuilder::SigmaSpendBuilder(CWallet& walletParam, CHDMintWallet& mintWallet, const CCoinControl *coinControlParam) :
+    TxBuilder(walletParam),
     mintWallet(mintWallet)
 {
     cs_main.lock();
@@ -120,7 +120,7 @@ SigmaSpendBuilder::SigmaSpendBuilder(CWallet& wallet, CHDMintWallet& mintWallet,
         throw;
     }
 
-    this->coinControl = coinControl;
+    this->coinControl = coinControlParam;
 }
 
 SigmaSpendBuilder::~SigmaSpendBuilder()
@@ -136,7 +136,6 @@ CAmount SigmaSpendBuilder::GetInputs(std::vector<std::unique_ptr<InputSigner>>& 
     selected.clear();
     denomChanges.clear();
 
-    const auto& consensusParams = Params().GetConsensus();
     std::list<CSigmaEntry> sigmaCoins = pwalletMain->GetAvailableCoins(coinControl);
 
     if (!wallet.GetCoinsToSpend(required, selected, denomChanges, sigmaCoins,

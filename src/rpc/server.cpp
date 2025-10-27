@@ -320,22 +320,40 @@ UniValue stop(const JSONRPCRequest& jsonRequest)
  * Call Table
  */
 static const CRPCCommand vRPCCommands[] =
-{ //  category              name                      actor (function)         okSafe argNames
-  //  --------------------- ------------------------  -----------------------  ------ ----------
+{ //  category              name                           actor (function)                    okSafe  argNames
+  //  --------------------- ------------------------       -----------------------             ------  ----------
     /* Overall control/query calls */
-    { "control",            "help",                   &help,                   true  },
-    { "control",            "stop",                   &stop,                   true  },
+    { "control",            "help",                        &help,                              true,   {} },
+    { "control",            "stop",                        &stop,                              true,   {} },
         /* Address index */
-    { "addressindex",       "getaddressmempool",      &getaddressmempool,      true  },
-    { "addressindex",       "getaddressutxos",        &getaddressutxos,        false },
-    { "addressindex",       "getaddressdeltas",       &getaddressdeltas,       false },
-    { "addressindex",       "getaddresstxids",        &getaddresstxids,        false },
-    { "addressindex",       "getaddressbalance",      &getaddressbalance,      false },
+    { "addressindex",       "getaddressmempool",           &getaddressmempool,                 true,   {} },
+    { "addressindex",       "getaddressutxos",             &getaddressutxos,                   false,  {} },
+    { "addressindex",       "getaddressdeltas",            &getaddressdeltas,                  false,  {} },
+    { "addressindex",       "getaddresstxids",             &getaddresstxids,                   false,  {} },
+    { "addressindex",       "getaddressbalance",           &getaddressbalance,                 false,  {} },
+    { "addressindex",       "getAddressNumWBalance",       &getAddressNumWBalance,             false,  {} },
+
         /* Mobile related */
-    { "mobile",             "getanonymityset",        &getanonymityset,        true  },
-    { "mobile",             "getmintmetadata",        &getmintmetadata,        true  },
-    { "mobile",             "getusedcoinserials",     &getusedcoinserials,     true  },
-    { "mobile",             "getlatestcoinids",       &getlatestcoinids,       true  },
+    { "mobile",             "getanonymityset",             &getanonymityset,                   false,  {} },
+    { "mobile",             "getmintmetadata",             &getmintmetadata,                   true,   {} },
+    { "mobile",             "getusedcoinserials",          &getusedcoinserials,                false,  {} },
+    { "mobile",             "getfeerate",                  &getfeerate,                        true,   {} },
+    { "mobile",             "getlatestcoinid",             &getlatestcoinid,                   true,   {} },
+
+        /* Mobile Spark */
+    { "mobile",             "getsparkanonymityset",        &getsparkanonymityset,              false,  {} },
+    { "mobile",             "getsparkanonymitysetmeta",    &getsparkanonymitysetmeta,          false,  {} },
+    { "mobile",             "getsparkanonymitysetsector",  &getsparkanonymitysetsector,        false,  {} },
+    { "mobile",             "getsparkmintmetadata",        &getsparkmintmetadata,              true,   {} },
+    { "mobile",             "getusedcoinstags",            &getusedcoinstags,                  false,  {} },
+    { "mobile",             "getusedcoinstagstxhashes",    &getusedcoinstagstxhashes,          false,  {} },
+    { "mobile",             "getsparklatestcoinid",        &getsparklatestcoinid,              true,   {} },
+    { "mobile",             "getmempoolsparktxids",        &getmempoolsparktxids,              true,   {} },
+    { "mobile",             "getmempoolsparktxs",          &getmempoolsparktxs,                true,   {} },
+
+
+    { "mobile",             "checkifmncollateral",         &checkifmncollateral,               false,  {} },
+
 };
 
 CRPCTable::CRPCTable()
@@ -531,7 +549,7 @@ UniValue CRPCTable::execute(const JSONRPCRequest &request) const
     // Return immediately if in warmup
     {
         LOCK(cs_rpcWarmup);
-        if (fRPCInWarmup)
+        if (fRPCInWarmup && request.strMethod != "walletpassphrase") // TODO this is temp check and will be removed after spark transition
             throw JSONRPCError(RPC_IN_WARMUP, rpcWarmupStatus);
     }
 

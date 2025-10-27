@@ -155,7 +155,7 @@ void LelantusProver::generate_sigma_proofs(
                 parallelTasks.emplace_back(threadPool.PostTask([&]() {
                     try {
                         prover.sigma_commit(commits, index, rA_i, rB_i, rC_i, rD_i, a_i, Tk_i, Pk_i, Yk_i, sigma_i, proof);
-                    } catch (...) {
+                    } catch (const std::exception &) {
                         return false;
                     }
                     return true;
@@ -221,7 +221,7 @@ void LelantusProver::generate_sigma_proofs(
         std::vector<GroupElement> Qk;
         Qk.reserve(N * params->get_sigma_m());
         for (std::size_t i = 0; i < N; ++i) {
-            for (std::size_t j = 0; j < params->get_sigma_m(); ++j) {
+            for (std::size_t j = 0; cmp::less(j, params->get_sigma_m()); ++j) {
                 Pk_sum += (Pk[i][j] * qk_x_n.pow);
                 Tk_Yk_sum += ((Tk[i][j] + Yk[i][j]) * qk_x_n.pow);
                 qk_x_n.go_next();

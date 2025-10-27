@@ -18,7 +18,7 @@
 #ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
 #endif
-
+#include "primitives/mint_spend.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/thread.hpp>
 #include <limits>
@@ -42,7 +42,7 @@ uint256 CInstantSendLock::GetRequestId() const
 namespace isutils
 {
 static int16_t const INSTANTSEND_ADAPTED_TX = std::numeric_limits<int16_t>::min();
-CTransaction AdaptJsplitTx(CTransaction const & tx);
+CTransaction AdaptPrivateTx(CTransaction const & tx);
 }
 
 
@@ -125,7 +125,7 @@ std::unordered_map<uint256, CInstantSendLockPtr> CInstantSendDb::RemoveConfirmed
             break;
         }
         uint32_t nHeight = std::numeric_limits<uint32_t>::max() - be32toh(std::get<1>(curKey));
-        if (nHeight > nUntilHeight) {
+        if (cmp::greater(nHeight, nUntilHeight)) {
             break;
         }
 
@@ -164,7 +164,7 @@ void CInstantSendDb::RemoveArchivedInstantSendLocks(int nUntilHeight)
             break;
         }
         uint32_t nHeight = std::numeric_limits<uint32_t>::max() - be32toh(std::get<1>(curKey));
-        if (nHeight > nUntilHeight) {
+        if (cmp::greater(nHeight, nUntilHeight)) {
             break;
         }
 
@@ -491,17 +491,27 @@ bool CInstantSendManager::CheckCanLock(const CTransaction& tx, bool printDebug, 
     }
 
     if (tx.nType == isutils::INSTANTSEND_ADAPTED_TX ) {
-        for (CTxIn const & in : tx.vin) {
-            Scalar serial;
-            serial.deserialize(&in.scriptSig.front());
-            LOCK(cs_main);
-            if (lelantus::CLelantusState::GetState()->IsUsedCoinSerial(serial))
-                return false;
+        if (tx.IsLelantusJoinSplit()) {
+            for (CTxIn const & in : tx.vin) {
+                Scalar serial;
+                serial.deserialize(&in.scriptSig.front());
+                LOCK(cs_main);
+                if (lelantus::CLelantusState::GetState()->IsUsedCoinSerial(serial))
+                    return false;
+            }
+        } else if (tx.IsSparkSpend()) {
+            for (CTxIn const & in : tx.vin) {
+                GroupElement lTag;
+                lTag.deserialize(&in.scriptSig.front());
+                LOCK(cs_main);
+                if (spark::CSparkState::GetState()->IsUsedLTag(lTag))
+                    return false;
+            }
         }
         return true;
     }
 
-    CAmount nValueIn = 0;
+    BZX_UNUSED CAmount nValueIn = 0;
     for (const auto& in : tx.vin) {
         CAmount v = 0;
         if (!CheckCanLock(in.prevout, printDebug, tx.GetHash(), &v, params)) {
@@ -577,7 +587,7 @@ void CInstantSendManager::HandleNewRecoveredSig(const CRecoveredSig& recoveredSi
     if (llmqType == Consensus::LLMQ_NONE) {
         return;
     }
-    auto& params = Params().GetConsensus().llmqs.at(llmqType);
+    BZX_UNUSED auto& params = Params().GetConsensus().llmqs.at(llmqType);
 
     uint256 txid;
     bool isInstantSendLock = false;
@@ -599,7 +609,7 @@ void CInstantSendManager::HandleNewRecoveredSig(const CRecoveredSig& recoveredSi
 
 void CInstantSendManager::HandleNewInputLockRecoveredSig(const CRecoveredSig& recoveredSig, const uint256& txid)
 {
-    auto llmqType = Params().GetConsensus().llmqForInstantSend;
+    BZX_UNUSED auto llmqType = Params().GetConsensus().llmqForInstantSend;
 
     CTransactionRef tx;
     uint256 hashBlock;
@@ -607,8 +617,8 @@ void CInstantSendManager::HandleNewInputLockRecoveredSig(const CRecoveredSig& re
         return;
     }
 
-    if(tx && tx->IsLelantusJoinSplit()) {
-        tx = MakeTransactionRef(isutils::AdaptJsplitTx(*tx));
+    if (tx && (tx->IsLelantusJoinSplit() || tx->IsSparkSpend())) {
+        tx = MakeTransactionRef(isutils::AdaptPrivateTx(*tx));
     }
 
     if (LogAcceptCategory("instantsend")) {
@@ -1013,7 +1023,7 @@ void CInstantSendManager::SyncTransaction(const CTransaction& tx_, const CBlockI
         return;
     }
 
-    CTransaction const & tx{tx_.IsLelantusJoinSplit() ? isutils::AdaptJsplitTx(tx_) : tx_};
+    CTransaction const & tx{(tx_.IsLelantusJoinSplit() || tx_.IsSparkSpend()) ? isutils::AdaptPrivateTx(tx_) : tx_};
 
     bool inMempool = mempool.get(tx.GetHash()) != nullptr;
     bool isDisconnect = pindex && posInBlock == CMainSignals::SYNC_TRANSACTION_NOT_IN_BLOCK;
@@ -1359,6 +1369,31 @@ void CInstantSendManager::RemoveChainLockConflictingLock(const uint256& islockHa
     }
 }
 
+bool CInstantSendManager::RemoveISLockByTxId(const uint256& txid)
+{
+    if (!IsNewInstantSendEnabled()) {
+        return false;
+    }
+
+    int tipHeight;
+    {
+        LOCK(cs_main);
+        tipHeight = chainActive.Height();
+    }
+
+    LOCK(cs);
+    auto islock = db.GetInstantSendLockByTxid(txid);
+    if (!islock) {
+        return false;
+    }
+    auto removedIslocks = db.RemoveChainedInstantSendLocks(::SerializeHash(*islock), txid, tipHeight);
+    for (auto& h : removedIslocks) {
+        LogPrintf("CInstantSendManager::%s -- txid=%s: removed (child) ISLOCK %s\n", __func__,
+                  txid.ToString(), h.ToString());
+    }
+    return !removedIslocks.empty();
+}
+
 void CInstantSendManager::AskNodesForLockedTx(const uint256& txid)
 {
     std::vector<CNode*> nodesToAskFor;
@@ -1497,7 +1532,7 @@ CInstantSendLockPtr CInstantSendManager::GetConflictingLock(const CTransaction& 
         return nullptr;
     }
 
-    CTransaction const & tx{tx_.IsLelantusJoinSplit() ? isutils::AdaptJsplitTx(tx_) : tx_};
+    CTransaction const & tx{(tx_.IsLelantusJoinSplit() || tx_.IsSparkSpend()) ? isutils::AdaptPrivateTx(tx_) : tx_};
 
     LOCK(cs);
     for (const auto& in : tx.vin) {
@@ -1566,6 +1601,43 @@ CTransaction AdaptJsplitTx(CTransaction const & tx)
     *const_cast<int16_t*>(&result.nType) = INSTANTSEND_ADAPTED_TX;
     assert(result.GetHash() == tx.GetHash());
     return result;
+}
+
+CTransaction AdaptSparkTx(CTransaction const & tx)
+{
+    static size_t const lTagSerialSize = 34;
+
+    CTransaction result{tx};
+    std::unique_ptr<spark::SpendTransaction> spend;
+    try {
+        spend = std::make_unique<spark::SpendTransaction>(spark::ParseSparkSpend(tx));
+    }
+    catch (...) {
+        return result;
+    }
+
+    const_cast<std::vector<CTxIn>*>(&result.vin)->clear();                         //This const_cast was done intentionally as the current design allows for this way only
+    for (GroupElement const & lTag : spend->getUsedLTags()) {
+            CTxIn newin;
+            newin.scriptSig.resize(lTagSerialSize);
+            lTag.serialize(&newin.scriptSig.front());
+            newin.prevout.hash = primitives::GetLTagHash(lTag);
+            newin.prevout.n = 0;
+            const_cast<std::vector<CTxIn>*>(&result.vin)->push_back(newin);
+    }
+    *const_cast<int16_t*>(&result.nType) = INSTANTSEND_ADAPTED_TX;
+    assert(result.GetHash() == tx.GetHash());
+    return result;
+}
+
+CTransaction AdaptPrivateTx(CTransaction const & tx)
+{
+    if (tx.IsLelantusJoinSplit()) {
+        return AdaptJsplitTx(tx);
+    } else if (tx.IsSparkSpend()) {
+        return AdaptSparkTx(tx);
+    }
+    return tx;
 }
 }
 

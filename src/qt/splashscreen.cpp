@@ -12,7 +12,6 @@
 #include "clientversion.h"
 #include "init.h"
 #include "util.h"
-#include "ui_interface.h"
 #include "version.h"
 #ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
@@ -125,5 +124,10 @@ void SplashScreen::paintEvent(QPaintEvent *event)
 void SplashScreen::closeEvent(QCloseEvent *event)
 {
     StartShutdown(); // allows an "emergency" shutdown during startup
+    event->ignore();
+}
+
+void SplashScreen::mousePressEvent(QMouseEvent* event)
+{
     event->ignore();
 }

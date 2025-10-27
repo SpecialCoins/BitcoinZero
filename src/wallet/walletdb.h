@@ -18,6 +18,8 @@
 #include "hdmint/mintpool.h"
 #include "../secp256k1/include/GroupElement.h"
 #include "../secp256k1/include/Scalar.h"
+#include "../libspark/keys.h"
+#include "../spark/primitives.h"
 
 #include <list>
 #include <stdint.h>
@@ -44,8 +46,6 @@ class CWallet;
 class CWalletTx;
 class uint160;
 class uint256;
-class CSigmaEntry;
-class CSigmaSpendEntry;
 
 namespace bip47 {
 class CAccountReceiver;
@@ -79,7 +79,7 @@ public:
     static const int VERSION_WITH_BIP44 = 10;
     static const int VERSION_WITH_BIP39 = 11;
     static const int CURRENT_VERSION = VERSION_WITH_BIP39;
-    static const int N_CHANGES = 5; // standard = 0/1, mint = 2, elysium = 3, elysiumv1 = 4
+    static const int N_CHANGES = 5; // standard = 0/1, mint = 2
     int nVersion;
 
     CHDChain() { SetNull(); }
@@ -185,7 +185,7 @@ public:
 class CWalletDB : public CDB
 {
 public:
-    CWalletDB(const std::string& strFilename, const char* pszMode = "r+", bool fFlushOnClose = true) : CDB(strFilename, pszMode, fFlushOnClose)
+    CWalletDB(const std::string& strFilename, const char* pszMode = "r+", bool fFlushOnCloseParam = true) : CDB(strFilename, pszMode, fFlushOnCloseParam)
     {
     }
 
@@ -238,19 +238,10 @@ public:
     CAmount GetAccountCreditDebit(const std::string& strAccount);
     void ListAccountCreditDebit(const std::string& strAccount, std::list<CAccountingEntry>& acentries);
 
-    bool WriteSigmaEntry(const CSigmaEntry& sigma);
-    bool ReadSigmaEntry(const secp_primitives::GroupElement& pub, CSigmaEntry& entry);
-    bool HasSigmaEntry(const secp_primitives::GroupElement& pub);
-    bool EraseSigmaEntry(const CSigmaEntry& sigma);
-    void ListSigmaPubCoin(std::list<CSigmaEntry>& listPubCoin);
-    void ListCoinSpendSerial(std::list<CSigmaSpendEntry>& listCoinSpendSerial);
     void ListLelantusSpendSerial(std::list<CLelantusSpendEntry>& listLelantusSpendSerial);
-    bool WriteCoinSpendSerialEntry(const CSigmaSpendEntry& sigmaSpend);
     bool WriteLelantusSpendSerialEntry(const CLelantusSpendEntry& lelantusSpend);
     bool ReadLelantusSpendSerialEntry(const secp_primitives::Scalar& serial, CLelantusSpendEntry& lelantusSpend);
-    bool HasCoinSpendSerialEntry(const secp_primitives::Scalar& serial);
     bool HasLelantusSpendSerialEntry(const secp_primitives::Scalar& serial);
-    bool EraseCoinSpendSerialEntry(const CSigmaSpendEntry& sigmaSpend);
     bool EraseLelantusSpendSerialEntry(const CLelantusSpendEntry& lelantusSpend);
 
     bool ReadCalculatedZCBlock(int& height);
@@ -261,8 +252,8 @@ public:
     DBErrors FindWalletTx(CWallet* pwallet, std::vector<uint256>& vTxHash, std::vector<CWalletTx>& vWtx);
     DBErrors ZapWalletTx(CWallet* pwallet, std::vector<CWalletTx>& vWtx);
     DBErrors ZapSelectTx(CWallet* pwallet, std::vector<uint256>& vHashIn, std::vector<uint256>& vHashOut);
-    DBErrors ZapSigmaMints(CWallet* pwallet);
     DBErrors ZapLelantusMints(CWallet *pwallet);
+    DBErrors ZapSparkMints(CWallet *pwallet);
     static bool Recover(CDBEnv& dbenv, const std::string& filename, bool fOnlyKeys);
     static bool Recover(CDBEnv& dbenv, const std::string& filename);
 
@@ -272,8 +263,13 @@ public:
     bool ReadMintSeedCount(int32_t& nCount);
     bool WriteMintSeedCount(const int32_t& nCount);
 
+    bool readDiversifier(int32_t& nCount);
+    bool writeDiversifier(const int32_t& nCount);
+
+    bool readFullViewKey(spark::FullViewKey& viewKey);
+    bool writeFullViewKey(const spark::FullViewKey& viewKey);
+
     bool ArchiveDeterministicOrphan(const CHDMint& dMint);
-    bool UnarchiveSigmaMint(const uint256& hashPubcoin, CSigmaEntry& sigma);
     bool UnarchiveHDMint(const uint256& hashPubcoin, bool isLelantus, CHDMint& dMint);
 
     bool WriteHDMint(const uint256& hashPubcoin, const CHDMint& dMint, bool isLelantus);
@@ -295,160 +291,24 @@ public:
     bool ReadMintPoolPair(const uint256& hashPubcoin, uint160& hashSeedMaster, CKeyID& seedId, int32_t& nCount);
     std::vector<std::pair<uint256, MintPoolEntry>> ListMintPool();
 
+    std::unordered_map<uint256, CSparkMintMeta> ListSparkMints();
+    bool WriteSparkOutputTx(const CScript& scriptPubKey, const CSparkOutputTx& output);
+    bool ReadSparkOutputTx(const CScript& scriptPubKey, CSparkOutputTx& output);
+    bool WriteSparkMint(const uint256& lTagHash, const CSparkMintMeta& mint);
+    bool ReadSparkMint(const uint256& lTagHash, CSparkMintMeta& mint);
+    bool EraseSparkMint(const uint256& lTagHash);
+    void ListSparkSpends(std::list<CSparkSpendEntry>& listSparkSpends);
+    bool WriteSparkSpendEntry(const CSparkSpendEntry& sparkSpend);
+    bool ReadSparkSpendEntry(const secp_primitives::GroupElement& lTag, CSparkSpendEntry& sparkSpend);
+    bool HasSparkSpendEntry(const secp_primitives::GroupElement& lTag);
+    bool EraseSparkSpendEntry(const secp_primitives::GroupElement& lTag);
+
     //! write the hdchain model (external chain child index counter)
     bool WriteHDChain(const CHDChain& chain);
     bool WriteMnemonic(const MnemonicContainer& mnContainer);
 
     static void IncrementUpdateCounter();
     static unsigned int GetUpdateCounter();    
-
-#ifdef ENABLE_ELYSIUM
-
-public:
-    template<class MintPool>
-    bool ReadElysiumMintPoolV0(MintPool &mintPool)
-    {
-        return Read(std::string("exodus_mint_pool"), mintPool);
-    }
-
-    template<class MintPool>
-    bool WriteElysiumMintPoolV0(MintPool const &mintPool)
-    {
-        return Write(std::string("exodus_mint_pool"), mintPool, true);
-    }
-
-    bool HasElysiumMintPoolV0()
-    {
-        return Exists(std::string("exodus_mint_pool"));
-    }
-
-    template<class Key, class MintID>
-    bool ReadElysiumMintIdV0(const Key& k, MintID &id)
-    {
-        return Read(std::make_pair(std::string("exodus_mint_id"), k), id);
-    }
-
-    template<class Key, class MintID>
-    bool WriteElysiumMintIdV0(const Key& k, const MintID &id)
-    {
-        return Write(std::make_pair(std::string("exodus_mint_id"), k), id);
-    }
-
-    template<class Key>
-    bool HasElysiumMintIdV0(const Key& k)
-    {
-        return Exists(std::make_pair(std::string("exodus_mint_id"), k));
-    }
-
-    template<class Key>
-    bool EraseElysiumMintIdV0(const Key& k)
-    {
-        return Erase(std::make_pair(std::string("exodus_mint_id"), k));
-    }
-
-    template<class K, class V>
-    bool ReadElysiumMintV0(const K& k, V& v)
-    {
-        return Read(std::make_pair(std::string("exodus_mint"), k), v);
-    }
-
-    template<class K>
-    bool HasElysiumMintV0(const K& k)
-    {
-        return Exists(std::make_pair(std::string("exodus_mint"), k));
-    }
-
-    template<class K, class V>
-    bool WriteElysiumMintV0(const K &k, const V &v)
-    {
-        return Write(std::make_pair(std::string("exodus_mint"), k), v, true);
-    }
-
-    template<class K>
-    bool EraseElysiumMintV0(const K& k)
-    {
-        return Erase(std::make_pair(std::string("exodus_mint"), k));
-    }
-
-    template<typename K, typename V, typename InsertF>
-    void ListElysiumMintsV0(InsertF insertF)
-    {
-        ListEntries<K, V, InsertF>(std::string("exodus_mint"), insertF);
-    }
-
-    // version 1
-    template<class MintPool>
-    bool ReadElysiumMintPoolV1(MintPool &mintPool)
-    {
-        return Read(std::string("exodus_mint_pool_v1"), mintPool);
-    }
-
-    template<class MintPool>
-    bool WriteElysiumMintPoolV1(MintPool const &mintPool)
-    {
-        return Write(std::string("exodus_mint_pool_v1"), mintPool, true);
-    }
-
-    bool HasElysiumMintPoolV1()
-    {
-        return Exists(std::string("exodus_mint_pool_v1"));
-    }
-
-    template<class Key, class MintID>
-    bool ReadElysiumMintIdV1(const Key& k, MintID &id)
-    {
-        return Read(std::make_pair(std::string("exodus_mint_id_v1"), k), id);
-    }
-
-    template<class Key, class MintID>
-    bool WriteElysiumMintIdV1(const Key& k, const MintID &id)
-    {
-        return Write(std::make_pair(std::string("exodus_mint_id_v1"), k), id);
-    }
-
-    template<class Key>
-    bool HasElysiumMintIdV1(const Key& k)
-    {
-        return Exists(std::make_pair(std::string("exodus_mint_id_v1"), k));
-    }
-
-    template<class Key>
-    bool EraseElysiumMintIdV1(const Key& k)
-    {
-        return Erase(std::make_pair(std::string("exodus_mint_id_v1"), k));
-    }
-
-    template<class K, class V>
-    bool ReadElysiumMintV1(const K& k, V& v)
-    {
-        return Read(std::make_pair(std::string("exodus_mint_v1"), k), v);
-    }
-
-    template<class K>
-    bool HasElysiumMintV1(const K& k)
-    {
-        return Exists(std::make_pair(std::string("exodus_mint_v1"), k));
-    }
-
-    template<class K, class V>
-    bool WriteElysiumMintV1(const K &k, const V &v)
-    {
-        return Write(std::make_pair(std::string("exodus_mint_v1"), k), v, true);
-    }
-
-    template<class K>
-    bool EraseElysiumMintV1(const K& k)
-    {
-        return Erase(std::make_pair(std::string("exodus_mint_v1"), k));
-    }
-
-    template<typename K, typename V, typename InsertF>
-    void ListElysiumMintsV1(InsertF insertF)
-    {
-        ListEntries<K, V, InsertF>(std::string("exodus_mint_v1"), insertF);
-    }
-
-#endif
 
     //bip47 data
     bool WriteBip47Account(bip47::CAccountReceiver const & account);
@@ -507,5 +367,6 @@ private:
 };
 
 void ThreadFlushWalletDB();
+bool AutoBackupWallet (CWallet* wallet, std::string strWalletFile, std::string& strBackupWarning, std::string& strBackupError);
 
 #endif // BITCOIN_WALLET_WALLETDB_H

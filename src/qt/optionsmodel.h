@@ -49,16 +49,18 @@ public:
         Listen,                 // bool
         TorSetup,               // bool
         AutoAnonymize,          // bool
+        Split,                  // bool
         LelantusPage,           // bool
+        enableRapAddresses,     // bool
         OptionIDRowCount,
     };
 
     void Init(bool resetSettings = false);
     void Reset();
 
-    int rowCount(const QModelIndex & parent = QModelIndex()) const;
-    QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
-    bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
+    int rowCount(const QModelIndex & parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole) override;
     /** Updates current unit in memory, settings and emits displayUnitChanged(newUnit) signal */
     void setDisplayUnit(const QVariant &value);
 
@@ -68,10 +70,11 @@ public:
     bool getMinimizeOnClose() { return fMinimizeOnClose; }
     int getDisplayUnit() { return nDisplayUnit; }
     QString getThirdPartyTxUrls() { return strThirdPartyTxUrls; }
-    bool getProxySettings(QNetworkProxy& proxy) const;
     bool getCoinControlFeatures() { return fCoinControlFeatures; }
+    bool getRapAddresses() {    return fenableRapAddresses; }
     const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
     bool getAutoAnonymize() { return fAutoAnonymize; }
+    bool getfSplit() { return fSplit; }
     bool getLelantusPage() {return fLelantusPage; }
 
     /* Restart flag helper */
@@ -88,7 +91,9 @@ private:
     QString strThirdPartyTxUrls;
     bool fCoinControlFeatures;
     bool fAutoAnonymize;
+    bool fSplit;
     bool fLelantusPage;
+    bool fenableRapAddresses;
 
     /* settings that were overridden by command-line */
     QString strOverriddenByCommandLine;
@@ -99,6 +104,7 @@ private:
 Q_SIGNALS:
     void displayUnitChanged(int unit);
     void coinControlFeaturesChanged(bool);
+    void enableRapAddressesChanged(bool);
     void autoAnonymizeChanged(bool);
     void lelantusPageChanged(bool);
     void hideTrayIconChanged(bool);

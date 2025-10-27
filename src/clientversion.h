@@ -9,10 +9,6 @@
 #include "config/bitcoin-config.h"
 #else
 
-/**
- * client versioning and copyright year
- */
-
 //! Set to true for release, false for prerelease or test build
 #define CLIENT_VERSION_IS_RELEASE true
 
@@ -20,7 +16,7 @@
  * Copyright year (2009-this)
  * Todo: update this when changing our copyright comments in the source
  */
-#define COPYRIGHT_YEAR 2023
+#define COPYRIGHT_YEAR 2025
 
 #endif //HAVE_CONFIG_H
 

@@ -16,6 +16,7 @@
 #endif
 
 #include "compat.h"
+#include "compat_layer.h"
 #include "tinyformat.h"
 #include "utiltime.h"
 
@@ -64,9 +65,6 @@ extern bool fLogTimeMicros;
 extern bool fLogIPs;
 extern std::atomic<bool> fReopenDebugLog;
 extern CTranslationInterface translationInterface;
-
-/** Flag to indicate, whether the Elysium log file should be reopened. */
-extern std::atomic<bool> fReopenElysiumLog;
 
 extern const char * const BITCOIN_CONF_FILENAME;
 extern const char * const BITCOIN_PID_FILENAME;
@@ -162,7 +160,7 @@ bool IsArgSet(const std::string& strArg);
  * Return string argument or default value
  *
  * @param strArg Argument to get (e.g. "-foo")
- * @param default (e.g. "1")
+ * @param -default (e.g. "1")
  * @return command-line argument or default value
  */
 std::string GetArg(const std::string& strArg, const std::string& strDefault);
@@ -171,7 +169,7 @@ std::string GetArg(const std::string& strArg, const std::string& strDefault);
  * Return integer argument or default value
  *
  * @param strArg Argument to get (e.g. "-foo")
- * @param default (e.g. 1)
+ * @param -default (e.g. 1)
  * @return command-line argument (0 if invalid number) or default value
  */
 int64_t GetArg(const std::string& strArg, int64_t nDefault);
@@ -180,7 +178,7 @@ int64_t GetArg(const std::string& strArg, int64_t nDefault);
  * Return boolean argument or default value
  *
  * @param strArg Argument to get (e.g. "-foo")
- * @param default (true or false)
+ * @param -default (true or false)
  * @return command-line argument or default value
  */
 bool GetBoolArg(const std::string& strArg, bool fDefault);

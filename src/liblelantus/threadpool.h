@@ -68,26 +68,13 @@ private:
         // start missing threads
         while (threads.size() < number_of_threads)
             threads.emplace_back(std::bind(&ParallelOpThreadPool::ThreadProc, this));
-    }
-
-public:
-    ParallelOpThreadPool(std::size_t thread_number) : number_of_threads(thread_number), shutdown(false) {}
-
-    ~ParallelOpThreadPool() {
-        std::list<boost::thread> threadsToJoin;
-
-        {
-            boost::mutex::scoped_lock lock(task_queue_mutex);
-            shutdown = true;
-            task_queue_condition.notify_all();
-
-            // move the list to separate variable to wait for the shutdown process to complete
-            threadsToJoin.swap(threads);
         }
 
-        // wait for all the threads
-        for (boost::thread &t: threadsToJoin)
-            t.join();
+public:
+    ParallelOpThreadPool(std::size_t thread_number) : shutdown(false), number_of_threads(thread_number) {}
+
+    ~ParallelOpThreadPool() {
+        Shutdown();
     }
 
     // Post a task to the thread pool and return a future to wait for its completion
@@ -110,8 +97,29 @@ public:
     int GetNumberOfThreads() const {
         return number_of_threads;
     }
-};
 
+    void Shutdown() {
+        std::list<boost::thread> threadsToJoin;
+
+        {
+            boost::mutex::scoped_lock lock(task_queue_mutex);
+            shutdown = true;
+            task_queue_condition.notify_all();
+
+            // move the list to separate variable to wait for the shutdown process to complete
+            threadsToJoin.swap(threads);
+        }
+
+        // wait for all the threads
+        for (boost::thread &t: threadsToJoin)
+            t.join();
+    }
+
+    bool IsPoolShutdown() {
+        boost::mutex::scoped_lock lock(task_queue_mutex);
+        return shutdown;
+    }
+};
 
 // helper class to put thread interruption on pause
 class DoNotDisturb {

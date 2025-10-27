@@ -33,7 +33,9 @@ const char* GetTxnOutputType(txnouttype t)
     case TX_PRIVCOINMINTV3: return "privcoinmintv3";
     case TX_LELANTUSMINT: return "lelantusmint";
     case TX_LELANTUSJMINT: return "lelantusmint";
-
+    case TX_SPARKMINT: return "sparkmint";
+    case TX_SPARKSMINT: return "sparksmint";
+    case TX_EXCHANGEADDRESS: return "exchangeaddress";
     }
     return NULL;
 }
@@ -50,9 +52,12 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, std::vector<std::v
         // Standard tx, sender provides pubkey, receiver adds signature
         mTemplates.insert(std::make_pair(TX_PUBKEY, CScript() << OP_PUBKEY << OP_CHECKSIG));
 
+
         // Bitcoin address tx, sender provides hash of pubkey, receiver provides signature and pubkey
         mTemplates.insert(std::make_pair(TX_PUBKEYHASH, CScript() << OP_DUP << OP_HASH160 << OP_PUBKEYHASH << OP_EQUALVERIFY << OP_CHECKSIG));
 
+        // Super transparent address txout, same as previous one but with a prefix opcode to indicate it
+        mTemplates.insert(std::make_pair(TX_EXCHANGEADDRESS, CScript() <<  OP_EXCHANGEADDR << OP_DUP << OP_HASH160 << OP_EQUALVERIFY << OP_CHECKSIG));
         // Sender provides N pubkeys, receivers provides M signatures
         mTemplates.insert(std::make_pair(TX_MULTISIG, CScript() << OP_SMALLINTEGER << OP_PUBKEYS << OP_SMALLINTEGER << OP_CHECKMULTISIG));
     }
@@ -73,6 +78,14 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, std::vector<std::v
     {
         typeRet = TX_PUBKEYHASH;
         std::vector<unsigned char> hashBytes(scriptPubKey.begin()+3, scriptPubKey.begin()+23);
+        vSolutionsRet.push_back(hashBytes);
+        return true;
+    }
+
+    if (scriptPubKey.IsPayToExchangeAddress())
+    {
+        typeRet = TX_EXCHANGEADDRESS;
+        std::vector<unsigned char> hashBytes(scriptPubKey.begin()+4, scriptPubKey.begin()+24);
         vSolutionsRet.push_back(hashBytes);
         return true;
     }
@@ -110,6 +123,23 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, std::vector<std::v
     {
         typeRet = TX_LELANTUSJMINT;
         if (scriptPubKey.size() != 83) return false;
+        vSolutionsRet.emplace_back(scriptPubKey.begin() + 1, scriptPubKey.end());
+        return true;
+    }
+
+    // Spark
+    if (scriptPubKey.IsSparkMint())
+    {
+        typeRet = TX_SPARKMINT;
+        if (scriptPubKey.size() < 213) return false;
+        vSolutionsRet.emplace_back(scriptPubKey.begin() + 1, scriptPubKey.end());
+        return true;
+    }
+
+    if (scriptPubKey.IsSparkSMint())
+    {
+        typeRet = TX_SPARKSMINT;
+        if (scriptPubKey.size() < 213) return false;
         vSolutionsRet.emplace_back(scriptPubKey.begin() + 1, scriptPubKey.end());
         return true;
     }
@@ -230,6 +260,11 @@ bool ExtractDestination(const CScript& scriptPubKey, CTxDestination& addressRet)
         addressRet = CKeyID(uint160(vSolutions[0]));
         return true;
     }
+    else if (whichType == TX_EXCHANGEADDRESS)
+    {
+        addressRet = CExchangeKeyID(uint160(vSolutions[0]));
+        return true;
+    }
     else if (whichType == TX_SCRIPTHASH)
     {
         addressRet = CScriptID(uint160(vSolutions[0]));
@@ -296,6 +331,12 @@ public:
     bool operator()(const CKeyID &keyID) const {
         script->clear();
         *script << OP_DUP << OP_HASH160 << ToByteVector(keyID) << OP_EQUALVERIFY << OP_CHECKSIG;
+        return true;
+    }
+
+    bool operator()(const CExchangeKeyID &keyID) const {
+        script->clear();
+        *script << OP_EXCHANGEADDR << OP_DUP << OP_HASH160 << ToByteVector(keyID) << OP_EQUALVERIFY << OP_CHECKSIG;
         return true;
     }
 

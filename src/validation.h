@@ -20,7 +20,7 @@
 #include "timedata.h"
 #include "chainparams.h"
 #include "spentindex.h"
-
+#include "warnings.h"
 
 #include <algorithm>
 #include <exception>
@@ -60,11 +60,11 @@ static const bool DEFAULT_WHITELISTRELAY = true;
 static const bool DEFAULT_WHITELISTFORCERELAY = true;
 /** Default for -minrelaytxfee, minimum relay fee for transactions */
 //btzc: update BZX fee
-static const unsigned int DEFAULT_MIN_RELAY_TX_FEE = 1000;
+static const unsigned int DEFAULT_MIN_RELAY_TX_FEE = CENT / 1000; //0.00001 BZX,
 //! -maxtxfee default
-static const CAmount DEFAULT_TRANSACTION_MAXFEE = 0.1 * COIN;
+static const CAmount DEFAULT_TRANSACTION_MAXFEE = 1000 * CENT;
 //! Discourage users to set fees higher than this amount (in satoshis) per kB
-static const CAmount HIGH_TX_FEE_PER_KB = 0.01 * COIN;
+static const CAmount HIGH_TX_FEE_PER_KB = 0.01 * CENT;
 //! -maxtxfee will warn if called with a higher fee than this amount (in satoshis)
 static const CAmount HIGH_MAX_TX_FEE = 100 * HIGH_TX_FEE_PER_KB;
 /** Default for -limitancestorcount, max number of in-mempool ancestors */
@@ -133,7 +133,7 @@ static const int64_t BLOCK_DOWNLOAD_TIMEOUT_PER_PEER = 500000;
 
 static const unsigned int DEFAULT_LIMITFREERELAY = 0;
 static const bool DEFAULT_RELAYPRIORITY = true;
-static const int64_t DEFAULT_MAX_TIP_AGE = 24 * 60 * 60;    // was 24 * 60 * 60 in bitcoin
+static const int64_t DEFAULT_MAX_TIP_AGE = 24 * 60 * 60;
 /** Maximum age of our tip in seconds for us to be considered current for fee estimation */
 static const int64_t MAX_FEE_ESTIMATION_TIP_AGE = 3 * 60 * 60;
 
@@ -174,6 +174,7 @@ extern PrevBlockMap mapPrevBlockIndex;
 extern uint64_t nLastBlockTx;
 extern uint64_t nLastBlockSize;
 extern const std::string strMessageMagic;
+extern const std::string strLelantusMessageMagic;
 extern CWaitableCriticalSection csBestBlock;
 extern CConditionVariable cvBlockChange;
 extern std::atomic_bool fImporting;
@@ -282,14 +283,6 @@ void UnloadBlockIndex();
 void ThreadScriptCheck();
 /** Check whether we are doing an initial block download (synchronizing from disk or network) */
 bool IsInitialBlockDownload();
-/** Format a string that describes several potential problems detected by the core.
- * strFor can have three values:
- * - "rpc": get critical warnings, which should put the client in safe mode if non-empty
- * - "statusbar": get all warnings
- * - "gui": get all warnings, translated (where possible) for GUI
- * This function only returns the highest priority warning of the set selected by strFor.
- */
-std::string GetWarnings(const std::string& strFor);
 /** Retrieve a transaction (from memory pool, or from disk, if possible) */
 bool GetTransaction(const uint256 &hash, CTransactionRef &tx, const Consensus::Params& params, uint256 &hashBlock, bool fAllowSlow = false);
 /** Find the best known block, and make it the tip of the block chain */
@@ -327,7 +320,7 @@ void UnlinkPrunedFiles(const std::set<int>& setFilesToPrune);
 /** Create a new block index entry for a given block hash */
 CBlockIndex * InsertBlockIndex(uint256 hash);
 /** Abort with a message */
-bool AbortNode(const std::string &strMessage, const std::string &userMessage);
+bool AbortNode(const std::string &strMessage, const std::string &userMessage="");
 /** Sends out an alert */
 void AlertNotify(const std::string& strMessage);
 /** Flush all state, indexes and buffers to disk. */
@@ -405,7 +398,7 @@ void UpdateCoins(const CTransaction& tx, CCoinsViewCache& inputs, int nHeight);
 /** Transaction validation functions */
 
 /** Context-independent validity checks */
-bool CheckTransaction(const CTransaction& tx, CValidationState& state, bool fCheckDuplicateInputs, uint256 hashTx, bool isVerifyDB, int nHeight = INT_MAX, bool isCheckWallet = false, bool fStatefulPrivcoinCheck = true, sigma::CSigmaTxInfo *sigmaTxInfo = NULL, lelantus::CLelantusTxInfo* lelantusTxInfo = NULL);
+bool CheckTransaction(const CTransaction& tx, CValidationState& state, bool fCheckDuplicateInputs, uint256 hashTx, bool isVerifyDB, int nHeight = INT_MAX, bool isCheckWallet = false, bool fStatefulPrivcoinCheck = true, lelantus::CLelantusTxInfo* lelantusTxInfo = NULL, spark::CSparkTxInfo* sparkTxInfo = NULL);
 
 namespace Consensus {
 
@@ -432,6 +425,8 @@ bool IsFinalTx(const CTransaction &tx, int nBlockHeight, int64_t nBlockTime);
  * See consensus/consensus.h for flag definitions.
  */
 bool CheckFinalTx(const CTransaction &tx, int flags = -1);
+
+bool VerifyPrivateTxOwn(const uint256& txid, const std::vector<unsigned char>& vchSig, const std::string& message);
 
 /**
  * Test whether the LockPoints height and time are still valid on the current chain

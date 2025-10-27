@@ -62,7 +62,7 @@ public:
 #if QT_VERSION >= 0x040700
             cachedNodeStats.reserve(vstats.size());
 #endif
-            Q_FOREACH (const CNodeStats& nodestats, vstats)
+            for (const CNodeStats& nodestats : vstats)
             {
                 CNodeCombinedStats stats;
                 stats.nodeStateStats.nMisbehavior = 0;
@@ -86,12 +86,12 @@ public:
 
         if (sortColumn >= 0)
             // sort cacheNodeStats (use stable sort to prevent rows jumping around unnecessarily)
-            qStableSort(cachedNodeStats.begin(), cachedNodeStats.end(), NodeLessThan(sortColumn, sortOrder));
+            std::stable_sort(cachedNodeStats.begin(), cachedNodeStats.end(), NodeLessThan(sortColumn, sortOrder));
 
         // build index map
         mapNodeRows.clear();
         int row = 0;
-        Q_FOREACH (const CNodeCombinedStats& stats, cachedNodeStats)
+        for (const CNodeCombinedStats& stats : cachedNodeStats)
             mapNodeRows.insert(std::pair<NodeId, int>(stats.nodeStats.nodeid, row++));
     }
 
@@ -121,7 +121,7 @@ PeerTableModel::PeerTableModel(ClientModel *parent) :
 
     // set up timer for auto refresh
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), SLOT(refresh()));
+    connect(timer, &QTimer::timeout, this, &PeerTableModel::refresh);
     timer->setInterval(MODEL_UPDATE_DELAY);
 
     // load initial data
@@ -197,7 +197,7 @@ QVariant PeerTableModel::headerData(int section, Qt::Orientation orientation, in
 Qt::ItemFlags PeerTableModel::flags(const QModelIndex &index) const
 {
     if(!index.isValid())
-        return 0;
+        return Qt::ItemFlags();
 
     Qt::ItemFlags retval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return retval;

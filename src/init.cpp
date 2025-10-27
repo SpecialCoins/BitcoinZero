@@ -59,10 +59,6 @@
 #include "evo/deterministicmns.h"
 #include "llmq/quorums_init.h"
 
-#ifdef ENABLE_ELYSIUM
-#include "elysium/elysium.h"
-#endif
-
 #include <stdint.h>
 #include <stdio.h>
 #include <memory>
@@ -373,12 +369,6 @@ void Shutdown()
         evoDb = NULL;
     }
 
-#ifdef ENABLE_ELYSIUM
-    if (isElysiumEnabled()) {
-        elysium_shutdown();
-    }
-#endif
-
 #ifdef ENABLE_WALLET
     if (pwalletMain)
         pwalletMain->Flush(true);
@@ -434,7 +424,6 @@ static void HandleSIGTERM(int)
 void HandleSIGHUP(int)
 {
     fReopenDebugLog = true;
-    fReopenElysiumLog = true;
 }
 #else
 static BOOL WINAPI consoleCtrlHandler(DWORD dwCtrlType)
@@ -495,7 +484,7 @@ std::string HelpMessage(HelpMessageMode mode)
     strUsage += HelpMessageOpt("-conf=<file>", strprintf(_("Specify configuration file (default: %s)"), BITCOIN_CONF_FILENAME));
     if (mode == HMM_BITCOIND)
     {
-#if HAVE_DECL_DAEMON
+#if defined(HAVE_DECL_DAEMON) && HAVE_DECL_DAEMON
         strUsage += HelpMessageOpt("-daemon", _("Run in the background as a daemon and accept commands"));
 #endif
     }
@@ -665,32 +654,15 @@ std::string HelpMessage(HelpMessageMode mode)
         strUsage += HelpMessageOpt("-rpcforceutf8", strprintf("Replace invalid UTF-8 encoded characters with question marks in RPC response (default: %d)", 1));
     }
 
-#ifdef ENABLE_ELYSIUM
-    strUsage += HelpMessageGroup("Elysium options:");
-    strUsage += HelpMessageOpt("-elysium", "Enable Elysium");
-    strUsage += HelpMessageOpt("-startclean", "Clear all persistence files on startup; triggers reparsing of Elysium transactions");
-    strUsage += HelpMessageOpt("-elysiumtxcache=<num>", "The maximum number of transactions in the input transaction cache (default: 500000)");
-    strUsage += HelpMessageOpt("-elysiumprogressfrequency=<seconds>", "Time in seconds after which the initial scanning progress is reported (default: 30)");
-    strUsage += HelpMessageOpt("-elysiumdebug=<category>", "Enable or disable log categories, can be \"all\" or \"none\"");
-    strUsage += HelpMessageOpt("-autocommit=<flag>", "Enable or disable broadcasting of transactions, when creating transactions (default: 1)");
-    strUsage += HelpMessageOpt("-overrideforcedshutdown=<flag>", "Disable force shutdown when error (default: 0)");
-    strUsage += HelpMessageOpt("-elysiumalertallowsender=<addr>", "Whitelist senders of alerts, can be \"any\")");
-    strUsage += HelpMessageOpt("-elysiumalertignoresender=<addr>", "Ignore senders of alerts");
-    strUsage += HelpMessageOpt("-elysiumactivationignoresender=<addr>", "Ignore senders of activations");
-    strUsage += HelpMessageOpt("-elysiumactivationallowsender=<addr>", "Whitelist senders of activations");
-    strUsage += HelpMessageOpt("-elysiumuiwalletscope=<number>", "Max. transactions to show in trade and transaction history (default: 65535)");
-    strUsage += HelpMessageOpt("-elysiumshowblockconsensushash=<number>", "Calculate and log the consensus hash for the specified block");
-#endif
-
     return strUsage;
 }
 
 std::string LicenseInfo()
 {
-    const std::string URL_SOURCE_CODE = "<https://github.com/BZXorg/BZX>";
-    const std::string URL_WEBSITE = "<https://BZX.org/>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/SpecialCoins/BitcoinZero>";
+    const std::string URL_WEBSITE = "<https://bzx.world//>";
 
-    std::string copyright = CopyrightHolders(strprintf(_("Copyright (C) %i-%i"), 2016, COPYRIGHT_YEAR) + " ");
+    std::string copyright = CopyrightHolders(strprintf(_("Copyright (C) %i-%i"), 2020, COPYRIGHT_YEAR) + " ");
     
     const std::string bitcoinStr = strprintf("%i-%i The Bitcoin Core", 2016, COPYRIGHT_YEAR);
     if (copyright.find(bitcoinStr) != std::string::npos) {
@@ -801,7 +773,7 @@ void ThreadImport(std::vector <boost::filesystem::path> vImportFiles) {
 
 #ifdef ENABLE_WALLET
     if (!GetBoolArg("-disablewallet", false) && pwalletMain->zwallet) {
-        //Load mint hashes to memory
+        //Load privcoin mint hashes to memory
         LogPrintf("Loading mints to wallet..\n");
         pwalletMain->zwallet->GetTracker().Init();
         pwalletMain->zwallet->LoadMintPoolFromDB();
@@ -900,7 +872,6 @@ void ThreadImport(std::vector <boost::filesystem::path> vImportFiles) {
     }
     // Need this to restore Sigma spend state
     if (GetBoolArg("-rescan", false) && !GetBoolArg("-disablewallet", false) && pwalletMain->zwallet) {
-        pwalletMain->zwallet->GetTracker().ListMints();
         pwalletMain->zwallet->GetTracker().ListLelantusMints();
     }
 #endif
@@ -1086,7 +1057,11 @@ void InitParameterInteraction()
             LogPrintf("%s: parameter interaction: -whitelistforcerelay=1 -> setting -whitelistrelay=1\n", __func__);
     }
 
-    // Forcing all mnemonic settings off if -usehd is off.
+#ifdef ENABLE_WALLET
+    // Set arg "-newwallet" false by default for wallet scaning.
+    SoftSetBoolArg("-newwallet", false);
+
+    // Forcing all mnemonic settings off if -usehd is off..
     if (!GetBoolArg("-usehd", DEFAULT_USE_HD_WALLET)) {
         if (SoftSetBoolArg("-usemnemonic", false) && SoftSetArg("-mnemonic", "") && SoftSetArg("-mnemonicpassphrase", "") && SoftSetArg("-hdseed", "not hex"))
             LogPrintf("%s: Potential  parameter interaction: -usehd=0 -> setting -usemnemonic=0, -mnemonic=\"\", -mnemonicpassphrase=\"\", -hdseed=\"not hex\"\n", __func__);
@@ -1097,6 +1072,7 @@ void InitParameterInteraction()
         if (SoftSetArg("-mnemonic", "") && SoftSetArg("-mnemonicpassphrase", "") && SoftSetArg("-hdseed", "not hex"))
             LogPrintf("%s: Potential parameter interaction: -usemnemonic=0 -> setting -mnemonic=\"\", -mnemonicpassphrase=\"\"\n, -hdseed=\"not hex\"\n", __func__);
     }
+#endif // ENABLE_WALLET
 }
 
 static std::string ResolveErrMsg(const char *const optname, const std::string &strBind) {
@@ -1235,7 +1211,7 @@ bool AppInitBasicSetup()
     _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
     _CrtSetReportFile(_CRT_WARN, CreateFileA("NUL", GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, 0));
 #endif
-#if _MSC_VER >= 1400
+#if defined(_MSC_VER) && _MSC_VER  >= 1400
     // Disable confusing "helpful" text message on abort, Ctrl-C
     _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
 #endif
@@ -1249,7 +1225,8 @@ bool AppInitBasicSetup()
 #define PROCESS_DEP_ENABLE 0x00000001
 #endif
     typedef BOOL (WINAPI *PSETPROCDEPPOL)(DWORD);
-    PSETPROCDEPPOL setProcDEPPol = (PSETPROCDEPPOL)GetProcAddress(GetModuleHandleA("Kernel32.dll"), "SetProcessDEPPolicy");
+    PSETPROCDEPPOL setProcDEPPol = reinterpret_cast<PSETPROCDEPPOL>(
+        reinterpret_cast<void*>(GetProcAddress(GetModuleHandleA("Kernel32.dll"), "SetProcessDEPPolicy")));
     if (setProcDEPPol != NULL) setProcDEPPol(PROCESS_DEP_ENABLE);
 #endif
 
@@ -1463,6 +1440,7 @@ bool AppInitParameterInteraction()
     fIsBareMultisigStd = GetBoolArg("-permitbaremultisig", DEFAULT_PERMIT_BAREMULTISIG);
     fAcceptDatacarrier = GetBoolArg("-datacarrier", DEFAULT_ACCEPT_DATACARRIER);
     nMaxDatacarrierBytes = GetArg("-datacarriersize", nMaxDatacarrierBytes);
+
     nMaxTipAge = GetArg("-maxtipage", DEFAULT_MAX_TIP_AGE);
 
     fEnableReplacement = GetBoolArg("-mempoolreplacement", DEFAULT_ENABLE_REPLACEMENT);
@@ -1478,7 +1456,7 @@ bool AppInitParameterInteraction()
 
 static bool LockDataDirectory(bool probeOnly)
 {
-	MilliSleep(1500);
+    MilliSleep(2000);
     std::string strDataDir = GetDataDir().string();
 
     // Make sure only a single Bitcoin process is using the data directory.
@@ -1571,7 +1549,7 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
             return InitError(_("Unable to start HTTP server. See debug log for details."));
     }
 
-    int64_t nStart;
+    int64_t nStart = 0;
 
     // ********************************************************* Step 5: verify wallet database integrity
 #ifdef ENABLE_WALLET
@@ -1959,53 +1937,6 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
     LogPrintf("No wallet support compiled in!\n");
 #endif // !ENABLE_WALLET
 
-    // ********************************************************* Step 8.5: load elysium
-
-#ifdef ENABLE_ELYSIUM
-    if (isElysiumEnabled()) {
-        if (!fTxIndex) {
-            // ask the user if they would like us to modify their config file for them
-            std::string msg = _("Disabled transaction index detected.\n\n"
-                                "Elysium requires an enabled transaction index. To enable "
-                                "transaction indexing, please use the \"-txindex\" option as "
-                                "command line argument or add \"txindex=1\" to your client "
-                                "configuration file within your data directory.\n\n"
-                                "Configuration file"); // allow translation of main text body while still allowing differing config file string
-            msg += ": " + GetConfigFile("").string() + "\n\n";
-            msg += _("Would you like Elysium to attempt to update your configuration file accordingly?");
-            bool fRet = uiInterface.ThreadSafeMessageBox(msg, "", CClientUIInterface::MSG_INFORMATION | CClientUIInterface::BTN_OK | CClientUIInterface::MODAL | CClientUIInterface::BTN_ABORT);
-            if (fRet) {
-                // add txindex=1 to config file in GetConfigFile()
-                boost::filesystem::path configPathInfo = GetConfigFile("");
-                FILE *fp = fopen(configPathInfo.string().c_str(), "at");
-                if (!fp) {
-                    std::string failMsg = _("Unable to update configuration file at");
-                    failMsg += ":\n" + GetConfigFile("").string() + "\n\n";
-                    failMsg += _("The file may be write protected or you may not have the required permissions to edit it.\n");
-                    failMsg += _("Please add txindex=1 to your configuration file manually.\n\nElysium will now shutdown.");
-                    return InitError(failMsg);
-                }
-                fprintf(fp, "\ntxindex=1\n");
-                fflush(fp);
-                fclose(fp);
-                std::string strUpdated = _(
-                        "Your configuration file has been updated.\n\n"
-                        "Elysium will now shutdown - please restart the client for your new configuration to take effect.");
-                uiInterface.ThreadSafeMessageBox(strUpdated, "", CClientUIInterface::MSG_INFORMATION | CClientUIInterface::BTN_OK | CClientUIInterface::MODAL);
-                return false;
-            } else {
-                return InitError(_("Please add txindex=1 to your configuration file manually.\n\nOmni Core will now shutdown."));
-            }
-        }
-
-        uiInterface.InitMessage(_("Parsing Elysium transactions..."));
-        elysium_init();
-
-        // Elysium code should be initialized and wallet should now be loaded, perform an initial populate
-        CheckWalletUpdate();
-    }
-#endif
-
     // ********************************************************* Step 9: data directory maintenance
     LogPrintf("Step 9: data directory maintenance **********************\n");
     // if pruning, unset the service bit and perform the initial blockstore prune
@@ -2148,13 +2079,13 @@ bool AppInitMain(boost::thread_group& threadGroup, CScheduler& scheduler)
         return InitError(strNodeError);
     // ********************************************************* Step 14: finished
 
-    SetRPCWarmupFinished();
-    uiInterface.InitMessage(_("Done loading"));
-
 #ifdef ENABLE_WALLET
     if (pwalletMain)
         pwalletMain->postInitProcess(threadGroup);
 #endif
+
+    SetRPCWarmupFinished();
+    uiInterface.InitMessage(_("Done loading"));
 
     return !fRequestShutdown;
 }

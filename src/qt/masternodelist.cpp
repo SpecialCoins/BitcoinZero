@@ -10,7 +10,9 @@
 #include "netbase.h"
 #include "sync.h"
 #include "validation.h"
+#ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
+#endif // ENABLE_WALLET
 #include "walletmodel.h"
 
 #include <univalue.h>
@@ -66,15 +68,15 @@ MasternodeList::MasternodeList(const PlatformStyle* platformStyle, QWidget* pare
     contextMenuDIP3 = new QMenu();
     contextMenuDIP3->addAction(copyProTxHashAction);
     contextMenuDIP3->addAction(copyCollateralOutpointAction);
-    connect(ui->tableWidgetMasternodesDIP3, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenuDIP3(const QPoint&)));
-    connect(ui->tableWidgetMasternodesDIP3, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(extraInfoDIP3_clicked()));
-    connect(copyProTxHashAction, SIGNAL(triggered()), this, SLOT(copyProTxHash_clicked()));
-    connect(copyCollateralOutpointAction, SIGNAL(triggered()), this, SLOT(copyCollateralOutpoint_clicked()));
+    connect(ui->tableWidgetMasternodesDIP3, &QWidget::customContextMenuRequested, this, &MasternodeList::showContextMenuDIP3);
+    connect(ui->tableWidgetMasternodesDIP3, &QAbstractItemView::doubleClicked, this, &MasternodeList::extraInfoDIP3_clicked);
+    connect(copyProTxHashAction, &QAction::triggered, this, &MasternodeList::copyProTxHash_clicked);
+    connect(copyCollateralOutpointAction, &QAction::triggered, this, &MasternodeList::copyCollateralOutpoint_clicked);
     //always start with "my masternodes only" checked
     ui->checkBoxMyMasternodesOnly->setChecked(false);
 
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateDIP3ListScheduled()));
+    connect(timer, &QTimer::timeout, this, &MasternodeList::updateDIP3ListScheduled);
     timer->start(1000);
 }
 
@@ -88,7 +90,7 @@ void MasternodeList::setClientModel(ClientModel* model)
     this->clientModel = model;
     if (model) {
         // try to update list when masternode count changes
-        connect(clientModel, SIGNAL(masternodeListChanged()), this, SLOT(handleMasternodeListChanged()));
+        connect(clientModel, &ClientModel::masternodeListChanged, this, &MasternodeList::handleMasternodeListChanged);
     }
 }
 
@@ -163,7 +165,9 @@ void MasternodeList::updateDIP3List()
     {
         // Get all UTXOs for each MN collateral in one go so that we can reduce locking overhead for cs_main
         // We also do this outside of the below Qt list update loop to reduce cs_main locking time to a minimum
-        LOCK(cs_main);
+        TRY_LOCK(cs_main,lock_main);
+        if (!lock_main)
+            return;
         mnList.ForEachMN(false, [&](const CDeterministicMNCPtr& dmn) {
             CTxDestination collateralDest;
             Coin coin;
@@ -212,7 +216,8 @@ void MasternodeList::updateDIP3List()
         // Address, Protocol, Status, Active Seconds, Last Seen, Pub Key
         QTableWidgetItem* addressItem = new QTableWidgetItem(QString::fromStdString(dmn->pdmnState->addr.ToString()));
         QTableWidgetItem* statusItem = new QTableWidgetItem(mnList.IsMNValid(dmn) ? tr("ENABLED") : (mnList.IsMNPoSeBanned(dmn) ? tr("POSE_BANNED") : tr("UNKNOWN")));
-        QTableWidgetItem* PoSeScoreItem = new QTableWidgetItem(QString::number(dmn->pdmnState->nPoSePenalty));
+        QTableWidgetItem* PoSeScoreItem = new QTableWidgetItem();
+        PoSeScoreItem->setData(Qt::EditRole, dmn->pdmnState->nPoSePenalty);
         QTableWidgetItem* registeredItem = new QTableWidgetItem(QString::number(dmn->pdmnState->nRegisteredHeight));
         QTableWidgetItem* lastPaidItem = new QTableWidgetItem((dmn->pdmnState->nLastPaidHeight < params.DIP0003EnforcementHeight) ? tr("NONE") : QString::number(dmn->pdmnState->nLastPaidHeight));
         QTableWidgetItem* nextPaymentItem = new QTableWidgetItem(nextPayments.count(dmn->proTxHash) ? QString::number(nextPayments[dmn->proTxHash]) : tr("UNKNOWN"));
@@ -364,4 +369,49 @@ void MasternodeList::copyCollateralOutpoint_clicked()
     }
 
     QApplication::clipboard()->setText(QString::fromStdString(dmn->collateralOutpoint.ToStringShort()));
+}
+
+void MasternodeList::resizeEvent(QResizeEvent* event) 
+{
+    QWidget::resizeEvent(event);
+
+    const int newWidth = event->size().width();
+    const int newHeight = event->size().height();
+
+    adjustTextSize(newWidth ,newHeight);
+
+    // Calculate new column widths based on the new window width
+    int newWidthOwner = static_cast<int>(newWidth * 0.19);  
+    int newWidthMin = static_cast<int>(newWidth * 0.08);
+    int newWidthMid = static_cast<int>(newWidth * 0.12);
+    int newWidthStatus = static_cast<int>(newWidth * 0.11);
+
+    // Apply new column widths
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(0, newWidthStatus);
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(1, newWidthMin);
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(2, newWidthMin);
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(3, newWidthMid);
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(4, newWidthMid);
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(5, newWidthMid);
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(6, newWidthMid);
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(7, newWidthMid);
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(8, newWidthMid);
+    ui->tableWidgetMasternodesDIP3->setColumnWidth(9, newWidthOwner);
+}
+void MasternodeList::adjustTextSize(int width,int height){
+
+    const double fontSizeScalingFactor = 70.0;
+    int baseFontSize = std::min(width, height) / fontSizeScalingFactor;
+    int fontSize = std::min(15, std::max(12, baseFontSize));
+    QFont font = this->font();
+    font.setPointSize(fontSize);
+
+    // Set font size for all labels
+    ui->label_filter_2->setFont(font);
+    ui->label_count_2->setFont(font);
+    ui->countLabelDIP3->setFont(font);
+    ui->checkBoxMyMasternodesOnly->setFont(font);
+    ui->tableWidgetMasternodesDIP3->setFont(font);
+    ui->tableWidgetMasternodesDIP3->horizontalHeader()->setFont(font);
+    ui->tableWidgetMasternodesDIP3->verticalHeader()->setFont(font);
 }

@@ -1,4 +1,3 @@
-#include "../lelantus.h"
 #include "../masternode-sync.h"
 #include "../validation.h"
 #include "../wallet/wallet.h"
@@ -6,7 +5,7 @@
 #include "automintmodel.h"
 #include "bitcoinunits.h"
 #include "guiconstants.h"
-#include "lelantusmodel.h"
+#include "sparkmodel.h"
 #include "optionsmodel.h"
 
 #include <boost/bind/bind.hpp>
@@ -18,13 +17,9 @@ IncomingFundNotifier::IncomingFundNotifier(
     timer = new QTimer(this);
     timer->setSingleShot(true);
 
-    connect(timer,
-        SIGNAL(timeout()),
-        this,
-        SLOT(check()),
-        Qt::QueuedConnection);
+    connect(timer, &QTimer::timeout, this, &IncomingFundNotifier::check, Qt::QueuedConnection);
 
-    importTransactions();
+    QMetaObject::invokeMethod(this, "importTransactions", Qt::QueuedConnection);
     subscribeToCoreSignals();
 }
 
@@ -49,27 +44,30 @@ void IncomingFundNotifier::newBlock()
 void IncomingFundNotifier::pushTransaction(uint256 const &id)
 {
     LOCK(cs);
-
     txs.push_back(id);
     resetTimer();
 }
 
 void IncomingFundNotifier::check()
 {
-    LOCK(cs);
-
-    // update only if there are transaction and last update was done more than 2 minutes ago, and in case it is first time
-    if (txs.empty() || (lastUpdateTime!= 0 && (GetSystemTimeInSeconds() - lastUpdateTime <= 120))) {
-        return;
-    }
-
-    lastUpdateTime = GetSystemTimeInSeconds();
-
     CAmount credit = 0;
     std::vector<uint256> immatures;
 
     {
-        LOCK2(cs_main, wallet->cs_wallet);
+        TRY_LOCK(cs_main,lock_main);
+        if (!lock_main)
+            return;
+        TRY_LOCK(cs, lock);
+        if(!lock)
+            return;
+        TRY_LOCK(wallet->cs_wallet,lock_wallet);
+        if (!lock_wallet)
+            return;
+        // update only if there are transaction and last update was done more than 2 minutes ago, and in case it is first time
+        if (txs.empty() || (lastUpdateTime!= 0 && (GetSystemTimeInSeconds() - lastUpdateTime <= 120))) {
+            return;
+        }
+        lastUpdateTime = GetSystemTimeInSeconds();
         CCoinControl coinControl;
         coinControl.nCoinType = CoinType::ONLY_NOT1000IFMN;
         while (!txs.empty()) {
@@ -96,21 +94,19 @@ void IncomingFundNotifier::check()
         for (auto const &valueAndUTXO : valueAndUTXOs) {
             credit += valueAndUTXO.first;
         }
-    }
-
-    for (auto const &tx : immatures) {
-        txs.push_back(tx);
-    }
-
-    if (credit > 0) {
-        Q_EMIT matureFund(credit);
+        for (auto const &tx : immatures) {
+            txs.push_back(tx);
+        }
+        if (credit > 0) {
+            Q_EMIT matureFund(credit);
+        }
     }
 }
 
 void IncomingFundNotifier::importTransactions()
 {
-    LOCK(cs);
-    LOCK2(cs_main, wallet->cs_wallet);
+    LOCK2(cs_main, cs);
+    LOCK(wallet->cs_wallet);
 
     for (auto const &tx : wallet->mapWallet) {
         if (tx.second.GetAvailableCredit() > 0 || tx.second.GetImmatureCredit() > 0) {
@@ -171,117 +167,119 @@ void IncomingFundNotifier::unsubscribeFromCoreSignals()
         boost::bind(IncomingFundNotifyBlockTip, this, _1, _2));
 }
 
-AutoMintModel::AutoMintModel(
-    LelantusModel *_lelantusModel,
+AutoMintSparkModel::AutoMintSparkModel(
+    SparkModel *_sparkModel,
     OptionsModel *_optionsModel,
     CWallet *_wallet,
     QObject *parent) :
     QObject(parent),
-    lelantusModel(_lelantusModel),
+    sparkModel(_sparkModel),
     optionsModel(_optionsModel),
     wallet(_wallet),
-    autoMintState(AutoMintState::Disabled),
-    autoMintCheckTimer(0),
+    autoMintSparkState(AutoMintSparkState::Disabled),
+    autoMintSparkCheckTimer(0),
     notifier(0)
 {
-    autoMintCheckTimer = new QTimer(this);
-    autoMintCheckTimer->setSingleShot(false);
+    autoMintSparkCheckTimer = new QTimer(this);
+    autoMintSparkCheckTimer->setSingleShot(false);
 
-    connect(autoMintCheckTimer, SIGNAL(timeout()), this, SLOT(checkAutoMint()));
+    connect(autoMintSparkCheckTimer, &QTimer::timeout, [this]{ checkAutoMintSpark(); });
 
     notifier = new IncomingFundNotifier(wallet, this);
 
-    connect(notifier, SIGNAL(matureFund(CAmount)), this, SLOT(startAutoMint()));
+    connect(notifier, &IncomingFundNotifier::matureFund, this, &AutoMintSparkModel::startAutoMintSpark);
 
-    connect(optionsModel, SIGNAL(autoAnonymizeChanged(bool)), this, SLOT(updateAutoMintOption(bool)));
+    connect(optionsModel, &OptionsModel::autoAnonymizeChanged, this, &AutoMintSparkModel::updateAutoMintSparkOption);
 }
 
-AutoMintModel::~AutoMintModel()
+AutoMintSparkModel::~AutoMintSparkModel()
 {
-    delete autoMintCheckTimer;
+    delete autoMintSparkCheckTimer;
 
-    autoMintCheckTimer = nullptr;
+    autoMintSparkCheckTimer = nullptr;
 }
 
-bool AutoMintModel::isAnonymizing() const
+bool AutoMintSparkModel::isSparkAnonymizing() const
 {
-    return autoMintState == AutoMintState::Anonymizing;
+    return autoMintSparkState == AutoMintSparkState::Anonymizing;
 }
 
-void AutoMintModel::ackMintAll(AutoMintAck ack, CAmount minted, QString error)
+void AutoMintSparkModel::ackMintSparkAll(AutoMintSparkAck ack, CAmount minted, QString error)
 {
     bool mint = false;
     {
-        LOCK(lelantusModel->cs);
-        if (autoMintState == AutoMintState::Disabled) {
+        TRY_LOCK(sparkModel->cs, lock);
+        if(!lock)
+            return;
+        if (autoMintSparkState == AutoMintSparkState::Disabled) {
             // Do nothing
             return;
-        } else if (ack == AutoMintAck::WaitUserToActive) {
-            autoMintState = AutoMintState::WaitingUserToActivate;
-        } else if (ack == AutoMintAck::AskToMint) {
-            autoMintState = AutoMintState::Anonymizing;
-            autoMintCheckTimer->stop();
+        } else if (ack == AutoMintSparkAck::WaitUserToActive) {
+            autoMintSparkState = AutoMintSparkState::WaitingUserToActivate;
+        } else if (ack == AutoMintSparkAck::AskToMint) {
+            autoMintSparkState = AutoMintSparkState::Anonymizing;
+            autoMintSparkCheckTimer->stop();
             mint = true;
         } else {
-            autoMintState = AutoMintState::WaitingIncomingFund;
-            autoMintCheckTimer->stop();
+            autoMintSparkState = AutoMintSparkState::WaitingIncomingFund;
+            autoMintSparkCheckTimer->stop();
         }
 
-        processAutoMintAck(ack, minted, error);
+        processAutoMintSparkAck(ack, minted, error);
     }
 
     if (mint) {
-        lelantusModel->mintAll(AutoMintMode::AutoMintAll);
+        sparkModel->mintSparkAll(AutoMintSparkMode::AutoMintAll);
     }
 }
 
-void AutoMintModel::checkAutoMint(bool force)
+void AutoMintSparkModel::checkAutoMintSpark(bool force)
 {
-    // if lelantus is not allow or client is in initial syncing state then wait
-    // except user force to check
     if (!force) {
         if (!masternodeSync.IsBlockchainSynced()) {
             return;
         }
 
-        bool allowed = lelantus::IsLelantusAllowed();
+        bool allowed = spark::IsSparkAllowed();
         if (!allowed) {
             return;
         }
     }
 
     {
-        LOCK(lelantusModel->cs);
+        TRY_LOCK(sparkModel->cs, lock);
+        if(!lock)
+            return;
 
         if (fReindex) {
             return;
         }
 
-        switch (autoMintState) {
-        case AutoMintState::Disabled:
-        case AutoMintState::WaitingIncomingFund:
+        switch (autoMintSparkState) {
+        case AutoMintSparkState::Disabled:
+        case AutoMintSparkState::WaitingIncomingFund:
             if (force) {
                 break;
             }
-            autoMintCheckTimer->stop();
+            autoMintSparkCheckTimer->stop();
             return;
-        case AutoMintState::WaitingUserToActivate:
+        case AutoMintSparkState::WaitingUserToActivate:
             break;
-        case AutoMintState::Anonymizing:
+        case AutoMintSparkState::Anonymizing:
             return;
         default:
             throw std::runtime_error("Unknown auto mint state");
         }
 
-        autoMintState = AutoMintState::Anonymizing;
+        autoMintSparkState = AutoMintSparkState::Anonymizing;
     }
 
-    Q_EMIT requireShowAutomintNotification();
+    Q_EMIT requireShowAutomintSparkNotification();
 }
 
-void AutoMintModel::startAutoMint()
+void AutoMintSparkModel::startAutoMintSpark()
 {
-    if (autoMintCheckTimer->isActive()) {
+    if (autoMintSparkCheckTimer->isActive()) {
         return;
     }
 
@@ -291,60 +289,72 @@ void AutoMintModel::startAutoMint()
 
     CAmount mintable = 0;
     {
-        LOCK2(cs_main, wallet->cs_wallet);
-        mintable = lelantusModel->getMintableAmount();
+        TRY_LOCK(cs_main,lock_main);
+        if (!lock_main)
+            return;
+        TRY_LOCK(wallet->cs_wallet,lock_wallet);
+        if (!lock_wallet)
+            return;
+        mintable = sparkModel->getMintableSparkAmount();
     }
 
     if (mintable > 0) {
-        autoMintState = AutoMintState::WaitingUserToActivate;
+        autoMintSparkState = AutoMintSparkState::WaitingUserToActivate;
 
-        autoMintCheckTimer->start(MODEL_UPDATE_DELAY);
+        autoMintSparkCheckTimer->start(MODEL_UPDATE_DELAY);
     } else {
-        autoMintState = AutoMintState::WaitingIncomingFund;
+        autoMintSparkState = AutoMintSparkState::WaitingIncomingFund;
     }
 }
 
-void AutoMintModel::updateAutoMintOption(bool enabled)
+void AutoMintSparkModel::updateAutoMintSparkOption(bool enabled)
 {
-    LOCK2(cs_main, wallet->cs_wallet);
-    LOCK(lelantusModel->cs);
+    TRY_LOCK(cs_main,lock_main);
+    if (!lock_main)
+        return;
+    TRY_LOCK(wallet->cs_wallet,lock_wallet);
+    if (!lock_wallet)
+        return;
+    TRY_LOCK(sparkModel->cs, lock);
+    if (!lock)
+        return;
 
     if (enabled) {
-        if (autoMintState == AutoMintState::Disabled) {
-            startAutoMint();
+        if (autoMintSparkState == AutoMintSparkState::Disabled) {
+            startAutoMintSpark();
         }
     } else {
-        if (autoMintCheckTimer->isActive()) {
-            autoMintCheckTimer->stop();
+        if (autoMintSparkCheckTimer->isActive()) {
+            autoMintSparkCheckTimer->stop();
         }
 
         // stop mint
-        autoMintState = AutoMintState::Disabled;
+        autoMintSparkState = AutoMintSparkState::Disabled;
 
-        Q_EMIT closeAutomintNotification();
+        Q_EMIT closeAutomintSparkNotification();
     }
 }
 
-void AutoMintModel::processAutoMintAck(AutoMintAck ack, CAmount minted, QString error)
+void AutoMintSparkModel::processAutoMintSparkAck(AutoMintSparkAck ack, CAmount minted, QString error)
 {
     QPair<QString, CClientUIInterface::MessageBoxFlags> msgParams;
     msgParams.second = CClientUIInterface::MSG_WARNING;
 
     switch (ack)
     {
-    case AutoMintAck::Success:
+    case AutoMintSparkAck::Success:
         msgParams.first = tr("Successfully anonymized %1")
             .arg(BitcoinUnits::formatWithUnit(optionsModel->getDisplayUnit(), minted));
         msgParams.second = CClientUIInterface::MSG_INFORMATION;
         break;
-    case AutoMintAck::WaitUserToActive:
-    case AutoMintAck::NotEnoughFund:
+    case AutoMintSparkAck::WaitUserToActive:
+    case AutoMintSparkAck::NotEnoughFund:
         return;
-    case AutoMintAck::FailToMint:
+    case AutoMintSparkAck::FailToMint:
         msgParams.first = tr("Fail to mint, %1").arg(error);
         msgParams.second = CClientUIInterface::MSG_ERROR;
         break;
-    case AutoMintAck::FailToUnlock:
+    case AutoMintSparkAck::FailToUnlock:
         msgParams.first = tr("Fail to unlock wallet");
         msgParams.second = CClientUIInterface::MSG_ERROR;
         break;

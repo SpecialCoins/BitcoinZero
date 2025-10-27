@@ -17,6 +17,10 @@
 
 #include <boost/thread.hpp>
 
+#ifdef __linux__
+#include <sys/sysinfo.h>
+#endif
+
 static const char DB_COIN = 'C';
 static const char DB_COINS = 'c';
 static const char DB_BLOCK_FILES = 'f';
@@ -309,6 +313,32 @@ bool CBlockTreeDB::ReadAddressIndex(uint160 addressHash, AddressType type,
     return true;
 }
 
+size_t CBlockTreeDB::findAddressNumWBalance() {
+    boost::scoped_ptr<CDBIterator> pcursor(NewIterator());
+    pcursor->SeekToFirst();
+    std::unordered_map<uint160, CAmount> addrMap;
+    while (pcursor->Valid()) {
+        boost::this_thread::interruption_point();
+        std::pair<char,CAddressIndexKey> key;
+        if (pcursor->GetKey(key) && key.first == DB_ADDRESSINDEX && (key.second.type == AddressType::payToPubKeyHash || key.second.type == AddressType::payToExchangeAddress)) {
+            CAmount nValue;
+            // Retrieve the associated value
+            if (pcursor->GetValue(nValue) && nValue != 0) { // Only process non-zero values
+                addrMap[key.second.hashBytes] += nValue; // Accumulate balance for the address
+            }
+        }
+        pcursor->Next();
+    }
+
+    size_t counter = 0;
+    for (auto& itr : addrMap) {
+        if (itr.second > 0) {
+            ++counter;
+        }
+    }
+
+    return counter;
+}
 
 bool CBlockTreeDB::WriteTimestampIndex(const CTimestampIndexKey &timestampIndex) {
     CDBBatch batch(*this);
@@ -350,11 +380,30 @@ bool CBlockTreeDB::ReadFlag(const std::string &name, bool &fValue) {
 
 bool CBlockTreeDB::LoadBlockIndexGuts(boost::function<CBlockIndex*(const uint256&)> insertBlockIndex)
 {
+    const auto &consensusParams = Params().GetConsensus();
     std::unique_ptr<CDBIterator> pcursor(NewIterator());
 
     pcursor->Seek(std::make_pair(DB_BLOCK_INDEX, uint256()));
 
     // Load mapBlockIndex
+
+    // We need to check PoW for the last N blocks. To do so we can't just save a pointer to the last block and go back 
+    // from it because of possible forks. This multimap is used to track the most recent blocks (by height) saved in 
+    // the block index on disk
+    std::multimap<int, CBlockIndex*> lastNBlocks;
+    // lowest height of all the elements in lastNBlocks
+    int firstInLastNBlocksHeight = 0;
+
+    bool fCheckPoWForAllBlocks = GetBoolArg("-fullblockindexcheck", DEFAULT_FULL_BLOCKINDEX_CHECK);
+    int64_t nBlocksToCheck = GetArg("-numberofblockstocheckonstartup", DEFAULT_BLOCKINDEX_NUMBER_OF_BLOCKS_TO_CHECK);
+
+#ifdef __linux__
+    struct sysinfo sysInfo;
+
+    if (sysinfo(&sysInfo) == 0 && sysInfo.freeram < 2ul*1024ul*1024ul*1024ul)
+        nBlocksToCheck = DEFAULT_BLOCKINDEX_LOWMEM_NUMBER_OF_BLOCKS_TO_CHECK;
+#endif
+
     while (pcursor->Valid()) {
         boost::this_thread::interruption_point();
         std::pair<char, uint256> key;
@@ -375,18 +424,49 @@ bool CBlockTreeDB::LoadBlockIndexGuts(boost::function<CBlockIndex*(const uint256
                 pindexNew->nNonce                   = diskindex.nNonce;
                 pindexNew->nStatus                  = diskindex.nStatus;
                 pindexNew->nTx                      = diskindex.nTx;
-                pindexNew->sigmaMintedPubCoins      = diskindex.sigmaMintedPubCoins;
-                pindexNew->sigmaSpentSerials        = diskindex.sigmaSpentSerials;
                 pindexNew->lelantusMintedPubCoins   = diskindex.lelantusMintedPubCoins;
+                pindexNew->lelantusMintData         = diskindex.lelantusMintData;
                 pindexNew->lelantusSpentSerials     = diskindex.lelantusSpentSerials;
                 pindexNew->anonymitySetHash         = diskindex.anonymitySetHash;
-                pindexNew->activeDisablingSporks    = diskindex.activeDisablingSporks;
+                pindexNew->sparkMintedCoins         = diskindex.sparkMintedCoins;
+                pindexNew->sparkSetHash             = diskindex.sparkSetHash;
+                pindexNew->spentLTags               = diskindex.spentLTags;
+                pindexNew->sparkTxHashContext       = diskindex.sparkTxHashContext;
+                pindexNew->ltagTxhash               = diskindex.ltagTxhash;
+                pindexNew->addedSparkNames          = diskindex.addedSparkNames;
+                pindexNew->removedSparkNames        = diskindex.removedSparkNames;
+
+                if (fCheckPoWForAllBlocks) {
+                    if (!CheckProofOfWork(pindexNew->GetBlockPoWHash(), pindexNew->nBits, consensusParams))
+                        return error("LoadBlockIndex(): CheckProofOfWork failed: %s", pindexNew->ToString());
+                }
+                else {
+                    if (pindexNew->nHeight >= firstInLastNBlocksHeight) {
+                        lastNBlocks.insert(std::pair<int, CBlockIndex*>(pindexNew->nHeight, pindexNew));
+                        if (cmp::greater(lastNBlocks.size(), nBlocksToCheck)) {
+                            // pop the first element from the map
+                            auto firstElement = lastNBlocks.begin();
+                            auto elementToPop = firstElement++;
+                            lastNBlocks.erase(elementToPop);
+                            firstInLastNBlocksHeight = firstElement->first;
+                        }
+                    }
+                }
+
                 pcursor->Next();
             } else {
                 return error("LoadBlockIndex() : failed to read value");
             }
         } else {
             break;
+        }
+    }
+
+    if (!fCheckPoWForAllBlocks) {
+        // delayed check for all the blocks
+        for (const auto &blockIndex: lastNBlocks) {
+            if (!CheckProofOfWork(blockIndex.second->GetBlockPoWHash(), blockIndex.second->nBits, consensusParams))
+                return error("LoadBlockIndex(): CheckProofOfWork failed: %s", blockIndex.second->ToString());
         }
     }
 
@@ -476,6 +556,9 @@ std::pair<AddressType, uint160> classifyAddress(txnouttype type, std::vector<std
     } else if(type == TX_PUBKEYHASH) {
         result.first = AddressType::payToPubKeyHash;
         result.second = uint160(std::vector<unsigned char>(addresses.front().begin(), addresses.front().end()));
+    } else if(type == TX_EXCHANGEADDRESS) {
+        result.first = AddressType::payToExchangeAddress;
+        result.second = uint160(std::vector<unsigned char>(addresses.front().begin(), addresses.front().end()));
     }
     return result;
 }
@@ -536,6 +619,11 @@ void handleOutput(const CTxOut &out, size_t outNo, uint256 const & txHash, int h
     if(out.scriptPubKey.IsLelantusJMint())
         addressIndex->push_back(std::make_pair(CAddressIndexKey(AddressType::lelantusJMint, uint160(), height, txNumber, txHash, outNo, false), out.nValue));
 
+    if(out.scriptPubKey.IsSparkMint())
+        addressIndex->push_back(std::make_pair(CAddressIndexKey(AddressType::sparkMint, uint160(), height, txNumber, txHash, outNo, false), out.nValue));
+
+    if(out.scriptPubKey.IsSparkSMint())
+        addressIndex->push_back(std::make_pair(CAddressIndexKey(AddressType::sparksMint, uint160(), height, txNumber, txHash, outNo, false), out.nValue));
 
     txnouttype type;
     std::vector<std::vector<unsigned char> > addresses;
@@ -560,13 +648,13 @@ void handleOutput(const CTxOut &out, size_t outNo, uint256 const & txHash, int h
 void CDbIndexHelper::ConnectTransaction(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view)
 {
     size_t no = 0;
-    if(!tx.IsCoinBase() && !tx.IsLelantusJoinSplit()) {
+    if(!tx.IsCoinBase() && !tx.HasNoRegularInputs()) {
         for (CTxIn const & input : tx.vin) {
             handleInput(input, no++, tx.GetHash(), height, txNumber, view, addressIndex, addressUnspentIndex, spentIndex);
         }
     }
 
-    if(tx.IsLelantusJoinSplit())
+    if(tx.IsPrivcoinSpend() || tx.IsSigmaSpend() || tx.IsLelantusJoinSplit() || tx.IsSparkSpend())
         handlePrivcoinSpend(tx.vout.begin(), tx.vout.end(), tx.GetHash(), height, txNumber, view, addressIndex, tx);
 
     no = 0;
@@ -591,7 +679,7 @@ void CDbIndexHelper::DisconnectTransactionInputs(CTransaction const & tx, int he
 
     size_t no = 0;
 
-    if(!tx.IsCoinBase() && !tx.IsLelantusJoinSplit())
+    if(!tx.IsCoinBase() && !tx.HasNoRegularInputs())
         for (CTxIn const & input : tx.vin) {
             handleInput(input, no++, tx.GetHash(), height, txNumber, view, addressIndex, addressUnspentIndex, spentIndex);
         }
@@ -610,7 +698,7 @@ void CDbIndexHelper::DisconnectTransactionInputs(CTransaction const & tx, int he
 
 void CDbIndexHelper::DisconnectTransactionOutputs(CTransaction const & tx, int height, int txNumber, CCoinsViewCache const & view)
 {
-    if(tx.IsLelantusJoinSplit())
+    if(tx.IsPrivcoinSpend() || tx.IsSigmaSpend() || tx.IsLelantusJoinSplit() || tx.IsSparkSpend())
         handlePrivcoinSpend(tx.vout.begin(), tx.vout.end(), tx.GetHash(), height, txNumber, view, addressIndex, tx);
 
     size_t no = 0;
@@ -668,7 +756,7 @@ public:
     void Unserialize(Stream &s) {
         unsigned int nCode = 0;
         // version
-        int nVersionDummy;
+        int nVersionDummy = 0;
         ::Unserialize(s, VARINT(nVersionDummy));
         // header code
         ::Unserialize(s, VARINT(nCode));

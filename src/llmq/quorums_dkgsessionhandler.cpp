@@ -64,7 +64,7 @@ std::list<CDKGPendingMessages::BinaryMessage> CDKGPendingMessages::PopPendingMes
         pendingMessages.pop_front();
     }
 
-    return std::move(ret);
+    return ret;
 }
 
 bool CDKGPendingMessages::HasSeen(const uint256& hash) const
@@ -142,8 +142,6 @@ void CDKGSessionHandler::ProcessMessage(CNode* pfrom, const std::string& strComm
 bool CDKGSessionHandler::InitNewQuorum(const CBlockIndex* pindexQuorum)
 {
     //AssertLockHeld(cs_main);
-
-    const auto& consensus = Params().GetConsensus();
 
     curSession = std::make_shared<CDKGSession>(params, blsWorker, dkgManager);
 
@@ -319,7 +317,7 @@ std::set<NodeId> BatchVerifyMessageSigs(CDKGSession& session, const std::vector<
         }
 
         // are all messages from the same node?
-        NodeId firstNodeId;
+        NodeId firstNodeId = 0;
         first = true;
         bool nodeIdsAllSame = true;
         for (auto it = messages.begin(); it != messages.end(); ++it) {
@@ -436,7 +434,6 @@ bool ProcessPendingMessageBatch(CDKGSession& session, CDKGPendingMessages& pendi
 void CDKGSessionHandler::HandleDKGRound()
 {
     uint256 curQuorumHash;
-    int curQuorumHeight;
 
     WaitForNextPhase(QuorumPhase_None, QuorumPhase_Initialized, uint256(), []{return false;});
 
@@ -447,7 +444,6 @@ void CDKGSessionHandler::HandleDKGRound()
         pendingJustifications.Clear();
         pendingPrematureCommitments.Clear();
         curQuorumHash = quorumHash;
-        curQuorumHeight = quorumHeight;
     }
 
     const CBlockIndex* pindexQuorum;
@@ -547,7 +543,7 @@ void CDKGSessionHandler::PhaseHandlerThread()
             HandleDKGRound();
         } catch (AbortPhaseException& e) {
             quorumDKGDebugManager->UpdateLocalSessionStatus(params.type, [&](CDKGDebugSessionStatus& status) {
-                status.aborted = true;
+                status.debugStatus.status.aborted = true;
                 return true;
             });
             LogPrint("llmq-dkg", "CDKGSessionHandler::%s -- aborted current DKG session for llmq=%s\n", __func__, params.name);
