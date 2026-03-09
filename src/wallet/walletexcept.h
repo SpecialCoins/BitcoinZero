@@ -1,0 +1,27 @@
+#ifndef BZX_WALLET_WALLETEXCEPT_H
+#define BZX_WALLET_WALLETEXCEPT_H
+
+#include <stdexcept>
+
+class WalletError : public std::runtime_error
+{
+public:
+    explicit WalletError(const char *what);
+    explicit WalletError(const std::string &what);
+};
+
+class WalletLocked : public WalletError
+{
+public:
+    WalletLocked();
+};
+
+class InsufficientFunds : public WalletError
+{
+public:
+    InsufficientFunds();
+    explicit InsufficientFunds(const char *what);
+    explicit InsufficientFunds(const std::string& what);
+};
+
+#endif // BZX_WALLET_WALLETEXCEPT_H
